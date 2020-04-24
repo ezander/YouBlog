@@ -1,6 +1,6 @@
 import { useEffect, useReducer } from 'react';
 
-export function executeDelayed(delay: Number) {
+export function delay(delay: Number) {
   return new Promise(resolve => setTimeout(resolve, delay))
 }
 
