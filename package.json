@@ -6,12 +6,11 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-
     "test": "jest --watch --coverage=false",
     "testNew": "jest --watch --coverage=false --changedSince=origin/master",
     "testDebug": "jest -o --watch --coverage=false",
     "testFinal": "jest",
-    "updateSnapshots": "jest -u --coverage=false"    
+    "updateSnapshots": "jest -u --coverage=false"
   },
   "dependencies": {
     "@react-native-community/masked-view": "0.1.6",
@@ -23,6 +22,8 @@
     "react-dom": "~16.9.0",
     "react-native": "https://github.com/expo/react-native/archive/sdk-37.0.1.tar.gz",
     "react-native-gesture-handler": "~1.6.0",
+    "react-native-markdown-renderer": "^3.2.8",
+    "react-native-markdown-simple": "^2.1.0",
     "react-native-reanimated": "~1.7.0",
     "react-native-safe-area-context": "0.7.3",
     "react-native-screens": "~2.2.0",

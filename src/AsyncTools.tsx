@@ -11,14 +11,20 @@ interface AsyncActionState<ResType> {
   error?: boolean | string
 }
 
-interface AsyncAction<ResType> {
-  type: string,
-  result?: ResType,
-  error?: boolean | string
-}
+// type AsyncActionState<ResType> =
+//   | {hasRun: false, isWorking: boolean, result: undefined}
+//   | {hasRun: true, isWorking: boolean, result: ResType}
+//   | {hasRun: true, isWorking: boolean, error: boolean | string}
+
+type AsyncAction<ResType> = 
+  | {type: "INIT"}
+  | {type: "SUCCESS", result: ResType}
+  | {type: "FAIL", error: boolean | string}
 
 
-function asyncActionReducer<ResType>(state: AsyncActionState<ResType>, action: AsyncAction<ResType>) {
+function asyncActionReducer<ResType>(state: AsyncActionState<ResType>, action: AsyncAction<ResType>)
+: AsyncActionState<ResType>
+{
   switch (action.type) {
     case 'INIT':
       return { ...state, isWorking: true, error: false, result: undefined };
@@ -30,9 +36,16 @@ function asyncActionReducer<ResType>(state: AsyncActionState<ResType>, action: A
       return state;
   }
 }
-export function useAsyncAction<ResType>(func: () => Promise<ResType>) {
-  const [state, dispatch] = useReducer(asyncActionReducer,
-    { hasRun: false, isWorking: false, error: undefined, result: undefined });
+interface ActionReducerType<ResType> {
+  (state: AsyncActionState<ResType>, action: AsyncAction<ResType>): AsyncActionState<ResType>  
+}
+
+export function useAsyncAction<ResType>(func: () => Promise<ResType>) 
+: AsyncActionState<ResType>
+{
+  const initialState = { hasRun: false, isWorking: false, error: undefined, result: undefined } as AsyncActionState<ResType>
+  const reducer : ActionReducerType<ResType> = asyncActionReducer
+  const [state, dispatch] = useReducer(reducer, initialState)
 
   useEffect(() => {
     let componentIsMounted = true;
