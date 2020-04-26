@@ -3,7 +3,7 @@ import React from 'react';
 import { Platform, TouchableOpacity } from 'react-native';
 import { Button, Header, Icon, Avatar } from 'react-native-elements';
 
-function NavHeader({ headerProps, onOpenMenu }: { headerProps: StackHeaderProps, onOpenMenu: any }) {
+function NavHeader({ headerProps, onOpenMenu }: { headerProps: StackHeaderProps, onOpenMenu?: any }) {
     const { scene, previous, navigation } = headerProps
 
     const { options } = scene.descriptor;
