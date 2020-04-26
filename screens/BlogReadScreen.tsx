@@ -11,11 +11,11 @@ import { useAsyncAction } from '../src/AsyncTools'
 import { fetchItem } from '../src/FirebaseDatabaseTools'
 
 async function fetchBlogEntry(id: string): Promise<BlogEntryWithId> {
-    return fetchItem("/blog_entries", id, firebaseConfig)
+    return fetchItem("blog_entries", id, firebaseConfig)
 }
 
 // @ts-ignore
-function BlogReadScreen({ navigation, route } ) {
+function BlogReadScreen({ navigation, route }) {
     const { id, title } = route.params
 
     navigation.setOptions({
@@ -67,32 +67,32 @@ const markdownStyles = (baseFontSize = 14) => {
         text: {
             fontFamily: "serif",
         },
-    //     heading1: {
-    //         fontSize: 32 * factor,
-    //     },
-    //     heading2: {
-    //         fontSize: 24 * factor,
-    //     },
-    //     heading3: {
-    //         fontSize: 18 * factor,
-    //     },
-    //     heading4: {
-    //         fontSize: 16 * factor,
-    //     },
-    //     heading5: {
-    //         fontSize: 13 * factor,
-    //     },
-    //     heading6: {
-    //         fontSize: 11 * factor,
-    //     },
-    //     plainText: {
-    //         fontSize: 14 * factor,
-    //     },
-    //     strong: {
-    //         fontSize: 14 * factor,
-    //     },
-    //     u: {
-    //         fontSize: 14 * factor,
-    //     }
+        //     heading1: {
+        //         fontSize: 32 * factor,
+        //     },
+        //     heading2: {
+        //         fontSize: 24 * factor,
+        //     },
+        //     heading3: {
+        //         fontSize: 18 * factor,
+        //     },
+        //     heading4: {
+        //         fontSize: 16 * factor,
+        //     },
+        //     heading5: {
+        //         fontSize: 13 * factor,
+        //     },
+        //     heading6: {
+        //         fontSize: 11 * factor,
+        //     },
+        //     plainText: {
+        //         fontSize: 14 * factor,
+        //     },
+        //     strong: {
+        //         fontSize: 14 * factor,
+        //     },
+        //     u: {
+        //         fontSize: 14 * factor,
+        //     }
     })
 }
