@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { FlatList, TouchableHighlight } from 'react-native-gesture-handler';
 import LoadingScreen from '../components/LoadingScreen';
 import Screen from '../components/Screen';
@@ -7,6 +7,7 @@ import TextScreen from '../components/TextScreen';
 import firebaseConfig from '../firebaseConfig.json';
 import { useAsyncAction } from '../src/AsyncTools';
 import { fetchAll } from '../src/FirebaseDatabaseTools';
+import { Text } from 'react-native-elements';
 
 
 async function fetchBlogEntries(): Promise<BlogList> {
@@ -45,6 +46,10 @@ export default function BlogListScreen({ navigation }: { navigation: any }) {
 
     if (result) {
         return <Screen>
+            <View style={{padding: 10}}>
+                <Text h4>Latest blog entries</Text>
+            </View>
+
             <FlatList<BlogEntryWithId>
                 data={result}
                 renderItem={({ item }) => <BlogListEntry entry={item} onSelect={() => entrySelected(item)} />} />
