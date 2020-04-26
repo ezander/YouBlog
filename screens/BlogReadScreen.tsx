@@ -2,7 +2,6 @@ import React, { useCallback } from 'react'
 import { ActivityIndicator, StyleSheet } from 'react-native'
 import { Image } from 'react-native-elements'
 import { ScrollView } from 'react-native-gesture-handler'
-// @ts-ignore
 import Markdown from 'react-native-markdown-simple'
 import LoadingScreen from '../components/LoadingScreen'
 import Screen from '../components/Screen'
