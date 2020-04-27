@@ -8,7 +8,8 @@ import Screen from '../components/Screen'
 import TextScreen from '../components/TextScreen'
 import firebaseConfig from '../firebaseConfig.json'
 import { useAsyncAction } from '../src/AsyncTools'
-import { fetchItem } from '../src/FirebaseDatabaseTools'
+// import { fetchItem } from '../src/FirebaseDatabaseTools'
+import { fetchItem } from '../src/FirestoreTools'
 
 async function fetchBlogEntry(id: string): Promise<BlogEntryWithId> {
     return fetchItem("blog_entries", id, firebaseConfig)
