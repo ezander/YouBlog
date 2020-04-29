@@ -1,9 +1,23 @@
 #!/bin/bash
 
-temp=$(mktemp -p. --suffix=.js)
-../node_modules/.bin/babel FillDatabase.js > $temp
+BABEL=../node_modules/.bin/babel
 
-node $temp
+# $BABEL ./data/  --retain-lines -d ./dist
+#--presets @babel/preset-typescript 
+$BABEL ./ --verbose \
+    --delete-dir-on-start --extensions '.ts,.js' --retain-lines -d ./temp
+cp ../firebaseConfig.json .
+
+node temp/FillDatabase.js
+ls temp
+
+# temp=$(mktemp -p. --suffix=.js)
+# ../node_modules/.bin/babel --presets=@babel/preset-env FillDatabase.js > $temp
+
+# less $temp
+# node $temp
+
+# trap "{ rm -f $temp; }" EXIT
 
 
 
