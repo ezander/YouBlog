@@ -1,115 +1,217 @@
-import axios from 'axios'
-import { FirebaseConfig, parseError } from './FirebaseTools';
+import axios, { Method, AxiosRequestConfig, AxiosResponse } from 'axios'
+import { HTTPError, FirebaseError, FirebaseConfig } from './FirebaseTools'
 
-function mapField(field) {
-    if (field.hasOwnProperty("stringValue")) return field["stringValue"]
-    if (field.hasOwnProperty("timestampValue")) return new Date(field["timestampValue"])
-    return "FOOOO"
-}
-function mapFields(fields) {
-    const res = {}
-    for (const key in fields) {
-        console.log(key)
-        res[key] = mapField(fields[key])
+export function mapObject<T>(
+    obj: T,
+    func: ((value: any, key: string) => any)
+): T {
+    const res: T = {} as T
+    for (const key in obj) {
+        res[key] = func(obj[key], key)
     }
-    console.log(res)
     return res
 }
-function convertDoc(document) {
-    const { fields, name } = document
-    return ({ id: name, ...mapFields(fields) })
-}
-function toArray(dictData: any) {
-    const documents = dictData.documents
 
-    const arr = documents.map(convertDoc)
-    console.log(arr)
-    return arr
+type FirestoreField =
+    | { "nullValue": null }
+    | { "stringValue": string }
+    | { "timestampValue": Date }
+    | { "booleanValue": boolean }
+    | { "integerValue": number }
+    | { "doubleValue": number }
+    | { "arrayValue": { values: FirestoreField[] } }
+    | { "mapValue": { fields: any } }
+
+export function toFirestoreField(value: any): FirestoreField {
+    if (value === null || value === undefined) { return { "nullValue": null } }
+    if (typeof value === "string") return { "stringValue": value }
+    if (value instanceof Date) return { "timestampValue": value }
+    if (typeof value === "boolean") return { "booleanValue": value }
+    if (typeof value === "number" && Number.isInteger(value)) return { "integerValue": value }
+    if (typeof value === "number") return { "doubleValue": value }
+    if (value instanceof Array) return { "arrayValue": { values: value.map(toFirestoreField) } }
+    if (value instanceof Object) return { "mapValue": { fields: mapObject(value, toFirestoreField) } }
+
+    // "bytesValue": string,
+    // "referenceValue": string,
+    // "geoPointValue": {object(LatLng)},
+
+    throw Error(`Unknown type: ${typeof value} ${value}`)
 }
 
-interface FetchAllOptions {
-    toArray?: boolean,
-    mask?: String[],
-    orderBy?: String
-}
-export async function fetchAll(
-    collection: string,
-    firebaseConfig: FirebaseConfig,
-    options: FetchAllOptions
-) {
-    options = { toArray: true, ...options }
-    const base_url = "https://firestore.googleapis.com/v1/"
-    const endpoint = `projects/${firebaseConfig.projectId}/databases/(default)/documents/${collection}`
-    let url = base_url + endpoint
-    let params = [] as String[]
-    if (options.mask) {
-        params = [...params, ...options.mask.map(field => `mask.fieldPaths=${field}`)]
-    }
-    if (options.orderBy) {
-        params = [...params, "orderBy=" + encodeURI(options.orderBy)]
-    }
-    if (params.length > 0) {
-        url = url + "?" + params.join("&")
-    }
+export function fromFirestoreField(field: any): any {
+    if ("nullValue" in field) return field.nullValue
+    if ("stringValue" in field) return field.stringValue
+    if ("timestampValue" in field) return new Date(field.timestampValue)
+    if ("booleanValue" in field) return field.booleanValue
+    if ("doubleValue" in field) return Number.parseFloat(field.doubleValue)
+    if ("integerValue" in field) return Number.parseInt(field.integerValue)
+    if ("arrayValue" in field) return field.arrayValue.values.map(fromFirestoreField)
+    if ("mapValue" in field) return mapObject(field.mapValue.fields, fromFirestoreField)
 
+    // "bytesValue": string,
+    // "referenceValue": string,
+    // "geoPointValue": {object(LatLng)},
+
+    throw Error(`Unknown type: ${typeof field} ${field}`)
+}
+
+interface DocumentInfo {
+    createTime: Date,
+    updateTime: Date,
+    name: string,
+    id: string
+}
+type Document<T> = {
+    fields: T
+}
+
+
+export function toFirestoreDocument<T>(obj: T): Document<T> {
+    return { fields: mapObject(obj, toFirestoreField) }
+}
+
+export function fromFirestoreDocument(doc: any, parent?: string): any {
+    const id = parent && doc.name.startsWith(parent) && doc.name.slice(parent.length+1)
     try {
-        const config = {
-            validateStatus: (status: number) => (status >= 200 && status < 300) || status === 400
+        return {
+            document: mapObject(doc.fields, fromFirestoreField),
+            name: doc.name,
+            createTime: new Date(doc.createTime),
+            updateTime: new Date(doc.updateTime),
+            id
         }
-        console.log(url)
-        const response = await axios.get(url, config)
-        console.log(response)
-
-        // return toArray(response.data)
-        return options.toArray ? toArray(response.data) : response.data
     }
     catch (error) {
-        console.log("HTTP error: ", error)
-        throw parseError(error)
+        // console.error(error)
+        throw error
     }
 }
 
-export async function fetchItem(
+
+export function toFirestoreParams(obj: any, params?: URLSearchParams) {
+    function addToParams(value: any, path: string, params: URLSearchParams) {
+        if (typeof value === "string") params.append(path, value)
+        else if (value instanceof Date) params.append(path, value.toString())
+        else if (typeof value === "boolean") params.append(path, value.toString())
+        else if (typeof value === "number") params.append(path, value.toString())
+        else if (value instanceof Array) value.map(v => addToParams(v, path, params))
+        else if (value instanceof Object) for (const key in value) {
+            addToParams(value[key], path + (path.length > 0 ? "." : "") + key, params)
+        }
+        return params
+    }
+    return addToParams(obj, "", params || new URLSearchParams())
+}
+
+function handleResponse(response: AxiosResponse) {
+
+    console.log("Axios: ", response.status, response.statusText, response.request.method,
+        response.config.url, response.config.method, response.config.params)
+    const between = (low: number, number: number, high: number) => (low <= number) && (number < high)
+    //console.log("Axios success: ", response)
+    const { status, statusText } = response
+    if (between(100, status, 200)) {
+        // don't know how to handle informational messages
+        throw new HTTPError(response.statusText + response.data.message)
+    }
+    if (between(200, status, 300)) {
+        // OK 
+        // console.log("Data: ", response.data)
+        return response.data
+    }
+    if (between(300, status, 400)) {
+        // don't know how to handle redirects and the like
+        throw new HTTPError(response.statusText + response.data.message)
+    }
+    if (between(400, status, 500)) {
+        // handle here: doc not found, 401, whatever...
+        const error = new FirebaseError(response.statusText)
+        error.data = response.data
+        throw error
+    }
+
+    throw new HTTPError(response.statusText + response.data.message)
+}
+
+function makeParent(
     collection: string,
-    id: string,
-    firebaseConfig: FirebaseConfig,
-    options = {}
+    firebaseConfig: FirebaseConfig
+) {
+    const { projectId } = firebaseConfig
+    return `projects/${projectId}/databases/(default)/documents/${collection}`
+}
+
+export function makeFirestoreRequest(
+    method: Method,
+    collection: string,
+    params: undefined | URLSearchParams,
+    data: undefined | any,
+    firebaseConfig: FirebaseConfig
 ) {
     const base_url = "https://firestore.googleapis.com/v1/"
-    //const endpoint = `projects/${firebaseConfig.projectId}/databases/(default)/documents/${collection}/${name}`
-    const endpoint = id;
-    let url = base_url + endpoint
-    let params = [] as String[]
-    // if (options.mask) {
-    //     params = [...params, ...options.mask.map(field => `mask.fieldPaths=${field}`)]
-    // } 
-    if (params.length > 0) {
-        url = url + "?" + params.join("&")
-    }
+    const parent = makeParent(collection, firebaseConfig)
 
-    try {
-        const config = {
-            validateStatus: (status: number) => (status >= 200 && status < 300) || status === 400
-        }
-        console.log(url)
-        const response = await axios.get(url, config)
-        console.log(response)
-
-        return convertDoc( response.data )
-        // return options.toArray ? toArray(response.data) : response.data
+    const config: AxiosRequestConfig = {
+        url: base_url + parent,
+        method: method,
+        validateStatus: () => true
     }
-    catch (error) {
-        console.log("HTTP error: ", error)
-        throw parseError(error)
-    }
+    if (params) config.params = params
+    if (data) config.data = data
 
-    // const url = `https://${firebaseConfig.projectId}.firebaseio.com${endpoint}/${id}.json`
-    // console.log(url)
-    // try {
-    //     const response = await axios.get(url)
-    //     return {...response.data, id}
-    // }
-    // catch (error) {
-    //     throw parseError(error)
-    // }
+    return axios(config).then(handleResponse)
+}
+
+export function createDocument(
+    collection: string,
+    object: any,
+    documentId: undefined | string,
+    firebaseConfig: FirebaseConfig
+) {
+    const params = new URLSearchParams()
+    if (documentId) toFirestoreParams({ 'documentId': documentId }, params)
+    const data = toFirestoreDocument(object)
+
+    return makeFirestoreRequest('post', collection, params, data, firebaseConfig)
+        .then(data => fromFirestoreDocument(data, makeParent(collection, firebaseConfig)))
+}
+
+export function getDocument(
+    collection: string,
+    documentId: string,
+    mask: string[] = [],
+    firebaseConfig: FirebaseConfig
+) {
+    const params = toFirestoreParams({ mask })
+    return makeFirestoreRequest('get', collection + '/' + documentId, params, undefined, firebaseConfig)
+        .then(data => fromFirestoreDocument(data, makeParent(collection, firebaseConfig)))
+}
+
+export function hasDocument(
+    collection: string,
+    documentId: string,
+    testField: undefined | string,
+    firebaseConfig: FirebaseConfig
+) {
+    return getDocument(collection, documentId, testField ? [testField] : [], firebaseConfig)
+        .then(() => true, () => false)
+}
+
+export function listDocuments(
+    collection: string,
+    mask: string[] = [],
+    firebaseConfig: FirebaseConfig
+) {
+    const params = toFirestoreParams({ mask: { fieldPaths: mask } })
+    return makeFirestoreRequest('get', collection, params, undefined, firebaseConfig)
+        .then(data => data.documents.map((doc:any) => fromFirestoreDocument(doc, makeParent(collection, firebaseConfig))))
+}
+
+export function deleteDocument(
+    collection: string,
+    documentId: string,
+    firebaseConfig: FirebaseConfig
+) {
+    return makeFirestoreRequest('delete', collection + '/' + documentId, undefined, undefined, firebaseConfig)
 }

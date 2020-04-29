@@ -15,3 +15,4 @@ web-report/
 /data/temp
 /data/firebaseConfig.json
 /dist
+/.temp
