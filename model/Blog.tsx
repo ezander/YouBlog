@@ -7,7 +7,11 @@ interface BlogEntry {
     image_url: string
 }
 
-type WithId<T> = T & { id : string }
+// type WithId<T> = T & { id : string }
+type WithId<T> = {
+    document: T,
+    id : string
+}
 type BlogEntryWithId = WithId<BlogEntry>
 
 type BlogList = Array<BlogEntryWithId>

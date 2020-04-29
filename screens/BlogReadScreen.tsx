@@ -1,3 +1,4 @@
+import moment from 'moment'
 import React, { useCallback } from 'react'
 import { ActivityIndicator, StyleSheet } from 'react-native'
 import { Image } from 'react-native-elements'
@@ -8,11 +9,10 @@ import Screen from '../components/Screen'
 import TextScreen from '../components/TextScreen'
 import firebaseConfig from '../firebaseConfig.json'
 import { useAsyncAction } from '../src/AsyncTools'
-// import { fetchItem } from '../src/FirebaseDatabaseTools'
-import { fetchItem } from '../src/FirestoreTools'
+import { getDocument } from '../src/FirestoreTools'
 
 async function fetchBlogEntry(id: string): Promise<BlogEntryWithId> {
-    return fetchItem("blog_entries", id, firebaseConfig)
+    return getDocument("blog_entries", id, {}, firebaseConfig)
 }
 
 // @ts-ignore
@@ -36,14 +36,14 @@ function BlogReadScreen({ navigation, route }) {
     }
 
     const entry = result as BlogEntryWithId
-    const { text, author, date, image_url } = entry
+    const { text, author, date, image_url } = entry.document
 
     const fontSize = 14
     return (<Screen>
         <ScrollView style={styles.blogContainer}>
             <Markdown styles={markdownStyles(fontSize)}>
                 # {title} {'\n\n'}
-                _{author}_ | _{date}_ {'\n'}
+                _{author}_ | _{moment(date).format('LLL')}_ {'\n'}
             </Markdown>
             <Image resizeMethod="auto" resizeMode="cover" source={{ uri: image_url }}
                 style={{ width: "100%", height: 200 }}

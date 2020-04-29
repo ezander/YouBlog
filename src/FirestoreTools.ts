@@ -72,7 +72,7 @@ export function toFirestoreDocument<T>(obj: T): Document<T> {
 }
 
 export function fromFirestoreDocument(doc: any, parent?: string): any {
-    const id = parent && doc.name.startsWith(parent) && doc.name.slice(parent.length+1)
+    const id = parent && doc.name.startsWith(parent) && doc.name.slice(parent.length + 1)
     try {
         return {
             document: mapObject(doc.fields, fromFirestoreField),
@@ -127,7 +127,7 @@ function handleResponse(response: AxiosResponse) {
     if (between(400, status, 500)) {
         // handle here: doc not found, 401, whatever...
         const error = new FirebaseError(response.statusText)
-        error.data = response.data
+        //error.data = response.data
         throw error
     }
 
@@ -180,10 +180,12 @@ export function createDocument(
 export function getDocument(
     collection: string,
     documentId: string,
-    mask: string[] = [],
+    options: {mask?: string[]},
     firebaseConfig: FirebaseConfig
 ) {
-    const params = toFirestoreParams({ mask })
+    const params = new URLSearchParams()
+    if (options.mask) toFirestoreParams({ mask: { fieldPaths: options.mask } }, params)
+
     return makeFirestoreRequest('get', collection + '/' + documentId, params, undefined, firebaseConfig)
         .then(data => fromFirestoreDocument(data, makeParent(collection, firebaseConfig)))
 }
@@ -194,23 +196,27 @@ export function hasDocument(
     testField: undefined | string,
     firebaseConfig: FirebaseConfig
 ) {
-    return getDocument(collection, documentId, testField ? [testField] : [], firebaseConfig)
+    return getDocument(collection, documentId, testField ? {mask: [testField]} : {}, firebaseConfig)
         .then(() => true, () => false)
 }
 
 export function listDocuments(
     collection: string,
-    mask: string[] = [],
+    options: { mask?: string[], orderBy?: string },
     firebaseConfig: FirebaseConfig
 ) {
-    const params = toFirestoreParams({ mask: { fieldPaths: mask } })
+    const params = new URLSearchParams()
+    if (options.mask) toFirestoreParams({ mask: { fieldPaths: options.mask } }, params)
+    if (options.orderBy) toFirestoreParams({ orderBy: options.orderBy }, params)
+
     return makeFirestoreRequest('get', collection, params, undefined, firebaseConfig)
-        .then(data => data.documents.map((doc:any) => fromFirestoreDocument(doc, makeParent(collection, firebaseConfig))))
+        .then(data => data.documents.map((doc: any) => fromFirestoreDocument(doc, makeParent(collection, firebaseConfig))))
 }
 
 export function deleteDocument(
     collection: string,
     documentId: string,
+    options: {},
     firebaseConfig: FirebaseConfig
 ) {
     return makeFirestoreRequest('delete', collection + '/' + documentId, undefined, undefined, firebaseConfig)
