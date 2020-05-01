@@ -1,5 +1,6 @@
 import axios, { Method, AxiosRequestConfig, AxiosResponse } from 'axios'
-import { HTTPError, FirebaseError, FirebaseConfig } from './FirebaseTools'
+import { HTTPError, FirebaseError, FirebaseConfig, ErrorType } from './FirebaseTools'
+import { createError } from './FirebaseErrors'
 
 export function mapObject<T>(
     obj: T,
@@ -126,8 +127,7 @@ function handleResponse(response: AxiosResponse) {
     }
     if (between(400, status, 500)) {
         // handle here: doc not found, 401, whatever...
-        const error = new FirebaseError(response.statusText)
-        //error.data = response.data
+        const error = createError(response)
         throw error
     }
 
@@ -135,16 +135,17 @@ function handleResponse(response: AxiosResponse) {
 }
 
 function makeParent(
-    collection: string,
+    collection: string | string[],
     firebaseConfig: FirebaseConfig
 ) {
     const { projectId } = firebaseConfig
-    return `projects/${projectId}/databases/(default)/documents/${collection}`
+    const path = (typeof collection === "string") ? collection : collection.join("/")
+    return `projects/${projectId}/databases/(default)/documents/${path}`
 }
 
-export function makeFirestoreRequest(
+export async function makeFirestoreRequest(
     method: Method,
-    collection: string,
+    collection: string | string[],
     params: undefined | URLSearchParams,
     data: undefined | any,
     firebaseConfig: FirebaseConfig
@@ -160,10 +161,11 @@ export function makeFirestoreRequest(
     if (params) config.params = params
     if (data) config.data = data
 
-    return axios(config).then(handleResponse)
+    const response = await axios(config)
+    return await handleResponse(response)
 }
 
-export function createDocument(
+export async function createDocument(
     collection: string,
     object: any,
     documentId: undefined | string,
@@ -171,36 +173,55 @@ export function createDocument(
 ) {
     const params = new URLSearchParams()
     if (documentId) toFirestoreParams({ 'documentId': documentId }, params)
-    const data = toFirestoreDocument(object)
+    const doc = toFirestoreDocument(object)
 
-    return makeFirestoreRequest('post', collection, params, data, firebaseConfig)
-        .then(data => fromFirestoreDocument(data, makeParent(collection, firebaseConfig)))
+    const data = await makeFirestoreRequest('post', collection, params, doc, firebaseConfig)
+    return fromFirestoreDocument(data, makeParent(collection, firebaseConfig))
 }
 
-export function getDocument(
+export async function patchDocument(
+    collection: string,
+    object: any,
+    documentId: string,
+    firebaseConfig: FirebaseConfig
+) {
+    const params = new URLSearchParams()
+    // if (documentId) toFirestoreParams({ 'documentId': documentId }, params)
+    const doc = toFirestoreDocument(object)
+
+    const data = await makeFirestoreRequest('patch', [collection, documentId], params, doc, firebaseConfig)
+    return fromFirestoreDocument(data, makeParent(collection, firebaseConfig))
+}
+
+export async function getDocument(
     collection: string,
     documentId: string,
-    options: {mask?: string[]},
+    options: { mask?: string[] },
     firebaseConfig: FirebaseConfig
 ) {
     const params = new URLSearchParams()
     if (options.mask) toFirestoreParams({ mask: { fieldPaths: options.mask } }, params)
 
-    return makeFirestoreRequest('get', collection + '/' + documentId, params, undefined, firebaseConfig)
-        .then(data => fromFirestoreDocument(data, makeParent(collection, firebaseConfig)))
+    const data = await makeFirestoreRequest('get', [collection, documentId], params, undefined, firebaseConfig)
+    return fromFirestoreDocument(data, makeParent(collection, firebaseConfig))
 }
 
-export function hasDocument(
+export async function hasDocument(
     collection: string,
     documentId: string,
     testField: undefined | string,
     firebaseConfig: FirebaseConfig
 ) {
-    return getDocument(collection, documentId, testField ? {mask: [testField]} : {}, firebaseConfig)
-        .then(() => true, () => false)
+    try {
+        await getDocument(collection, documentId, testField ? { mask: [testField] } : {}, firebaseConfig)
+        return true
+    }
+    catch (error) {
+        // if( error.data.status )
+        return false
+    }
 }
-
-export function listDocuments(
+export async function listDocuments(
     collection: string,
     options: { mask?: string[], orderBy?: string },
     firebaseConfig: FirebaseConfig
@@ -209,15 +230,15 @@ export function listDocuments(
     if (options.mask) toFirestoreParams({ mask: { fieldPaths: options.mask } }, params)
     if (options.orderBy) toFirestoreParams({ orderBy: options.orderBy }, params)
 
-    return makeFirestoreRequest('get', collection, params, undefined, firebaseConfig)
-        .then(data => data.documents.map((doc: any) => fromFirestoreDocument(doc, makeParent(collection, firebaseConfig))))
+    const data = await makeFirestoreRequest('get', collection, params, undefined, firebaseConfig)
+    return data.documents.map((doc: any) => fromFirestoreDocument(doc, makeParent(collection, firebaseConfig)))
 }
 
-export function deleteDocument(
+export async function deleteDocument(
     collection: string,
     documentId: string,
     options: {},
     firebaseConfig: FirebaseConfig
 ) {
-    return makeFirestoreRequest('delete', collection + '/' + documentId, undefined, undefined, firebaseConfig)
+    return await makeFirestoreRequest('delete', collection + '/' + documentId, undefined, undefined, firebaseConfig)
 }

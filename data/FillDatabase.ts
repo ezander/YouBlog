@@ -8,7 +8,7 @@ import * as Firestore from '../src/FirestoreTools'
 console = console.Console({ stdout: process.stdout, stderr: process.stderr, colorMode: true, inspectOptions: { depth: 56 } })
 
 const firebaseConfig = require("../firebaseConfig.json")
-const COLLECTION = 'test_blog_entries'
+const COLLECTION = 'blog_entries'
 
 function readFile(filename: string) {
     //@ts-ignore
@@ -18,9 +18,13 @@ function readFile(filename: string) {
 }
 
 
-// function updateDocument(collection, object, )
 
-function write_post(
+enum DocMode { LEAVE, RECREATE, UPDATE };
+
+// const mode: DocMode = DocMode.RECREATE
+const mode: DocMode = DocMode.UPDATE
+
+async function processFile(
     author: string,
     author_id: string,
     date_str: string,
@@ -33,31 +37,20 @@ function write_post(
     const text = readFile(filename).slice(0, 100) + "..."
     const post = { author, author_id, title, date, text, image_url }
     // post.extra = { foo: "bar", bi: [1, 3, new Date(), { baz: 3, d: 3.141, bool: true, bf: false, nl: null }] }
-    return Firestore.createDocument(COLLECTION, post, filename, firebaseConfig)
-}
-
-
-const recreate = !false
-async function processFile(
-    author: string,
-    author_id: string,
-    date_str: string,
-    title: string,
-    filename: string,
-    image_url: string
-) {
-    const id = filename
 
     console.log("File: ", filename)
 
     let exist = await Firestore.hasDocument(COLLECTION, id, "author", firebaseConfig)
 
-    if (exist && recreate) {
+    if (exist && mode === DocMode.RECREATE) {
         await Firestore.deleteDocument(COLLECTION, id, {}, firebaseConfig)
         exist = false;
     }
     if (!exist) {
-        const doc = await write_post(author, author_id, date_str, title, filename, image_url)
+        const doc = await Firestore.createDocument(COLLECTION, post, id, firebaseConfig)
+    }
+    else if (mode === DocMode.UPDATE) {
+        const doc = await Firestore.patchDocument(COLLECTION, post, id, firebaseConfig)
     }
     try {
         const doc = await Firestore.getDocument(COLLECTION, id, {}, firebaseConfig)

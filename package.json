@@ -42,6 +42,8 @@
     "@types/react-native": "~0.61.17",
     "babel-preset-expo": "~8.1.0",
     "jest-expo": "^37.0.0",
+    "ts-node": "^8.9.1",
+    "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "~3.8.3"
   },
   "private": true,

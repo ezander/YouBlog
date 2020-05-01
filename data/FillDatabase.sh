@@ -1,15 +1,17 @@
 #!/bin/bash
 
-BABEL=../node_modules/.bin/babel
-OUTDIR=../.temp
+# BABEL=../node_modules/.bin/babel
+# OUTDIR=../.temp
 
-$BABEL ../ --only "../data/,../src/" \
-    --extensions '.ts,.js' \
-    -d $OUTDIR \
-    --retain-lines \
-    --source-maps inline
+# $BABEL ../ --only "../data/,../src/" \
+#     --extensions '.ts,.js' \
+#     -d $OUTDIR \
+#     --retain-lines \
+#     --source-maps inline
 
-#    --verbose
-cp ../firebaseConfig.json $OUTDIR
+# #    --verbose
+# cp ../firebaseConfig.json $OUTDIR
 
-node $OUTDIR/data/FillDatabase.js
+# node --async-stack-traces --enable-source-maps $OUTDIR/data/FillDatabase.js
+
+../node_modules/.bin/ts-node-dev ./FillDatabase.ts

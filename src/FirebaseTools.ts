@@ -9,24 +9,89 @@ export interface FirebaseConfig {
     measurementId: string;
 }
 
+
+export enum ErrorType {
+    INVALID_DATA,
+    TEMPORARY_PROBLEM,
+    INTERNAL_PROBLEM
+}
+
+// Idea...
+// "Cannot connect to server", ErrorType.TEMPORARY_PROBLEM, ["Retry later", "Check network settings"], "www.google.de"
+// "Invalid request", ErrorType.INVALID_DATA, ["Check fields in your form"], {fields: "url"}
+// "Division by zero", ErrorType, ["Inform developers of this error"]
+// error: info + possible resolutions
+// mayRetry, changeDataPossible, changeDataNecessary, needsCheck, informDevs
+// "needs to close app", "may go back", "may try to retry", "should retry", "should retry after fixing"
+
+interface ErrorInfo {
+    title?: string,
+    cause?: string,
+    details?: string,
+    resolutions?: string[],
+    data?: any,
+    rootError?: Error
+}
+
 export class AppError extends Error {
+    errorType: ErrorType;
+    info: ErrorInfo;
+
+    constructor(
+        message: string,
+        errorType: ErrorType = ErrorType.INTERNAL_PROBLEM,
+        info: ErrorInfo = {}
+    ) {
+        super(message)
+        this.info = info
+        this.errorType = errorType
+    }
+
+    get mayRetry() {
+        return this.errorType === ErrorType.INVALID_DATA || this.errorType === ErrorType.TEMPORARY_PROBLEM
+    }
+    get mustChangeData() {
+        return this.errorType === ErrorType.INVALID_DATA;
+    }
+    get isProgrammerError() {
+        return this.errorType === ErrorType.INTERNAL_PROBLEM;
+    }
+    get title() {
+        return this.info.title
+    }
+    get details() {
+        return this.info.details
+    }
+    get resolutions() {
+        return this.info.resolutions
+    }
+    get data() {
+        return this.info.data
+    }
+    get rootError() {
+        return this.info.rootError
+    }
+
 }
 
 export class FirebaseError extends AppError {
+    // constructor(message: string, info?: any) {
+    //     super(message)
+    //     this.info = info
+    // }
 }
 
 export class HTTPError extends AppError {
 }
 
-export function parseError(error : any) {
-    // mayRetry, changeDataPossible, changeDataNecessary, needsCheck, informDevs
-    const {response} = error;
-    const {status, statusText } = response
+export function parseError(error: any) {
+    const { response } = error;
+    const { status, statusText } = response
 
     if (status === 400) {
         const firebaseError = response.data.error
         return new FirebaseError(firebaseError.message)
     } else {
-        return new HTTPError( `${status} - ${statusText}` )
+        return new HTTPError(`${status} - ${statusText}`)
     }
 }

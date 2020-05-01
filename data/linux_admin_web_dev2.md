@@ -1,5 +1,3 @@
-
-
 Part 1 of this series explored the Linux command line basics necessary for working with the Linux operating system. We covered working with files and directories as well as handling packages. Part 2 will concentrate on commands needed to deploy, connect to, interact with, and maintain web servers.
 
 ## Working With Linux: Deploying and Maintaining a Web Server
