@@ -1,3 +1,4 @@
+#!/usr/bin/env ts-node-script
 
 // #https://mediatemple.net/blog/web-development-tech/you-should-probably-blog-in-markdown/
 
