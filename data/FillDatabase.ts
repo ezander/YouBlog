@@ -35,7 +35,7 @@ async function processFile(
 ) {
     const id = filename
     const date = new Date(date_str + "T00:00:00Z")
-    const text = readFile(filename).slice(0, 100) + "..."
+    const text = readFile(filename)
     const post = { author, author_id, title, date, text, image_url }
     // post.extra = { foo: "bar", bi: [1, 3, new Date(), { baz: 3, d: 3.141, bool: true, bf: false, nl: null }] }
 
