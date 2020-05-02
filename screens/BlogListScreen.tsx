@@ -1,7 +1,7 @@
 import moment from 'moment';
 import React from 'react';
 import { View } from 'react-native';
-import { Text } from 'react-native-elements';
+import { ListItem, Text } from 'react-native-elements';
 import { FlatList, TouchableHighlight } from 'react-native-gesture-handler';
 import LoadingScreen from '../components/LoadingScreen';
 import Screen from '../components/Screen';
@@ -11,13 +11,13 @@ import { useAsyncAction } from '../src/AsyncTools';
 import { listDocuments } from '../src/FirestoreTools';
 
 async function fetchBlogEntries(): Promise<BlogList> {
-    const mask = ["title", "author", "date"]
+    const mask = ["title", "author", "date", "image_url"]
     const orderBy = "date desc"
 
     return listDocuments("blog_entries", { mask, orderBy }, firebaseConfig)
 }
 
-function BlogListEntry({ entry, onSelect }: { entry: BlogEntryWithId, onSelect: (() => void) }) {
+function BlogListEntryOld({ entry, onSelect }: { entry: BlogEntryWithId, onSelect: (() => void) }) {
     const blog = entry.document
     return (
         <TouchableHighlight
@@ -29,6 +29,18 @@ function BlogListEntry({ entry, onSelect }: { entry: BlogEntryWithId, onSelect: 
                 <Text style={{ color: "grey", fontSize: 10 }}>{blog.author} | {moment(blog.date).fromNow()}</Text>
             </View>
         </TouchableHighlight>)
+}
+function BlogListEntry({ entry, onSelect }: { entry: BlogEntryWithId, onSelect: (() => void) }) {
+    const blog = entry.document
+    return (
+            <ListItem
+                title={blog.title}
+                subtitle={blog.author + " | " + moment(blog.date).fromNow()}
+                onPress={onSelect}
+                bottomDivider
+                chevron
+            />
+    )
 }
 
 export default function BlogListScreen({ navigation }: { navigation: any }) {
@@ -44,9 +56,9 @@ export default function BlogListScreen({ navigation }: { navigation: any }) {
     }
 
     const entrySelected = (entry: BlogEntryWithId) => {
-        // Alert.alert(entry.title, "Coming soon...")        
+        // Alert.alert(entry.title, "Coming soon...")
         const blog = entry.document
-        navigation.navigate("BlogEntry", { id: entry.id, title: blog.title })
+        navigation.navigate("BlogEntry", { id: entry.id, blogInfo: blog })
     }
 
     if (result) {
@@ -54,10 +66,14 @@ export default function BlogListScreen({ navigation }: { navigation: any }) {
             <View style={{ padding: 10 }}>
                 <Text h4>Latest blog entries</Text>
             </View>
-
+            <View style={{width: "100%", padding: 10, flex: 1}}>
             <FlatList<BlogEntryWithId>
                 data={result}
                 renderItem={({ item }) => <BlogListEntry entry={item} onSelect={() => entrySelected(item)} />} />
+            {/* {
+                result.map(item => <BlogListEntry key={item.id} entry={item} onSelect={() => entrySelected(item)} />)
+            } */}
+            </View>
         </Screen>
     }
 

@@ -1,7 +1,8 @@
 declare module 'react-native-markdown-simple' {
 
     export interface MarkdownProps {
-        styles: any
+        styles: any,
+        children: any
     }
 
     export class Markdown extends React.Component<MarkdownProps>{ }

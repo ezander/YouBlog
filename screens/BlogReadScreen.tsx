@@ -1,9 +1,9 @@
 import moment from 'moment'
 import React, { useCallback } from 'react'
-import { ActivityIndicator, StyleSheet } from 'react-native'
+import { ActivityIndicator, StyleSheet, Platform } from 'react-native'
 import { Image } from 'react-native-elements'
 import { ScrollView } from 'react-native-gesture-handler'
-import Markdown from 'react-native-markdown-simple'
+import Markdown, { MarkdownProps } from 'react-native-markdown-simple'
 import LoadingScreen from '../components/LoadingScreen'
 import Screen from '../components/Screen'
 import TextScreen from '../components/TextScreen'
@@ -15,28 +15,37 @@ async function fetchBlogEntry(id: string): Promise<BlogEntryWithId> {
     return getDocument("blog_entries", id, {}, firebaseConfig)
 }
 
-// @ts-ignore
-function BlogReadScreen({ navigation, route }) {
-    const { id, title } = route.params
-
-    navigation.setOptions({
-        title: title,
-    })
-
+// interface MarkdownProps {
+//     styles: any
+// }
+function MarkdownLoader({id, ...rest} : {id: string} & MarkdownProps) {
     // use useCallback and useMemo?
     const fetchThisBlogEntry = useCallback(fetchBlogEntry.bind(null, id), [id])
     const { hasRun, isWorking, error, result } = useAsyncAction<BlogEntryWithId>(fetchThisBlogEntry)
 
+    const title="foo"
     if (!hasRun || isWorking) {
-        return <LoadingScreen text={`Loading blog entry: ${title}`} />
+        return <LoadingScreen text={'Loading blog entry...'} />
     }
 
     if (error) {
         return <TextScreen text="An error occurred loading blog entry" />
     }
-
     const entry = result as BlogEntryWithId
-    const { text, author, date, image_url } = entry.document
+    const { text } = entry.document
+
+    return <Markdown {...rest}>{text}</Markdown>
+}
+
+// @ts-ignore
+function BlogReadScreen({ navigation, route }) {
+    const { id, blogInfo } = route.params
+
+    navigation.setOptions({
+        title: blogInfo.title,
+    })
+
+    const {title, author, date, image_url} = blogInfo
 
     const fontSize = 14
     return (<Screen>
@@ -49,7 +58,7 @@ function BlogReadScreen({ navigation, route }) {
                 style={{ width: "100%", height: 200 }}
                 PlaceholderContent={<ActivityIndicator />}
             />
-            <Markdown styles={markdownStyles(fontSize)}>{text}</Markdown>
+            <MarkdownLoader id={id} styles={markdownStyles(fontSize)}/>
         </ScrollView>
     </Screen>)
 }
@@ -66,34 +75,7 @@ const markdownStyles = (baseFontSize = 14) => {
     const factor = baseFontSize / 14
     return ({
         text: {
-            fontFamily: "serif",
+            fontFamily: Platform.select({android: "serif", ios: "Times New Roman" })
         },
-        //     heading1: {
-        //         fontSize: 32 * factor,
-        //     },
-        //     heading2: {
-        //         fontSize: 24 * factor,
-        //     },
-        //     heading3: {
-        //         fontSize: 18 * factor,
-        //     },
-        //     heading4: {
-        //         fontSize: 16 * factor,
-        //     },
-        //     heading5: {
-        //         fontSize: 13 * factor,
-        //     },
-        //     heading6: {
-        //         fontSize: 11 * factor,
-        //     },
-        //     plainText: {
-        //         fontSize: 14 * factor,
-        //     },
-        //     strong: {
-        //         fontSize: 14 * factor,
-        //     },
-        //     u: {
-        //         fontSize: 14 * factor,
-        //     }
-    })
+   })
 }
