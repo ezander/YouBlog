@@ -1,9 +1,8 @@
 import moment from 'moment';
-import React from 'react';
-import { View } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { FlatList, TouchableHighlight, View } from 'react-native';
 import { ListItem, Text } from 'react-native-elements';
-import { FlatList, TouchableHighlight } from 'react-native-gesture-handler';
-import LoadingScreen from '../components/LoadingScreen';
+import { withErrorBoundary } from '../components/ErrorBoundary';
 import Screen from '../components/Screen';
 import TextScreen from '../components/TextScreen';
 import firebaseConfig from '../firebaseConfig.json';
@@ -14,6 +13,7 @@ async function fetchBlogEntries(): Promise<BlogList> {
     const mask = ["title", "author", "date", "image_url"]
     const orderBy = "date desc"
 
+    console.log("Fetching documents...")
     return listDocuments("blog_entries", { mask, orderBy }, firebaseConfig)
 }
 
@@ -33,49 +33,45 @@ function BlogListEntryOld({ entry, onSelect }: { entry: BlogEntryWithId, onSelec
 function BlogListEntry({ entry, onSelect }: { entry: BlogEntryWithId, onSelect: (() => void) }) {
     const blog = entry.document
     return (
-            <ListItem
-                title={blog.title}
-                subtitle={blog.author + " | " + moment(blog.date).fromNow()}
-                onPress={onSelect}
-                bottomDivider
-                chevron
-            />
+        <ListItem
+            title={blog.title}
+            subtitle={blog.author + " | " + moment(blog.date).fromNow()}
+            onPress={onSelect}
+            bottomDivider
+            chevron
+        />
     )
 }
 
-export default function BlogListScreen({ navigation }: { navigation: any }) {
+function BlogListScreen({ navigation }: { navigation: any }) {
+    const [refresh, setRefresh] = useState(0)
 
-    const { hasRun, isWorking, error, result } = useAsyncAction<BlogList>(fetchBlogEntries)
+    const doFetchBlogEntries = useCallback(() => fetchBlogEntries(), [refresh])
 
-    if (!hasRun || isWorking) {
-        return <LoadingScreen text="Loading blog entries..." />
-    }
+    const { hasRun, isWorking, error, result } = useAsyncAction<BlogList>(doFetchBlogEntries)
 
     if (error) {
         return <TextScreen text="An error occurred loading blog entries" />
     }
 
     const entrySelected = (entry: BlogEntryWithId) => {
-        // Alert.alert(entry.title, "Coming soon...")
         const blog = entry.document
         navigation.navigate("BlogEntry", { id: entry.id, blogInfo: blog })
     }
 
-    if (result) {
-        return <Screen>
-            <View style={{ padding: 10 }}>
-                <Text h4>Latest blog entries</Text>
-            </View>
-            <View style={{width: "100%", padding: 10, flex: 1}}>
+    return <Screen>
+        <View style={{ padding: 10 }}>
+            <Text h4>Latest blog entries</Text>
+        </View>
+        <View style={{ width: "100%", padding: 10, flex: 1 }}>
             <FlatList<BlogEntryWithId>
                 data={result}
-                renderItem={({ item }) => <BlogListEntry entry={item} onSelect={() => entrySelected(item)} />} />
-            {/* {
-                result.map(item => <BlogListEntry key={item.id} entry={item} onSelect={() => entrySelected(item)} />)
-            } */}
-            </View>
-        </Screen>
-    }
-
-    return <TextScreen text="Internal error." />
+                renderItem={({ item }) => <BlogListEntry entry={item} onSelect={() => entrySelected(item)} />}
+                refreshing={!hasRun || isWorking}
+                onRefresh={() => { setRefresh(refresh => refresh + 1) }}
+            />
+        </View>
+    </Screen>
 }
+
+export default withErrorBoundary(BlogListScreen)

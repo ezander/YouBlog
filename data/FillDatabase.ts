@@ -76,5 +76,3 @@ async function doIt() {
 }
 doIt()
 
-// console.log(toFirestoreParams( {'documentId': "asdf", mask: {fieldNames: ["foo", "bar"]}} ))
-

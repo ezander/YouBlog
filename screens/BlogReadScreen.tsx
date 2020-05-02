@@ -1,9 +1,10 @@
 import moment from 'moment'
 import React, { useCallback } from 'react'
-import { ActivityIndicator, StyleSheet, Platform } from 'react-native'
+import { ActivityIndicator, Platform, StyleSheet } from 'react-native'
 import { Image } from 'react-native-elements'
 import { ScrollView } from 'react-native-gesture-handler'
 import Markdown, { MarkdownProps } from 'react-native-markdown-simple'
+import { withErrorBoundary } from '../components/ErrorBoundary'
 import LoadingScreen from '../components/LoadingScreen'
 import Screen from '../components/Screen'
 import TextScreen from '../components/TextScreen'
@@ -15,15 +16,11 @@ async function fetchBlogEntry(id: string): Promise<BlogEntryWithId> {
     return getDocument("blog_entries", id, {}, firebaseConfig)
 }
 
-// interface MarkdownProps {
-//     styles: any
-// }
-function MarkdownLoader({id, ...rest} : {id: string} & MarkdownProps) {
+function MarkdownLoader({ id, ...rest }: { id: string } & MarkdownProps) {
     // use useCallback and useMemo?
     const fetchThisBlogEntry = useCallback(fetchBlogEntry.bind(null, id), [id])
     const { hasRun, isWorking, error, result } = useAsyncAction<BlogEntryWithId>(fetchThisBlogEntry)
 
-    const title="foo"
     if (!hasRun || isWorking) {
         return <LoadingScreen text={'Loading blog entry...'} />
     }
@@ -45,7 +42,7 @@ function BlogReadScreen({ navigation, route }) {
         title: blogInfo.title,
     })
 
-    const {title, author, date, image_url} = blogInfo
+    const { title, author, date, image_url } = blogInfo
 
     const fontSize = 14
     return (<Screen>
@@ -58,12 +55,12 @@ function BlogReadScreen({ navigation, route }) {
                 style={{ width: "100%", height: 200 }}
                 PlaceholderContent={<ActivityIndicator />}
             />
-            <MarkdownLoader id={id} styles={markdownStyles(fontSize)}/>
+            <MarkdownLoader id={id} styles={markdownStyles(fontSize)} />
         </ScrollView>
     </Screen>)
 }
 
-export default BlogReadScreen
+export default withErrorBoundary(BlogReadScreen)
 
 const styles = StyleSheet.create({
     blogContainer: {
@@ -75,7 +72,7 @@ const markdownStyles = (baseFontSize = 14) => {
     const factor = baseFontSize / 14
     return ({
         text: {
-            fontFamily: Platform.select({android: "serif", ios: "Times New Roman" })
+            fontFamily: Platform.select({ android: "serif", ios: "Times New Roman" })
         },
-   })
+    })
 }

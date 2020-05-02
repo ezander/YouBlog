@@ -3,15 +3,15 @@ import { View, StyleSheet, StyleProp, ViewStyle } from 'react-native'
 
 
 interface ScreenProps {
-    style ?: Object,
+    style?: Object,
     children?: Array<JSX.Element> | JSX.Element,
     rest?: any
 }
 
-function Screen({ style, children, ...rest } : ScreenProps ) {
+function Screen({ style, children, ...rest }: ScreenProps) {
     return (
-        <View style={{...styles.screen, ...style}} {...rest }>
-            { children }
+        <View style={{ ...styles.screen, ...style }} {...rest}>
+            {children}
         </View>)
 }
 
