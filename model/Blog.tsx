@@ -2,7 +2,7 @@ interface BlogEntry {
     author: string,
     author_id: string,
     title: string,
-    date: string,
+    date: Date,
     text: string,
     image_url: string
 }

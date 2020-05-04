@@ -17,19 +17,6 @@ async function fetchBlogEntries(): Promise<BlogList> {
     return listDocuments("blog_entries", { mask, orderBy }, firebaseConfig)
 }
 
-function BlogListEntryOld({ entry, onSelect }: { entry: BlogEntryWithId, onSelect: (() => void) }) {
-    const blog = entry.document
-    return (
-        <TouchableHighlight
-            underlayColor="#CFC"
-            activeOpacity={0.6}
-            onPress={onSelect}>
-            <View style={{ paddingBottom: 5 }}>
-                <Text>{blog.title}</Text>
-                <Text style={{ color: "grey", fontSize: 10 }}>{blog.author} | {moment(blog.date).fromNow()}</Text>
-            </View>
-        </TouchableHighlight>)
-}
 function BlogListEntry({ entry, onSelect }: { entry: BlogEntryWithId, onSelect: (() => void) }) {
     const blog = entry.document
     return (
@@ -56,7 +43,13 @@ function BlogListScreen({ navigation }: { navigation: any }) {
 
     const entrySelected = (entry: BlogEntryWithId) => {
         const blog = entry.document
-        navigation.navigate("BlogEntry", { id: entry.id, blogInfo: blog })
+        navigation.navigate("BlogEntry", { 
+            id: entry.id, 
+            title: blog.title, 
+            date_str: blog.date.toISOString(),
+            author: blog.author,
+            image_url: blog.image_url
+         })
     }
 
     return <Screen>

@@ -36,13 +36,13 @@ function MarkdownLoader({ id, ...rest }: { id: string } & MarkdownProps) {
 
 // @ts-ignore
 function BlogReadScreen({ navigation, route }) {
-    const { id, blogInfo } = route.params
+    const { id, title, author, date_str, image_url  } = route.params
+    const date = new Date(date_str)
 
     navigation.setOptions({
-        title: blogInfo.title,
+        title: title,
     })
 
-    const { title, author, date, image_url } = blogInfo
 
     const fontSize = 14
     return (<Screen>
