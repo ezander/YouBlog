@@ -16,29 +16,44 @@ async function fetchBlogEntry(id: string): Promise<BlogEntryWithId> {
     return getDocument("blog_entries", id, {}, firebaseConfig)
 }
 
-function MarkdownLoader({ id, ...rest }: { id: string } & MarkdownProps) {
-    // use useCallback and useMemo?
-    const fetchThisBlogEntry = useCallback(fetchBlogEntry.bind(null, id), [id])
-    const { hasRun, isWorking, error, result } = useAsyncAction<BlogEntryWithId>(fetchThisBlogEntry)
+// function MarkdownLoader({ id, ...rest }: { id: string } & MarkdownProps) {
+//     // use useCallback and useMemo?
+//     const fetchThisBlogEntry = useCallback(fetchBlogEntry.bind(null, id), [id])
+//     const { hasRun, isWorking, error, result } = useAsyncAction<BlogEntryWithId>(fetchThisBlogEntry)
 
-    if (!hasRun || isWorking) {
-        return <LoadingScreen text={'Loading blog entry...'} />
-    }
+//     if (!hasRun || isWorking) {
+//         return <LoadingScreen text={'Loading blog entry...'} />
+//     }
 
-    if (error) {
-        return <TextScreen text="An error occurred loading blog entry" />
-    }
-    const entry = result as BlogEntryWithId
-    const { text } = entry.document
+//     if (error) {
+//         return <TextScreen text="An error occurred loading blog entry" />
+//     }
+//     const entry = result as BlogEntryWithId
+//     const { text } = entry.document
 
-    return <Markdown {...rest}>{text}</Markdown>
-}
+//     return <Markdown {...rest}>{text}</Markdown>
+// }
 
 // @ts-ignore
 function BlogReadScreen({ navigation, route }) {
-    const { id, title, author, date_str, image_url  } = route.params
-    const date = new Date(date_str)
+    const id = route.params.id
 
+    const fetchThisBlogEntry = useCallback(fetchBlogEntry.bind(null, id), [id])
+    const { hasRun, isWorking, error, result } = useAsyncAction<BlogEntryWithId>(fetchThisBlogEntry)
+
+    if (error) {
+        throw error;
+        // return <TextScreen text="An error occurred loading blog entry" />
+    }
+    const entry = result as BlogEntryWithId
+    const text = entry?.document?.text
+    const { title, author, date_str, image_url } = {title: null, image_url: null, ...route.params, ...entry?.document}
+    console.log(id, { title, author, date_str, image_url })
+
+    const date = date_str ? new Date(date_str) : entry?.document?.date
+
+    // console.log("Route: ", route)
+    // console.log("Nav: ", navigation)
     navigation.setOptions({
         title: title,
     })
@@ -47,15 +62,26 @@ function BlogReadScreen({ navigation, route }) {
     const fontSize = 14
     return (<Screen>
         <ScrollView style={styles.blogContainer}>
-            <Markdown styles={markdownStyles(fontSize)}>
-                # {title} {'\n\n'}
+            {
+                title && 
+                <Markdown styles={markdownStyles(fontSize)}>
+                    # {title} {'\n\n'}
                 _{author}_ | _{moment(date).format('LLL')}_ {'\n'}
-            </Markdown>
-            <Image resizeMethod="auto" resizeMode="cover" source={{ uri: image_url }}
+                </Markdown>
+            }
+            {
+                image_url &&
+                <Image resizeMethod="auto" resizeMode="cover" source={{ uri: image_url }}
                 style={{ width: "100%", height: 200 }}
                 PlaceholderContent={<ActivityIndicator />}
             />
-            <MarkdownLoader id={id} styles={markdownStyles(fontSize)} />
+            }           
+            {
+                (!hasRun || isWorking) ?
+                    <LoadingScreen text={'Loading blog entry...'} /> :
+                    <Markdown styles={markdownStyles(fontSize)}>{text}</Markdown>
+
+            }
         </ScrollView>
     </Screen>)
 }

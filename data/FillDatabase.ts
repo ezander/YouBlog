@@ -33,7 +33,7 @@ async function processFile(
     filename: string,
     image_url: string
 ) {
-    const id = filename
+    const id = filename.endsWith(".md") ? filename.slice(0, -3) : filename
     const date = new Date(date_str + "T00:00:00Z")
     const text = readFile(filename)
     const post = { author, author_id, title, date, text, image_url }

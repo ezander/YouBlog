@@ -21,6 +21,7 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "scheme": "youblog",
     "ios": {
       "supportsTablet": true
     }
