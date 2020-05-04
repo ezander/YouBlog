@@ -1,7 +1,7 @@
 import moment from 'moment'
 import React, { useCallback } from 'react'
 import { ActivityIndicator, Platform, StyleSheet } from 'react-native'
-import { Image } from 'react-native-elements'
+import { Image, Text, Card } from 'react-native-elements'
 import { ScrollView } from 'react-native-gesture-handler'
 import Markdown, { MarkdownProps } from 'react-native-markdown-simple'
 import { withErrorBoundary } from '../components/ErrorBoundary'
@@ -36,21 +36,34 @@ async function fetchBlogEntry(id: string): Promise<BlogEntryWithId> {
 
 // @ts-ignore
 function BlogReadScreen({ navigation, route }) {
-    const id = route.params.id
+    const id = route.params.urlId || route.params.id
+    const from_params = !route.params.urlId
 
     const fetchThisBlogEntry = useCallback(fetchBlogEntry.bind(null, id), [id])
     const { hasRun, isWorking, error, result } = useAsyncAction<BlogEntryWithId>(fetchThisBlogEntry)
+    console.log("ASync: ", hasRun, isWorking, error)
 
     if (error) {
-        throw error;
-        // return <TextScreen text="An error occurred loading blog entry" />
+        // throw error;
+        const text="An error occurred loading blog entry"
+        return (<Screen>
+            <Card>
+            <Text>{text}</Text>
+            <Text>{JSON.stringify(error)}</Text>
+            </Card>
+        </Screen>)
+            
+        // <TextScreen text="An error occurred loading blog entry" />
     }
     const entry = result as BlogEntryWithId
     const text = entry?.document?.text
-    const { title, author, date_str, image_url } = {title: null, image_url: null, ...route.params, ...entry?.document}
+    const { title, author, date_str, image_url } = from_params ? route.params : (entry?.document || {})
+
+    console.log("BRS: ", route.params, from_params)
+
     console.log(id, { title, author, date_str, image_url })
 
-    const date = date_str ? new Date(date_str) : entry?.document?.date
+    const date = from_params ? new Date(date_str) : entry?.document?.date
 
     // console.log("Route: ", route)
     // console.log("Nav: ", navigation)
