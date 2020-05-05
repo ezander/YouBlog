@@ -55,7 +55,7 @@ function LinkingNavigationContainer<Props>(
 export default function App() {
 
   const linking = {
-    prefixes: [prefix],
+    prefixes: [prefix, 'https://expo.io/@ezander/YouBlog', "https://zandere.de/youblog"],
     config: {
       "BlogList": "list",
       "BlogEntry": {

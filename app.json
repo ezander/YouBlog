@@ -24,6 +24,26 @@
     "scheme": "youblog",
     "ios": {
       "supportsTablet": true
+    },
+    "description": "Cooolest bloggin App on the planet! Just joking...",
+    "android": {
+      "package": "de.zandere.youblog",
+      "versionCode": 1,
+      "intentFilters": [
+        {
+          "action": "VIEW",
+          "data": [
+            {
+              "scheme": "https",
+              "host": "expo.io"
+            }
+          ],
+          "category": [
+            "BROWSABLE",
+            "DEFAULT"
+          ]
+        }
+      ]
     }
   }
 }
