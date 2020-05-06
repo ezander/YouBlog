@@ -3,7 +3,7 @@ import React, { useCallback } from 'react'
 import { ActivityIndicator, Platform, StyleSheet } from 'react-native'
 import { Image, Text, Card } from 'react-native-elements'
 import { ScrollView } from 'react-native-gesture-handler'
-import Markdown, { MarkdownProps } from 'react-native-markdown-simple'
+import Markdown from 'react-native-markdown-renderer'
 import { withErrorBoundary } from '../components/ErrorBoundary'
 import LoadingScreen from '../components/LoadingScreen'
 import Screen from '../components/Screen'
@@ -11,7 +11,7 @@ import TextScreen from '../components/TextScreen'
 import firebaseConfig from '../firebaseConfig.json'
 import { useAsyncAction } from '../src/AsyncTools'
 import { getDocument } from '../src/FirestoreTools'
-
+import {styles as defaultMarkdownStyles} from 'react-native-markdown-renderer/src/lib/styles'
 async function fetchBlogEntry(id: string): Promise<BlogEntryWithId> {
     return getDocument("blog_entries", id, {}, firebaseConfig)
 }
@@ -45,14 +45,14 @@ function BlogReadScreen({ navigation, route }) {
 
     if (error) {
         // throw error;
-        const text="An error occurred loading blog entry"
+        const text = "An error occurred loading blog entry"
         return (<Screen>
             <Card>
-            <Text>{text}</Text>
-            <Text>{JSON.stringify(error)}</Text>
+                <Text>{text}</Text>
+                <Text>{JSON.stringify(error)}</Text>
             </Card>
         </Screen>)
-            
+
         // <TextScreen text="An error occurred loading blog entry" />
     }
     const entry = result as BlogEntryWithId
@@ -76,8 +76,8 @@ function BlogReadScreen({ navigation, route }) {
     return (<Screen>
         <ScrollView style={styles.blogContainer}>
             {
-                title && 
-                <Markdown styles={markdownStyles(fontSize)}>
+                title &&
+                <Markdown style={markdownStyles(fontSize)}>
                     # {title} {'\n\n'}
                 _{author}_ | _{moment(date).format('LLL')}_ {'\n'}
                 </Markdown>
@@ -85,14 +85,14 @@ function BlogReadScreen({ navigation, route }) {
             {
                 image_url &&
                 <Image resizeMethod="auto" resizeMode="cover" source={{ uri: image_url }}
-                style={{ width: "100%", height: 200 }}
-                PlaceholderContent={<ActivityIndicator />}
-            />
-            }           
+                    style={{ width: "100%", height: 200 }}
+                    PlaceholderContent={<ActivityIndicator />}
+                />
+            }
             {
                 (!hasRun || isWorking) ?
                     <LoadingScreen text={'Loading blog entry...'} /> :
-                    <Markdown styles={markdownStyles(fontSize)}>{text}</Markdown>
+                    <Markdown style={markdownStyles(fontSize)}>{text}</Markdown>
 
             }
         </ScrollView>
@@ -109,9 +109,28 @@ const styles = StyleSheet.create({
 
 const markdownStyles = (baseFontSize = 14) => {
     const factor = baseFontSize / 14
-    return ({
-        text: {
-            fontFamily: Platform.select({ android: "serif", ios: "Times New Roman" })
+    const fontFamilyCode = Platform.select({ android: "monospace", ios: "Courier" })
+    const fontFamilyBase = Platform.select({ android: "serif", ios: "Times New Roman" })
+
+    const def = defaultMarkdownStyles;
+    
+
+    return StyleSheet.create({
+        codeBlock: {
+            ...def.codeBlock, 
+            fontFamily: fontFamilyCode
         },
+        codeInline: {
+            ...def.codeInline, 
+            fontFamily: fontFamilyCode
+        },
+        inlineCode: {
+            ...def.inlineCode, 
+            fontFamily: fontFamilyCode
+        },
+        text: {
+            ...def.text,
+            fontFamily: fontFamilyBase
+        }
     })
 }
