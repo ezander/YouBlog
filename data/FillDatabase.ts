@@ -1,6 +1,7 @@
 #!/usr/bin/env ts-node-script
 
 // #https://mediatemple.net/blog/web-development-tech/you-should-probably-blog-in-markdown/
+// https://www.browserling.com/tools/html-to-markdown
 
 var fs = require('fs');
 import * as Firestore from '../src/FirestoreTools'
@@ -66,10 +67,51 @@ async function processFile(
 
 async function doIt() {
     // console.log(firebaseConfig)
-    await processFile("Alex Alabbas", "_aa", "2020-04-22", "Logs And Metrics: How Important Are They?", "logs_and_metrics.md", "https://mediatemple.net/blog/wp-content/uploads/2020/04/3330x1410-1-960x407.png")
-    await processFile("Chris Coyier", "_cc", "2016-04-27", "You Should Probably Blog in Markdown", "blog_markdown.md", "https://mediatemple.net/blog/wp-content/uploads/2016/04/chris-coyier-4-960x406.png")
-    await processFile("Jeffrey Uberstine", "_ju", "2020-04-10", "Linux Administration For Web Developers: Part 1", "linux_admin_web_dev1.md", "https://mediatemple.net/blog/wp-content/uploads/2020/04/1665x705-Part1.-960x407.png")
-    await processFile("Jeffrey Uberstine", "_ju", "2020-04-10", "Linux Administration For Web Developers: Part 2", "linux_admin_web_dev2.md", "https://mediatemple.net/blog/wp-content/uploads/2020/04/1665x705-Part2-960x407.png")
+    await processFile(
+        "Alex Alabbas", "_aa",
+        "2020-04-22",
+        "Logs And Metrics: How Important Are They?",
+        "logs_and_metrics.md",
+        "https://mediatemple.net/blog/wp-content/uploads/2020/04/3330x1410-1-960x407.png")
+    await processFile(
+        "Chris Coyier", "_cc",
+        "2016-04-27",
+        "You Should Probably Blog in Markdown",
+        "blog_markdown.md",
+        "https://mediatemple.net/blog/wp-content/uploads/2016/04/chris-coyier-4-960x406.png")
+    await processFile(
+        "Jeffrey Uberstine", "_ju",
+        "2020-04-10",
+        "Linux Administration For Web Developers: Part 1",
+        "linux_admin_web_dev1.md",
+        "https://mediatemple.net/blog/wp-content/uploads/2020/04/1665x705-Part1.-960x407.png")
+    await processFile(
+        "Jeffrey Uberstine", "_ju",
+        "2020-04-10",
+        "Linux Administration For Web Developers: Part 2",
+        "linux_admin_web_dev2.md",
+        "https://mediatemple.net/blog/wp-content/uploads/2020/04/1665x705-Part2-960x407.png")
+    await processFile(
+        "Lindsay Kolowich", "_lk",
+        "2020-05-03",
+        "13 Blogging Mistakes Most Beginner Bloggers Make",
+        "blogging_mistakes.md",
+        "https://blog.hubspot.com/hubfs/blogging-for-beginners.jpg")
+    await processFile(
+        "Dave Cheney", "_dc",
+        "2020-05-05",
+        "Don’t just check errors, handle them gracefully",
+        "handle_errors.md",
+        "https://dave.cheney.net/wp-content/uploads/2016/04/Screen-Shot-2016-04-23-at-11.39.26.png")
+    await processFile(
+        "Saadia Minhas", "_sm",
+        "2020-05-06",
+        "How to Write Good Error Messages",
+        "good_error_messages.md",
+        "https://miro.medium.com/max/1382/1*W6sDVrsrLBYHP881a8COQA.jpeg")
+
+
+
 
     const docs = await Firestore.listDocuments(COLLECTION, { mask: ["author", "date", "title"], orderBy: "date desc" }, firebaseConfig)
     console.log(docs)
