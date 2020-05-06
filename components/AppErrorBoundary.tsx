@@ -30,15 +30,15 @@ const CustomFallbackComponent = (props: Props) => {
                 <Text style={styles.subtitle}>{'There\'s an error'}</Text>
                 <Text style={styles.error}>{props.error.toString()}</Text>
                 <View style={styles.buttonContainer}>
-                    {goBack && 
-                    <Button
-                        title="Go back"
-                        icon={<Icon name="arrow-back" size={20} color="white" />}
-                        buttonStyle={{ borderRadius: 20 }}
-                        containerStyle={{ flex: 1, marginHorizontal: 10 }}
-                        disabled={!goBack}
-                        onPress={goBack}
-                    />}
+                    {goBack &&
+                        <Button
+                            title="Go back"
+                            icon={<Icon name="arrow-back" size={20} color="white" />}
+                            buttonStyle={{ borderRadius: 20 }}
+                            containerStyle={{ flex: 1, marginHorizontal: 10 }}
+                            disabled={!goBack}
+                            onPress={goBack}
+                        />}
                     <Button
                         title="Try again"
                         icon={<Icon name="refresh" size={20} color="white" />}

@@ -2,7 +2,7 @@ import moment from 'moment';
 import React, { useCallback, useState } from 'react';
 import { FlatList, TouchableHighlight, View } from 'react-native';
 import { ListItem, Text } from 'react-native-elements';
-import { withErrorBoundary } from '../components/ErrorBoundary';
+import { withErrorBoundary } from '../components/AppErrorBoundary';
 import Screen from '../components/Screen';
 import TextScreen from '../components/TextScreen';
 import firebaseConfig from '../firebaseConfig.json';
