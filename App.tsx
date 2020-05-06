@@ -1,14 +1,12 @@
-import { NavigationContainer, useLinking, NavigationContainerRef, NavigationState, NavigationContainerProps } from '@react-navigation/native';
 import { createStackNavigator, StackHeaderProps } from '@react-navigation/stack';
-import React, { useEffect, useCallback, useRef } from 'react';
+import { Linking } from 'expo';
+import React from 'react';
+import { Text } from 'react-native-elements';
+import ErrorBoundary from 'react-native-error-boundary';
 import NavHeader from './components/NavHeader';
+import { LinkingNavigationContainer } from './LinkingNavigationContainer';
 import BlogListScreen from './screens/BlogListScreen';
 import BlogReadScreen from './screens/BlogReadScreen';
-import ErrorBoundary from 'react-native-error-boundary';
-import { Linking } from 'expo';
-import { Text } from 'react-native-elements';
-import { LinkingOptions } from '@react-navigation/native/lib/typescript/src/types';
-import { getStateFromPath } from '@react-navigation/native'
 const Stack = createStackNavigator()
 
 const navigatorOptions = {
@@ -17,72 +15,33 @@ const navigatorOptions = {
   }
 }
 
-const prefix = Linking.makeUrl('/')
-
-
-type LinkingNavigationContainerProps = NavigationContainerProps & {
-  linking: LinkingOptions,
-  fallback: JSX.Element
-}
-
-type BaseType<T> = T
-type ThenArg<T> = T extends Promise<infer U> ? U : undefined
-
-function LinkingNavigationContainer<Props>(
-  { linking, fallback, ...props }: LinkingNavigationContainerProps
-) {
-  const ref = useRef<NavigationContainerRef>(null)
-  const { getInitialState } = useLinking(ref, linking)
-  const [isReady, setIsReady] = React.useState(false);
-  const [initialState, setInitialState] = React.useState<ThenArg<ReturnType<typeof getInitialState>>>();
-
-  React.useEffect(() => {
-    getInitialState()
-      .catch(() => { })
-      .then(state => {
-        if (state !== undefined) {
-          // @ts -ignore
-          setInitialState(state);
-        }
-
-        setIsReady(true);
-      });
-  }, [getInitialState]);
-
-  if (!isReady) {
-    return fallback;
+const linking = {
+  prefixes: [
+    Linking.makeUrl('/'),
+    'https://expo.io/@ezander/YouBlog',
+    'https://zandere.de/youblog'
+  ],
+  config: {
+    "BlogList": "list",
+    "BlogEntry": {
+      path: 'post/:urlId'
+    }
   }
-  return <NavigationContainer initialState={initialState} ref={ref} {...props} />
 }
 
 export default function App() {
-
-  const linking = {
-    prefixes: [prefix, 'https://expo.io/@ezander/YouBlog', "https://zandere.de/youblog"],
-    config: {
-      "BlogList": "list",
-      "BlogEntry": {
-        path: 'post/:urlId'
-      }
-    },
-    getStateFromPath: (path: Parameters<typeof getStateFromPath>[0], options: Parameters<typeof getStateFromPath>[1]): any => {
-      // Return a state object here
-      // You can also reuse the default logic by importing `getStateFromPath` from `@react-navigation/native`
-      console.log("getStateFromPath: ", path, options)
-
-      const state = getStateFromPath(path, options)
-      // console.log("State: ", state)
-      return state
-    },
-  }
-
-
   return (
     <ErrorBoundary>
       <LinkingNavigationContainer linking={linking} fallback={<Text>Loading...</Text>}>
         <Stack.Navigator {...navigatorOptions}>
-          <Stack.Screen name="BlogList" component={BlogListScreen} options={{ title: "All Blog Entries" }} />
-          <Stack.Screen name="BlogEntry" component={BlogReadScreen} options={{ title: "Single Blog Entry" }} />
+          <Stack.Screen
+            name="BlogList"
+            component={BlogListScreen}
+            options={{ title: "All Blog Entries" }} />
+          <Stack.Screen
+            name="BlogEntry"
+            component={BlogReadScreen}
+            options={{ title: "Single Blog Entry" }} />
         </Stack.Navigator>
       </LinkingNavigationContainer>
     </ErrorBoundary >
