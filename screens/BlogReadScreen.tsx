@@ -14,24 +14,6 @@ async function fetchBlogEntry(id: string): Promise<BlogEntryWithId> {
     return getDocument("blog_entries", id, {}, firebaseConfig)
 }
 
-// function MarkdownLoader({ id, ...rest }: { id: string } & MarkdownProps) {
-//     // use useCallback and useMemo?
-//     const fetchThisBlogEntry = useCallback(fetchBlogEntry.bind(null, id), [id])
-//     const { hasRun, isWorking, error, result } = useAsyncAction<BlogEntryWithId>(fetchThisBlogEntry)
-
-//     if (!hasRun || isWorking) {
-//         return <LoadingScreen text={'Loading blog entry...'} />
-//     }
-
-//     if (error) {
-//         return <TextScreen text="An error occurred loading blog entry" />
-//     }
-//     const entry = result as BlogEntryWithId
-//     const { text } = entry.document
-
-//     return <Markdown {...rest}>{text}</Markdown>
-// }
-
 // @ts-ignore
 function BlogReadScreen({ navigation, route }) {
     const id = route.params.urlId || route.params.id

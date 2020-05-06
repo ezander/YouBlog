@@ -84,7 +84,6 @@ function ThemedIcon({ theme, name, ...props }: ThemedIconProps) {
     if( !iconName ) throw new Error(`IconName ${name} not defined.`)
 
     const allProps = (typeof iconName === "string") ? { type, name: iconName, ...props } : { type, ...iconName, ...props }
-    // console.log("AllProps: ", allProps)
     return <Icon {...allProps} />
 }
 
@@ -93,7 +92,6 @@ export default ThemedIcon
 export type SpecialisedThemedIconProps = Omit<ThemedIconProps, "theme">
 
 export function MaterialIcon(props: SpecialisedThemedIconProps)  {
-    console.log("MatProps: ", props)
     return <ThemedIcon theme="material" {...props}/>
 }
 
