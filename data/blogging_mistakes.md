@@ -32,7 +32,7 @@ Most of a blog's traffic is driven organically -- in other words, consumers will
 
 ## Create blog posts that serve your larger company goals.
 
-Mistake: You think of ideas that only interest you.
+**Mistake: You think of ideas that only interest you.**
 
 As much as you might read and re-read your blog posts after you publish them, you're not the only reader, or the intended reader.
 
@@ -45,7 +45,7 @@ Need help figuring out what those goals are and how to address them? Chat with y
 
 ## Write like you talk.
 
-Mistake: Your writing is too stiff.
+**Mistake: Your writing is too stiff.**
 
 Writing a blog post is much different than writing a term paper. But when bloggers first start out, they usually only have experience with the latter. The problem? The style of writing from a term paper is not the style of writing people enjoy reading.
 
@@ -58,7 +58,7 @@ So loosen up your writing. Throw in contractions. Get rid of the jargon. Make a 
 
 ## Show your personality; don't tell it.
 
-Mistake: You think people care about you as a writer.
+**Mistake: You think people care about you as a writer.**
 
 It sounds harsh, but it's the truth: When people first start out blogging, they think that their audience will be inherently interested in their stories and their interests ... but that's not the case. It's no knock against them as a person -- it's just that when you're new, no one is interested in you and your experiences. People care way more about what you can teach them.
 Solution: Infuse your personality without eclipsing the topic.
@@ -73,7 +73,7 @@ To infuse personality into your own writing, try looking for ways to relate to y
 
 ## Make your point again and again.
 
-Mistake: You digress.
+**Mistake: You digress.**
 
 Although you are encouraged to let your own personality shine through in your writing, don't abuse the privilege. It's one thing to be yourself in the topic you're covering, but it's another thing to bring up too many personal experiences that bury the point you're trying to make.
 
@@ -86,13 +86,13 @@ If you're writing about how much water a potted plant needs, for example, don't 
 
 ## Start with a very specific working title.
 
-Mistake: Your topics are too broad.
+**Mistake: Your topics are too broad.**
 
 When people start blogging, they generally want to write on really big topics like:
 
-    "How to Do Social Media Marketing"
-    "Business Best Practices"
-    "How to Make Money on the Internet"
+> "How to Do Social Media Marketing"
+> "Business Best Practices"
+> "How to Make Money on the Internet"
 
 Topics like these are far too broad. Because there are so many details and nuances in these topics, it's really hard to do a good job answering them. Plus, more specific topics tend to attract smaller, more targeted audiences, which tend to be higher quality and more likely to convert into leads and customers.
 
@@ -105,7 +105,7 @@ Keep in mind that a working title isn't final -- it's just a concrete angle you 
 
 ## Use a specific post type, create an outline, and use headers.
 
-Mistake: Your writing is a brain dump.
+**Mistake: Your writing is a brain dump.**
 
 Sometimes when I get a great idea I'm excited about, it's really tempting to just sit down and let it flow out of me. But what I get is usually a sub-par blog post.
 
@@ -120,12 +120,12 @@ To write a blog post outline, first come up with a list of the top takeaways you
 
 ## Use data and research to back up the claims you make in your posts.
 
-Mistake: You don't use data as evidence.
+**Mistake: You don't use data as evidence.**
 
 Let's say I'm writing a blog post about why businesses should consider using Instagram for marketing. When I'm making that argument, which is more convincing?
 
-    "It seems like more people are using Instagram nowadays."
-    "Instagram’s user base is growing far faster than social network usage in general in the U.S. Instagram will grow 15.1% this year, compared to just 3.1% growth for the social network sector as a whole."
+> "It seems like more people are using Instagram nowadays."
+> "Instagram’s user base is growing far faster than social network usage in general in the U.S. Instagram will grow 15.1% this year, compared to just 3.1% growth for the social network sector as a whole."
 
 The second, of course. Arguments and claims are much more compelling when rooted in data and research. As marketers, we don’t just have to convince people to be on our side about an issue -- we need to convince them to take action. Data-driven content catches people's attention in a way that fluffy arguments do not.
 Solution: Use data to support your arguments. 
@@ -134,14 +134,14 @@ In any good story, you’ll offer a main argument, establish proof, and then end
 
 Some great places to find compelling data include:
 
-    HubSpot Research
-    Pew Research Center
-    MarketingSherpa
-    HubSpot's State of Inbound report
+* HubSpot Research
+* Pew Research Center
+* MarketingSherpa
+* HubSpot's State of Inbound report
 
 ## When drawing from others' ideas, cite them.
 
-Mistake: Your content borders on plagiarism.
+**Mistake: Your content borders on plagiarism.**
 
 Plagiarism didn't work in school, and it certainly doesn't work on your company's blog. But for some reason, many beginner bloggers think they can get away with the old copy-and-paste technique.
 
@@ -154,7 +154,7 @@ Instead, take a few minutes to understand how to cite other people's content in 
 
 ## Take 30 minutes to edit your post.
 
-Mistake: You think you're done once the writing's done.
+**Mistake: You think you're done once the writing's done.**
 
 Most people make the mistake of not editing their writing. It sounded so fluid in their head when they were writing that it must be great to read ... right?
 
@@ -167,7 +167,7 @@ To help you remember all the little things to check before publishing, check out
 
 ## At a certain point, just publish it.
 
-Mistake: You try to make every post perfect.
+**Mistake: You try to make every post perfect.**
 
 I hate to break it to you, but your blog post is never going to be perfect. Ever.
 
@@ -177,8 +177,10 @@ Solution: Better to publish and update than postpone for perfection.
 There's a point at which there are diminishing returns for getting closer to "perfect" -- and you're really never going to reach "perfect" anyway. So while you don't want to publish a post filled with factual inaccuracies and grammatical errors, it's not the end of the world if a typo slips through. It most likely won't affect how many views and leads it brings in.
 
 Plus, if you (or your readers) find the mistake, all of you have to do is update the post. No biggie. So give yourself a break once and a while -- perfect is the enemy of done.
-11. Blog consistently with the help of an editorial calendar.
-Mistake: You don't blog consistently.
+
+## Blog consistently with the help of an editorial calendar.
+
+**Mistake: You don't blog consistently.**
 
 By now, you've probably heard that the more often you blog, the more traffic you'll get to your website -- and the more subscribers and leads you'll generate from your posts. But as important as volume is, it's actually more important that you're blogging consistently when you're just getting started. If you publish five posts in one week and then only one or two in the next few weeks, it'll be hard to form a consistent habit. And inconsistency could really confuse your subscribers.
 
@@ -190,8 +192,10 @@ Solution: Schedule and publish blogs consistently.
 Use it to get into the habit of planning your blog post topics ahead of time, publishing consistently, and even scheduling posts in advance if you're finding yourself having a particularly productive week.
 
 Here at HubSpot, we typically use good ol' Google Calendar as our blog editorial calendar, which you can learn how to set up step-by-step here. Or, you can click here to download our free editorial calendar templates for Excel, Google Sheets, and Google Calendar, along with instructions on how to set them up.
-12. Focus on the long-term benefits of organic traffic.
-Mistake: You concentrate your analytics on immediate traffic.
+
+## Focus on the long-term benefits of organic traffic.
+
+**Mistake: You concentrate your analytics on immediate traffic.**
 
 Both beginner bloggers and advanced bloggers are guilty of this blogging mistake. If you concentrate your analysis on immediate traffic (traffic from email subscribers, RSS feeds, and social shares), then it's going to be hard to prove the enduring value of your blog. After all, the half-life for those sources is very brief -- usually a day or two.
 
@@ -203,8 +207,10 @@ Instead of focusing on the sudden decay of short-term traffic, focus instead on 
 To help drive this long-term traffic, make sure you're writing blog posts that have durable relevance on a consistent basis. These posts are called "evergreen" blog posts: They're relevant year after year with little or no upkeep, valuable, and high quality.
 
 Over time, as you write more evergreen content and build search authority, those posts will end up being responsible for a large percentage of your blog traffic. It all starts with a slight shift in perspective from daily traffic to cumulative traffic so you can reframe the way you view your blog and its ROI entirely.
-13. Add a subscription CTA to your blog and set up an email newsletter.
-Mistake: You aren't growing subscribers.
+
+## Add a subscription CTA to your blog and set up an email newsletter.
+
+**Mistake: You aren't growing subscribers.**
 
 Once you start blogging, it's easy to forget that blogging isn't just about getting new visitors to your blog. One of the biggest benefits of blogging is that it helps you steadily grow an email list of subscribers you can share your new content with. Each time you publish a new blog post, your subscribers will give you that initial surge of traffic -- which, in turn, will propel those posts' long-term success.
 
