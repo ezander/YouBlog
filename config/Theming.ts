@@ -1,4 +1,5 @@
 import { Platform } from "react-native"
+import {IconTheme}  from "../components/ThemedIcon"
 
 export const Colors = {
     primaryColor: "#4455DD",
@@ -17,8 +18,18 @@ export const FontFaces = {
 }
 
 
-export const HeaderTheme = {
-    backgroundColor: Platform.select({ios: "white", default: Colors.primaryColor })
+export const HeaderTheme : HeaderTheme = {
+    iconTheme: "material",
+    iconSize: 25,
+    fontSize: 20,
+    backgroundColor: Platform.select({ios: "white", default: Colors.primaryColor }),
+    iconColor: Platform.select({ios: Colors.primaryColor, default: "white"}),
+    textColor: Platform.select({ios: Colors.primaryColor, default: "white"})
+}
+
+export interface HeaderTheme {
+    iconTheme: IconTheme,
+    [others: string]: any
 }
 
 
@@ -30,8 +41,12 @@ export const BlogFontSizes = {
 }
 export type BlogFontScale = keyof typeof BlogFontSizes
 
-export const BlogTheme = {
-    fontScale: "large" as BlogFontScale,
+export const BlogTheme : BlogTheme = {
+    fontScale: "large",
     textFontFamily: FontFaces.serif,
     codeFontFamily: FontFaces.monospace
+}
+export interface BlogTheme {
+    fontScale: BlogFontScale,
+    [others: string]: any
 }

@@ -7,6 +7,7 @@ import NavHeader from './components/NavHeader';
 import { LinkingNavigationContainer } from './LinkingNavigationContainer';
 import BlogListScreen from './screens/BlogListScreen';
 import BlogReadScreen from './screens/BlogReadScreen';
+import BlogEditScreen from './screens/BlogEditScreen';
 const Stack = createStackNavigator()
 
 const navigatorOptions = {
@@ -42,6 +43,10 @@ export default function App() {
             name="BlogEntry"
             component={BlogReadScreen}
             options={{ title: "Single Blog Entry" }} />
+          <Stack.Screen
+            name="BlogEdit"
+            component={BlogEditScreen}
+            options={{ title: "Edit Blog Entry" }} />
         </Stack.Navigator>
       </LinkingNavigationContainer>
     </ErrorBoundary >

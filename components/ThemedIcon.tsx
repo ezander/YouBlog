@@ -56,9 +56,14 @@ const mapDefIonicons: IconMap = {
     more: { name: "more-vert", type: "material" }
 }
 
-type IconTheme = "material" | "ionicon"
+// Maybe those too?
+// * build (settings)
+// * favorite, favorit_border
+// * thumb_down, thumb_up
 
-type ThemedIconProps = IconProps & {
+export type IconTheme = "material" | "ionicon"
+
+export type ThemedIconProps = IconProps & {
     theme: IconTheme,
     name: keyof IconMap
 }
@@ -78,7 +83,7 @@ function getThemeMap(theme: IconTheme) {
     }
 }
 
-function ThemedIcon({ theme, name, ...props }: ThemedIconProps) {
+export function ThemedIcon({ theme, name, ...props }: ThemedIconProps) {
     const {type, map} = getThemeMap(theme)
     const iconName = map[name] 
     if( !iconName ) throw new Error(`IconName ${name} not defined.`)

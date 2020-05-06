@@ -84,8 +84,8 @@ function markdownStyles(
             styles[key].fontSize = Math.round(fontSize * scaleFactor)
         }
     }
-    console.log("Factor: ", scaleFactor)
-    console.log("styles: ", styles)
+    // console.log("Factor: ", scaleFactor)
+    // console.log("styles: ", styles)
 
     return StyleSheet.create(styles)
 }
