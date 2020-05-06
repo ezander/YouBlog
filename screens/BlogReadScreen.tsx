@@ -10,6 +10,7 @@ import firebaseConfig from '../firebaseConfig.json'
 import { useAsyncAction } from '../src/AsyncTools'
 import { getDocument } from '../src/FirestoreTools'
 import Markdown from '../components/Markdown'
+import { BlogTheme, BlogFontSizes } from '../config/Theming'
 async function fetchBlogEntry(id: string): Promise<BlogEntryWithId> {
     return getDocument("blog_entries", id, {}, firebaseConfig)
 }
@@ -51,18 +52,19 @@ function BlogReadScreen({ navigation, route }) {
         title: title,
     })
 
+    const fontSize = BlogFontSizes[BlogTheme.fontScale]
+    const codeFF = BlogTheme.codeFontFamily
+    const textFF = BlogTheme.textFontFamily
 
-    const fontSizes = {
-        small: 10, normal: 14, large: 18, xlarge: 22
-    }
-    const fontSize = fontSizes.large
     const header = `\n # ${title} \n _${author}_ | _${moment(date).format('LLL')}_ \n`
     return (<Screen>
         <ScrollView style={styles.blogContainer}>
             <Text></Text>
             {
                 title &&
-                <Markdown fontSize={fontSize}>{header}</Markdown>
+                <Markdown fontSize={fontSize} textFontFamily={textFF} codeFontFamily={codeFF}>
+                    {header}
+                </Markdown>
             }
             {
                 image_url &&
@@ -74,7 +76,9 @@ function BlogReadScreen({ navigation, route }) {
             {
                 (!hasRun || isWorking) ?
                     <LoadingScreen text={'Loading blog entry...'} /> :
-                    <Markdown fontSize={fontSize}>{text}</Markdown>
+                    <Markdown fontSize={fontSize} textFontFamily={textFF} codeFontFamily={codeFF}>
+                        {text}
+                    </Markdown>
             }
         </ScrollView>
     </Screen>)

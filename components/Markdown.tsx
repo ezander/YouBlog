@@ -1,35 +1,36 @@
 import React from 'react'
-// import MarkdownRenderer, {
-//     MarkdownProps as MarkdownRendererProps, 
-//     styles as defaultMarkdownStyles } 
-//     from 'react-native-markdown-renderer'
 import MarkdownRenderer, {
     MarkdownProps as MarkdownRendererProps,
     styles as defaultMarkdownStyles
 } from 'react-native-markdown-display'
 import { Platform, StyleSheet } from 'react-native'
-
+import { FontFaces } from '../config/Theming'
 
 export type MarkdownProps = MarkdownRendererProps & {
     fontSize?: number,
-    updateStyles?: any,
+    textFontFamily?: string,
+    codeFontFamily?: string,
     children: string | string[]
 }
 
-export default function Markdown<Props>({ fontSize, updateStyles, children, ...props }: MarkdownProps) {
+export default function Markdown<Props>({ 
+    fontSize, codeFontFamily, textFontFamily, children, ...props }: MarkdownProps) {
     const text = (typeof children === "string") ? children : children.join("\n")
-    return <MarkdownRenderer style={markdownStyles(fontSize)} {...props}>
+
+    const style = markdownStyles(fontSize, textFontFamily, codeFontFamily)
+    return <MarkdownRenderer style={style} {...props}>
         {text}
     </MarkdownRenderer>
 }
 
 
-const markdownStyles = (baseFontSize = 14) => {
-    const factor = baseFontSize / 14
-    const fontFamilyCode = Platform.select({ android: "monospace", ios: "Courier" })
-    const fontFamilyBase = Platform.select({ android: "serif", ios: "Times New Roman" })
+function markdownStyles(
+    baseFontSize: number = 14,
+    textFontFamily: string = FontFaces.serif,
+    codeFontFamily: string = FontFaces.monospace
+) {
     const codeProps = {
-        fontFamily: fontFamilyCode,
+        fontFamily: codeFontFamily,
         backgroundColor: "#F0F0D0"
     }
 
@@ -39,13 +40,13 @@ const markdownStyles = (baseFontSize = 14) => {
         },
         code_inline: {
             ...codeProps,
-            backgroundColor: "#F3F3F3"
+            // backgroundColor: "#F3F3F3"
         },
         fence: {
             ...codeProps
         },
         text: {
-            fontFamily: fontFamilyBase,
+            fontFamily: textFontFamily,
         },
         heading1: {
             fontSize: 24,
@@ -65,7 +66,7 @@ const markdownStyles = (baseFontSize = 14) => {
         },
         heading6: {
             fontSize: 14,
-            fontStyle: 'italic',            
+            fontStyle: 'italic',
         },
         body: {
             fontSize: 14,
@@ -76,13 +77,14 @@ const markdownStyles = (baseFontSize = 14) => {
         styles[key] = { ...defaultMarkdownStyles[key], ...styles[key] }
     }
 
+    const scaleFactor = baseFontSize / 14
     for (const key in styles) {
         if ("fontSize" in styles[key]) {
             const fontSize = styles[key].fontSize
-            styles[key].fontSize = Math.round(fontSize * factor)
+            styles[key].fontSize = Math.round(fontSize * scaleFactor)
         }
     }
-    console.log("Factor: ", factor)
+    console.log("Factor: ", scaleFactor)
     console.log("styles: ", styles)
 
     return StyleSheet.create(styles)
