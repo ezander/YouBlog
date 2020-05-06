@@ -2,13 +2,13 @@ This post is an extract from my presentation at the recent [GoCon spring confere
 
 * * *
 
-# Errors are just values
+## Errors are just values
 
 I’ve spent a lot of time thinking about the best way to handle errors in Go programs. I really wanted there to be a single way to do error handling, something that we could teach all Go programmers by rote, just as we might teach mathematics, or the alphabet.
 
 However, I have concluded that there is no single way to handle errors. Instead, I believe Go’s error handling can be classified into the three core strategies.
 
-# Sentinel errors
+## Sentinel errors
 
 The first category of error handling is what I call _sentinel errors_.
 
@@ -26,7 +26,7 @@ Using sentinel values is the least flexible error handling strategy, as the call
 
 Even something as well meaning as using `fmt.Errorf` to add some context to the error will defeat the caller’s equality test. Instead the caller will be forced to look at the output of the `error`‘s `Error` method to see if it matches a specific string.
 
-## Never inspect the output of error.Error
+### Never inspect the output of error.Error
 
 As an aside, I believe you should never inspect the output of the `error.Error` method. The `Error` method on the `error` interface exists for humans, not code.
 
@@ -34,7 +34,7 @@ The contents of that string belong in a log file, or displayed on screen. You sh
 
 I know that sometimes this isn’t possible, and as someone pointed out on twitter, this advice doesn’t apply to writing tests. Never the less, comparing the string form of an error is, in my opinion, a code smell, and you should try to avoid it.
 
-## Sentinel errors become part of your public API
+### Sentinel errors become part of your public API
 
 If your public function or method returns an error of a particular value then that value must be public, and of course documented. This adds to the surface area of your API.
 
@@ -42,7 +42,7 @@ If your API defines an interface which returns a specific error, all implementat
 
 We see this with `io.Reader`. Functions like `io.Copy` require a reader implementation to return _exactly_ `io.EOF` to signal to the caller _no more data, but that isn’t an error_.
 
-## Sentinel errors create a dependency between two packages
+### Sentinel errors create a dependency between two packages
 
 By far the worst problem with sentinel error values is they create a source code dependency between two packages. As an example, to check if an error is equal to `io.EOF`, your code must import the `io` package.
 
@@ -50,13 +50,13 @@ This specific example does not sound so bad, because it is quite common, but ima
 
 Having worked in a large project that toyed with this pattern, I can tell you that the spectre of bad design–in the form of an import loop–was never far from our minds.
 
-## Conclusion: avoid sentinel errors
+### Conclusion: avoid sentinel errors
 
 So, my advice is to avoid using sentinel error values in the code you write. There are a few cases where they are used in the standard library, but this is not a pattern that you should emulate.
 
 If someone asks you to export an error value from your package, you should politely decline and instead suggest an alternative method, such as the ones I will discuss next.
 
-# Error types
+## Error types
 
 Error types are the second form of Go error handling I want to discuss.
 
@@ -110,7 +110,7 @@ type PathError struct {
 func (e *PathError) Error() string
 ```
 
-## Problems with error types
+### Problems with error types
 
 So the caller can use a type assertion or type switch, error types must be made public.
 
@@ -118,13 +118,13 @@ If your code implements an interface whose contract requires a specific error ty
 
 This intimate knowledge of a package’s types creates a strong coupling with the caller, making for a brittle API.
 
-## Conclusion: avoid error types
+### Conclusion: avoid error types
 
 While error types are better than sentinel error values, because they can capture more context about what went wrong, error types share many of the problems of error values.
 
 So again my advice is to avoid error types, or at least, avoid making them part of your public API.
 
-# Opaque errors
+## Opaque errors
 
 Now we come to the third category of error handling. In my opinion this is the most flexible error handling strategy as it requires the least coupling between your code and caller.
 
@@ -146,7 +146,7 @@ func fn() error {
 
 For example, `Foo`‘s contract makes no guarantees about what it will return in the context of an error. The author of `Foo` is now free to annotate errors that pass through it with additional context without breaking its contract with the caller.
 
-## Assert errors for behaviour, not type
+### Assert errors for behaviour, not type
 
 In a small number of cases, this binary approach to error handling is not sufficient.
 
@@ -174,7 +174,7 @@ If the error does implement `Temporary`, then perhaps the caller can retry the o
 
 The key here is this logic can be implemented without importing the package that defines the error or indeed knowing anything about `err`‘s underlying type–we’re simply interested in its behaviour.
 
-# Don’t just check errors, handle them gracefully
+## Don’t just check errors, handle them gracefully
 
 This brings me to a second Go proverb that I want to talk about; don’t just check errors, handle them gracefully. Can you suggest some problems with the following piece of code?
 
@@ -214,7 +214,7 @@ func AuthenticateRequest(r *Request) error {
 
 But as we saw earlier, this pattern is incompatible with the use of sentinel error values or type assertions, because converting the error value to a string, merging it with another string, then converting it back to an error with `fmt.Errorf` breaks equality and destroys any context in the original error.
 
-## Annotating errors
+### Annotating errors
 
 I’d like to suggest a method to add context to errors, and to do that I’m going to introduce a simple package. The code is online at [`github.com/pkg/errors`](https://godoc.org/github.com/pkg/errors). The errors package has two main functions:
 
@@ -308,7 +308,7 @@ func IsTemporary(err error) bool {
 
 In operation, whenever you need to check an error matches a specific value or type, you should first recover the original error using the `errors.Cause` function.
 
-# Only handle errors once
+## Only handle errors once
 
 Lastly, I want to mention that you should only handle errors once. Handling an error means inspecting the error value, and making a decision.
 
@@ -349,7 +349,7 @@ func Write(w io.Write, buf []byte) error {
 
 Using the `errors` package gives you the ability to add context to error values, in a way that is inspectable by both a human and a machine.
 
-# Conclusion
+## Conclusion
 
 In conclusion, errors are part of your package’s public API, treat them with as much care as you would any other part of your public API.
 

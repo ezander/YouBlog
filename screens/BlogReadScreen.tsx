@@ -70,15 +70,17 @@ function BlogReadScreen({ navigation, route }) {
     })
 
 
-    const fontSize = 14
+    const fontSizes = {
+        small: 10, normal: 14, large: 18, xlarge: 22
+    }
+    const fontSize = fontSizes.large
+    const header = `\n # ${title} \n _${author}_ | _${moment(date).format('LLL')}_ \n`
     return (<Screen>
         <ScrollView style={styles.blogContainer}>
+            <Text></Text>
             {
                 title &&
-                <Markdown fontSize={fontSize} updateStyle={{}}>
-                    # {title} {'\n\n'}
-                _{author}_ | _{moment(date).format('LLL')}_ {'\n'}
-                </Markdown>
+                <Markdown fontSize={fontSize}>{header}</Markdown>
             }
             {
                 image_url &&
@@ -90,7 +92,7 @@ function BlogReadScreen({ navigation, route }) {
             {
                 (!hasRun || isWorking) ?
                     <LoadingScreen text={'Loading blog entry...'} /> :
-                    <Markdown fontSize={fontSize} updateStyle={{}}>{text}</Markdown>
+                    <Markdown fontSize={fontSize}>{text}</Markdown>
             }
         </ScrollView>
     </Screen>)

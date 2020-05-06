@@ -6,7 +6,7 @@ Such kind of situations can be frustrating for user if not handled properly with
 
 Below mentioned are few tips that when followed, error messages can also provide a pleasant experience to the user.
 
-# 1\. Be Clear And Not Ambiguous
+## 1\. Be Clear And Not Ambiguous
 
 Write error message in clear and simple language. User should be able to understand the problem while reading an error message.
 
@@ -14,7 +14,7 @@ If error message is ambiguous and user is not able to find the reason of message
 
 
 
-# 2\. Be Short And Meaningful
+## 2\. Be Short And Meaningful
 
 Error message should contain necessary information. Most of the time user is not willing to read a long story.
 
@@ -23,7 +23,7 @@ Be concise and write a short description that is meaningful for user and gives h
 Avoid using redundant words and do not over communicate the problem.
 
 
-# 3\. Don’t Use Technical Jargons
+## 3\. Don’t Use Technical Jargons
 
 Most of the users are not interested in technical details of the problem occurred. If a message contains technical terms or jargons, the user gets confused.
 
@@ -31,7 +31,7 @@ Try to use simple and plain language without referring to implementation details
 
 If there is a need to mention technical and complex details, then place them in a troubleshooting section and direct the user so that he can resolve the issue quickly.
 
-# 4\. Be Humble — Don’t Blame User
+## 4\. Be Humble — Don’t Blame User
 
 A good error message is humble. It conveys the issues gracefully to its user without blaming him for his actions.
 
@@ -40,7 +40,7 @@ The user can perform an incorrect action again and again. But the design’s res
 > “A good way to incorporate more human tone to your error messages is to think about explaining it out loud to someone. How does it sound when you speak it in conversation.” — [Sonia Gregory](https://freshsparks.com/user-experience-tips-best-error-messages/)
 
 
-# 5\. Avoid Negative Words
+## 5\. Avoid Negative Words
 
 There are certain negative words that need to avoid on user interface. Since error messages are based on some unusual actions of user, there is a chance that system displays something disrespectful for user.
 
@@ -51,7 +51,7 @@ John Ekman gives a very good [example](http://uxmag.com/articles/are-you-saying-
 > So even though the seat availability and possibility for an upgrade was the same, I got two completely different answers: one “yes” and one “no.””
 
 
-# 6\. Give Direction to User
+## 6\. Give Direction to User
 
 A good error message has three parts: problem identification, cause details if helpful, and a solution if possible.
 
@@ -60,7 +60,7 @@ Whenever an error occurs, user wants to fix it as soon as possible. The error me
 The message can also direct the user to some other place or person from where he can get detailed help about the problem.
 
 
-# 7\. Be Specific And Relevant
+## 7\. Be Specific And Relevant
 
 The message should contain relevant information so that user can relate specified location and options easily.
 
@@ -69,14 +69,14 @@ Point out the exact location of problem — where user should go and and what st
 If error message contains vague information, the user will get confused and it becomes difficult for him to remove the error.
 
 
-# 8\. Avoid Uppercase Text
+## 8\. Avoid Uppercase Text
 
 [Upper case text](https://uxdworld.com/2017/12/30/all-caps-on-ui-good-or-bad/) is difficult to read it gives an impact of shouting on user.
 
 Error message is a place where user is informed about some critical scenario, so using upper case text can give him a feeling of discouragement.
 
 
-# 9\. Provide Appropriate Actions
+## 9\. Provide Appropriate Actions
 
 Actions are important part of an error message. Appropriate actions provide guidance to user about the next step.
 
@@ -87,7 +87,7 @@ Actions are possible routes to solve the problem. A message can contain one or m
 If user has to perform specific actions to remove the error, then use the same action name as button title.
 
 
-# 10\. Use Progressive Disclosure Approach
+## 10\. Use Progressive Disclosure Approach
 
 If there is detailed information related to a message that user may not want to see, then place it in Show/Hide section. It can be useful for an advanced user that may want to know about technical details.
 
@@ -95,7 +95,7 @@ Just make sure to place least needed information in these sections as most of th
 
 
 
-# 11\. Use Proper Placement
+## 11\. Use Proper Placement
 
 It is very important to place an error message closer to the area from where it belongs to. User should not have to look here and there after reading the message that what it talks about.
 
@@ -106,7 +106,7 @@ Otherwise user will first find the erroneous control and then resolve it.
 An error message should be visible and noticeable. A message appearing on a screen should display in current view even user has scrolled the view to top or bottom.
 
 
-# Conclusion
+## Conclusion
 
 > “The best error message is the one that never shows up” — Thomas Fuchs
 
