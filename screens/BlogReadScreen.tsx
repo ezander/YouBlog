@@ -3,15 +3,13 @@ import React, { useCallback } from 'react'
 import { ActivityIndicator, Platform, StyleSheet } from 'react-native'
 import { Image, Text, Card } from 'react-native-elements'
 import { ScrollView } from 'react-native-gesture-handler'
-import Markdown from 'react-native-markdown-renderer'
 import { withErrorBoundary } from '../components/ErrorBoundary'
 import LoadingScreen from '../components/LoadingScreen'
 import Screen from '../components/Screen'
-import TextScreen from '../components/TextScreen'
 import firebaseConfig from '../firebaseConfig.json'
 import { useAsyncAction } from '../src/AsyncTools'
 import { getDocument } from '../src/FirestoreTools'
-import {styles as defaultMarkdownStyles} from 'react-native-markdown-renderer/src/lib/styles'
+import Markdown from '../components/Markdown'
 async function fetchBlogEntry(id: string): Promise<BlogEntryWithId> {
     return getDocument("blog_entries", id, {}, firebaseConfig)
 }
@@ -77,7 +75,7 @@ function BlogReadScreen({ navigation, route }) {
         <ScrollView style={styles.blogContainer}>
             {
                 title &&
-                <Markdown style={markdownStyles(fontSize)}>
+                <Markdown fontSize={fontSize} updateStyle={{}}>
                     # {title} {'\n\n'}
                 _{author}_ | _{moment(date).format('LLL')}_ {'\n'}
                 </Markdown>
@@ -92,8 +90,7 @@ function BlogReadScreen({ navigation, route }) {
             {
                 (!hasRun || isWorking) ?
                     <LoadingScreen text={'Loading blog entry...'} /> :
-                    <Markdown style={markdownStyles(fontSize)}>{text}</Markdown>
-
+                    <Markdown fontSize={fontSize} updateStyle={{}}>{text}</Markdown>
             }
         </ScrollView>
     </Screen>)
@@ -107,30 +104,3 @@ const styles = StyleSheet.create({
     },
 })
 
-const markdownStyles = (baseFontSize = 14) => {
-    const factor = baseFontSize / 14
-    const fontFamilyCode = Platform.select({ android: "monospace", ios: "Courier" })
-    const fontFamilyBase = Platform.select({ android: "serif", ios: "Times New Roman" })
-
-    const def = defaultMarkdownStyles;
-    
-
-    return StyleSheet.create({
-        codeBlock: {
-            ...def.codeBlock, 
-            fontFamily: fontFamilyCode
-        },
-        codeInline: {
-            ...def.codeInline, 
-            fontFamily: fontFamilyCode
-        },
-        inlineCode: {
-            ...def.inlineCode, 
-            fontFamily: fontFamilyCode
-        },
-        text: {
-            ...def.text,
-            fontFamily: fontFamilyBase
-        }
-    })
-}
