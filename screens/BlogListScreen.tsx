@@ -1,14 +1,13 @@
 import moment from 'moment';
-import React, { useCallback, useState } from 'react';
-import { FlatList, TouchableHighlight, View } from 'react-native';
+import React from 'react';
+import { FlatList, View } from 'react-native';
 import { ListItem, Text } from 'react-native-elements';
 import { withErrorBoundary } from '../components/AppErrorBoundary';
+import ErrorScreen from '../components/ErrorScreen';
 import Screen from '../components/Screen';
-import TextScreen from '../components/TextScreen';
 import firebaseConfig from '../firebaseConfig.json';
 import { useAsyncAction } from '../src/AsyncTools';
 import { listDocuments } from '../src/FirestoreTools';
-import ErrorScreen from '../components/ErrorScreen';
 
 async function fetchBlogEntries(): Promise<BlogList> {
     const mask = ["title", "author", "date", "image_url"]
@@ -36,18 +35,18 @@ function BlogListScreen({ navigation }: { navigation: any }) {
     const { hasRun, isWorking, error, result, doRefresh } = useAsyncAction<BlogList>(fetchBlogEntries)
 
     if (error) {
-        return <ErrorScreen text="An error occurred loading blog entries" error={error} onRetry={doRefresh}/>
+        return <ErrorScreen text="An error occurred loading blog entries" error={error} onRetry={doRefresh} />
     }
 
     const entrySelected = (entry: BlogEntryWithId) => {
         const blog = entry.document
-        navigation.navigate("BlogEntry", { 
-            id: entry.id, 
-            title: blog.title, 
+        navigation.navigate("BlogEntry", {
+            id: entry.id,
+            title: blog.title,
             date_str: blog.date.toISOString(),
             author: blog.author,
             image_url: blog.image_url
-         })
+        })
     }
 
     return <Screen>
