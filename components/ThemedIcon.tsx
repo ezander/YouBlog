@@ -30,9 +30,9 @@ const mapMaterial: IconMap = {
     share: "share",
     cancel: "close",
     done: "done",
-    log_in: "login-variant", // "login"
-    log_out: "logout-variant", // "logout"
-    sign_up: "person-add", //?really there
+    log_in: {name: "login", type: "material-community"},
+    log_out: {name: "logout", type: "material-community"},
+    sign_up: "person-add",
     more: "more-vert"
 }
 
