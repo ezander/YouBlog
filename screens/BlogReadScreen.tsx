@@ -1,6 +1,6 @@
 import moment from 'moment'
 import React, { useCallback } from 'react'
-import { ActivityIndicator, Platform, StyleSheet } from 'react-native'
+import { ActivityIndicator, Platform, StyleSheet, Share } from 'react-native'
 import { Image, Text, Card } from 'react-native-elements'
 import { ScrollView } from 'react-native-gesture-handler'
 import { withErrorBoundary } from '../components/AppErrorBoundary'
@@ -11,6 +11,8 @@ import { useAsyncAction } from '../src/AsyncTools'
 import { getDocument } from '../src/FirestoreTools'
 import Markdown from '../components/Markdown'
 import { BlogTheme, BlogFontSizes } from '../config/Theming'
+import { Item } from 'react-navigation-header-buttons'
+
 async function fetchBlogEntry(id: string): Promise<BlogEntryWithId> {
     return getDocument("blog_entries", id, {}, firebaseConfig)
 }
@@ -22,7 +24,7 @@ function BlogReadScreen({ navigation, route }) {
 
     const fetchThisBlogEntry = useCallback(fetchBlogEntry.bind(null, id), [id])
     const { hasRun, isWorking, error, result } = useAsyncAction<BlogEntryWithId>(fetchThisBlogEntry)
-    console.log("ASync: ", hasRun, isWorking, error)
+    // console.log("ASync: ", hasRun, isWorking, error)
 
     if (error) {
         // throw error;
@@ -39,17 +41,39 @@ function BlogReadScreen({ navigation, route }) {
     const entry = result as BlogEntryWithId
     const text = entry?.document?.text
     const { title, author, date_str, image_url } = from_params ? route.params : (entry?.document || {})
-
-    console.log("BRS: ", route.params, from_params)
-
-    console.log(id, { title, author, date_str, image_url })
-
     const date = from_params ? new Date(date_str) : entry?.document?.date
 
+    // console.log("BRS: ", route.params, from_params)
+    // console.log(id, { title, author, date_str, image_url })
     // console.log("Route: ", route)
     // console.log("Nav: ", navigation)
+
+
+
+    const handleLogin = () => {
+        navigation.navigate("Login")
+    }
+    const handleEdit = () => {
+        navigation.navigate("BlogEdit", { id, title, author, image_url })
+    }
+    const editAllowed = true // check whether logged in and owner of entry
+
+    const handleShare = () => {
+        const path = `post/${id}`
+        const url = "https://expo.io/@ezander/YouBlog/" + path
+        const message = `Read this! \n "${url}"`
+        Share.share({
+            title: "Share this blog post", message, url
+        })
+    }
+
     navigation.setOptions({
         title: title,
+        extraHeaderItems: [
+            editAllowed && <Item key="edit" title="Edit" iconName="edit" onPress={handleEdit} />,
+            <Item key="share" title="Share" iconName="share" onPress={handleShare} />,
+            <Item key="login" title="Login" iconName="sign_up" onPress={handleLogin} />
+        ]
     })
 
     const fontSize = BlogFontSizes[BlogTheme.fontScale]

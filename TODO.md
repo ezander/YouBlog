@@ -2,14 +2,14 @@
 
 ## To be done
 
-* Error boundary component around App
 * Authentication: Login, Logoff, SignUp, Change Profile
-* Editing, Modifying and Deleting of blog posts
-* Deep links
-* Sharing feature
-
+* Creating, Editing, and Deleting of blog posts
 
 ## Done
+
+* Error boundary component around App
+* Deep links
+* Sharing feature
 
 ## Ideas
 

@@ -1,4 +1,4 @@
-import { StackHeaderProps } from '@react-navigation/stack';
+import { StackHeaderProps, StackNavigationOptions } from '@react-navigation/stack';
 import React from 'react';
 import { Platform, TouchableOpacity, Share } from 'react-native';
 import { Header, Icon, Avatar } from 'react-native-elements';
@@ -10,13 +10,16 @@ import { Linking } from 'expo';
 
 
 
+export type ExtendedNavigationOptions = StackNavigationOptions & {
+    onOpenMenu?: any
+    extraHeaderItems?: Array<JSX.Element>
+}
 
 
-
-function NavHeader({ headerProps, onOpenMenu }: { headerProps: StackHeaderProps, onOpenMenu?: any }) {
+function NavHeader({ headerProps }: { headerProps: StackHeaderProps }) {
     const { scene, previous, navigation } = headerProps
 
-    const { options } = scene.descriptor;
+    const options = scene.descriptor.options as ExtendedNavigationOptions;
     let title =
         options.headerTitle !== undefined
             ? options.headerTitle
@@ -24,8 +27,15 @@ function NavHeader({ headerProps, onOpenMenu }: { headerProps: StackHeaderProps,
                 ? options.title
                 : scene.route.name;
 
+    const onOpenMenu = options.onOpenMenu
     const leftHeaderItems: Array<JSX.Element> = []
     const rightHeaderItems: Array<JSX.Element> = []
+
+    if (options.extraHeaderItems) {
+        for (const item of options.extraHeaderItems) rightHeaderItems.push(item)
+    }
+
+
 
     if (previous) {
         leftHeaderItems.push(
@@ -37,40 +47,6 @@ function NavHeader({ headerProps, onOpenMenu }: { headerProps: StackHeaderProps,
             <Item key="menu" title="Menu" iconName="menu" onPress={onOpenMenu} />
         )
     }
-
-    // console.log(scene.route)
-    const route = scene.route
-    const name = route.name
-    const params: any = route.params
-    const edit = true // check whether logged in and owner of entry
-
-    if (name === "BlogEntry" && edit && params) {
-        const handlePress = () => { 
-            navigation.navigate("BlogEdit", { 
-                id: params.id, 
-                title: params.title, 
-                author: params.author,
-                image_url: params.image_url
-             })
-        }
-        rightHeaderItems.push(<Item key="edit" title="Edit" iconName="edit" onPress={handlePress} />)
-    }
-
-    if (name === "BlogEntry" && params && params.id) {
-        // getPathFromState
-        // @ts -ignore
-        const path = 'post/' + params?.id
-        console.log("makeUrl: ", Linking.makeUrl(path))
-        // Linking.
-        const url = "https://expo.io/@ezander/YouBlog/" + path
-        const message = `Read this! \n "${url}"`
-
-        const handlePress = () => Share.share({
-            title: "Share this blog post", message, url
-        })
-        rightHeaderItems.push(<Item key="share" title="Share" iconName="share" onPress={handlePress} />)
-    }
-
 
     // rightHeaderItems.push(<Avatar rounded title="EZ" key="avatar" />)
 

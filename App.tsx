@@ -8,6 +8,7 @@ import { LinkingNavigationContainer } from './LinkingNavigationContainer';
 import BlogListScreen from './screens/BlogListScreen';
 import BlogReadScreen from './screens/BlogReadScreen';
 import BlogEditScreen from './screens/BlogEditScreen';
+import LoginScreen from './screens/SignUpScreen';
 const Stack = createStackNavigator()
 
 const navigatorOptions = {
@@ -47,6 +48,10 @@ export default function App() {
             name="BlogEdit"
             component={BlogEditScreen}
             options={{ title: "Edit Blog Entry" }} />
+          <Stack.Screen
+            name="Login"
+            component={LoginScreen}
+            options={{ title: "Log in or Sign up" }} />
         </Stack.Navigator>
       </LinkingNavigationContainer>
     </ErrorBoundary >

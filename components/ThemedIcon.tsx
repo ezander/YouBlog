@@ -14,7 +14,10 @@ type IconMap = {
     share: IconDef,
     cancel: IconDef,
     done: IconDef,
-    more: IconDef
+    more: IconDef,
+    log_in: IconDef,
+    log_out: IconDef,
+    sign_up: IconDef
 }
 
 const mapMaterial: IconMap = {
@@ -27,6 +30,9 @@ const mapMaterial: IconMap = {
     share: "share",
     cancel: "close",
     done: "done",
+    log_in: "login-variant", // "login"
+    log_out: "logout-variant", // "logout"
+    sign_up: "person-add", //?really there
     more: "more-vert"
 }
 
@@ -40,6 +46,9 @@ const mapIosIonicons: IconMap = {
     share: "ios-share",
     cancel: "ios-close",
     done: "ios-checkmark", //"ios-done-all"
+    log_in: "ios-log-in",
+    log_out: "ios-log-out",
+    sign_up: "ios-person-add",
     more: { name: "more-vert", type: "material" }
 }
 
@@ -53,6 +62,9 @@ const mapDefIonicons: IconMap = {
     share: "md-share",
     cancel: "md-close",
     done: "md-checkmark", //"ios-done-all"
+    log_in: "md-log-in",
+    log_out: "md-log-out",
+    sign_up: "md-person-add",
     more: { name: "more-vert", type: "material" }
 }
 

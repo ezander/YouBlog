@@ -33,7 +33,6 @@ export default function App() {
 
 
   return (
-    <NavigationContainer>
       <Stack.Navigator>
         {
           !hasRun || isWorking ?
@@ -43,6 +42,5 @@ export default function App() {
               <Stack.Screen name="Blog entries" component={BlogListScreen} />
         }
       </Stack.Navigator>
-    </NavigationContainer>
   );
 }
