@@ -85,7 +85,7 @@ export async function getUserData(
 
     try {
         const response = await axios.post(url, body)
-        console.log(response.data)
+        // console.log(response.data)
         return response.data.users[0] as UserDataResponseType
     }
     catch (error) {
@@ -119,7 +119,7 @@ export async function updateProfile(
     try {
         const response = await axios.post(url, body)
         console.log(response.data)
-        return response.data.users[0] as UserDataResponseType
+        return response.data as UserDataResponseType
     }
     catch (error) {
         throw parseError(error)

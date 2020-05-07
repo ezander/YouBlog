@@ -6,7 +6,7 @@
 var fs = require('fs');
 import * as Firestore from '../src/FirestoreTools'
 import * as Auth from '../src/FirebaseAuthTools'
-
+import { verifyIdToken } from '../src/FirebaseTokens'
 //@ts-ignore
 console = console.Console({ stdout: process.stdout, stderr: process.stderr, colorMode: true, inspectOptions: { depth: 56 } })
 
@@ -24,8 +24,8 @@ function readFile(filename: string) {
 
 enum DocMode { LEAVE, RECREATE, UPDATE };
 
-// const mode: DocMode = DocMode.RECREATE
-const mode: DocMode = DocMode.UPDATE
+const mode: DocMode = DocMode.RECREATE
+// const mode: DocMode = DocMode.UPDATE
 
 async function processFile(
     author: string,
@@ -38,25 +38,35 @@ async function processFile(
     const id = filename.endsWith(".md") ? filename.slice(0, -3) : filename
     const date = new Date(date_str + "T00:00:00Z")
     const text = readFile(filename)
-    const post = { author, author_id, title, date, text, image_url }
     // post.extra = { foo: "bar", bi: [1, 3, new Date(), { baz: 3, d: 3.141, bool: true, bf: false, nl: null }] }
 
-    console.log("File: ", filename)
+    // const localId = registeredUsers[author]?.localId
+    const user = registeredUsers[author]
+    if (!user) {
+        console.log(`User ${author} not registered`)
+        return null
+    }
 
-    let exist = await Firestore.hasDocument(COLLECTION, id, "author", firebaseConfig)
+    const localId = user.localId
+    const token = user.idToken
+
+    const post = { author, author_id: localId, title, date, text, image_url }
+
+
+    let exist = await Firestore.hasDocument(COLLECTION, id, "author", firebaseConfig, token)
 
     if (exist && mode === DocMode.RECREATE) {
-        await Firestore.deleteDocument(COLLECTION, id, {}, firebaseConfig)
+        await Firestore.deleteDocument(COLLECTION, id, {}, firebaseConfig, token)
         exist = false;
     }
     if (!exist) {
-        const doc = await Firestore.createDocument(COLLECTION, post, id, firebaseConfig)
+        const doc = await Firestore.createDocument(COLLECTION, post, id, firebaseConfig, token)
     }
     else if (mode === DocMode.UPDATE) {
-        const doc = await Firestore.patchDocument(COLLECTION, post, id, firebaseConfig)
+        const doc = await Firestore.patchDocument(COLLECTION, post, id, firebaseConfig, token)
     }
     try {
-        const doc = await Firestore.getDocument(COLLECTION, id, {}, firebaseConfig)
+        const doc = await Firestore.getDocument(COLLECTION, id, {}, firebaseConfig, token)
         doc.document.text = doc.document.text.slice(0, 100)
         console.log(doc)
         return doc
@@ -114,24 +124,50 @@ async function storeBlogEntries() {
 
 
 
-    const docs = await Firestore.listDocuments(COLLECTION, { mask: ["author", "date", "title"], orderBy: "date desc" }, firebaseConfig)
+    const token = registeredUsers["Alex Alabbas"].idToken
+    const docs = await Firestore.listDocuments(COLLECTION, { mask: ["author", "date", "title"], orderBy: "date desc" }, firebaseConfig, token)
     console.log(docs)
 }
 
-async function registerUser(email: string, password: string, displayName: string, photoUrl: string) {
-    const user = await Auth.signUpUser({email, password}, firebaseConfig)
-    console.log(user)
-    const foo = await Auth.updateProfile(user.idToken, {displayName, photoUrl}, firebaseConfig)
-    console.log(foo)
+const registeredUsers: any = {}
+
+async function registerUser(email: string, password: string, displayName: string, photoUrl?: string) {
+    let user: any = {}
+    try {
+        const userData = await Auth.signUpUser({ email, password }, firebaseConfig)
+        // console.log("SignUp: ", userData)
+        user = { ...user, ...userData }
+
+        const profileData = await Auth.updateProfile(userData.idToken, { displayName, photoUrl }, firebaseConfig)
+        // console.log("Profile: ", profileData)
+        user = { ...user, ...profileData }
+    }
+    catch (error) {
+        // console.error(error)
+        const userData = await Auth.logInUser({ email, password }, firebaseConfig)
+        // console.log("Login: ", userData)
+        user = { ...user, ...userData }
+    }
+    console.log(verifyIdToken(user.idToken))
+
+    registeredUsers[displayName] = user
+    // registeredUsers[email] = user
 }
 
 async function registerUsers() {
-    registerUser("aa@testmail.com", "test1234", "Alex Alabbas", "https://mediatemple.net/blog/wp-content/uploads/2019/10/IMG_8950-400x400.jpg")
+    await registerUser("aa@testmail.com", "test1234", "Alex Alabbas", "https://mediatemple.net/blog/wp-content/uploads/2019/10/IMG_8950-400x400.jpg")
+    await registerUser("cc@testmail.com", "test1234", "Chris Coyier")
+    await registerUser("ju@testmail.com", "test1234", "Jeffrey Uberstine")
+    await registerUser("lk@testmail.com", "test1234", "Lindsay Kolowich")
+    await registerUser("dc@testmail.com", "test1234", "Dave Cheney")
+    await registerUser("sm@testmail.com", "test1234", "Saadia Minhas")
+
+    console.log("Users: ", registeredUsers)
 }
 
 async function doIt() {
     await registerUsers()
-    //await storeBlogEntries()
+    await storeBlogEntries()
 }
 
 doIt()

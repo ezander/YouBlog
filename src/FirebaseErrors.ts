@@ -32,6 +32,19 @@ export function createError(response: AxiosResponse) {
                     resolutions: ["Try to login"],
                     title: "Authorization error"
                 })
+        case 403:
+            // console.log("Axios Error 403", response)
+            return new FirebaseError(
+                "Authorisation problem: " + message,
+                ErrorType.INVALID_DATA, // make this a subtype
+                {
+                    cause: "Insufficient Authorisation for this request",
+                    details: "The API call needs authorisation and you didn't login or are not allowed to perform this request." +
+                        `${message} (${code} - ${fb_status})`,
+                    data: { config, data },
+                    resolutions: ["Try to login"],
+                    title: "Authorization error"
+                })
         case 404:
             return new FirebaseError(
                 "Resource not found: " + message,

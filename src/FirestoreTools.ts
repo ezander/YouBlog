@@ -148,15 +148,21 @@ export async function makeFirestoreRequest(
     collection: string | string[],
     params: undefined | URLSearchParams,
     data: undefined | any,
-    firebaseConfig: FirebaseConfig
+    firebaseConfig: FirebaseConfig,
+    token?: string
 ) {
     const base_url = "https://firestore.googleapis.com/v1/"
     const parent = makeParent(collection, firebaseConfig)
+    const headers: any = {}
+    if( token ) {
+        headers["Authorization"] = "Bearer " + token // access_token
+    }
 
     const config: AxiosRequestConfig = {
         url: base_url + parent,
-        method: method,
-        validateStatus: () => true
+        method,
+        validateStatus: () => true,
+        headers
     }
     if (params) config.params = params
     if (data) config.data = data
@@ -169,13 +175,14 @@ export async function createDocument(
     collection: string,
     object: any,
     documentId: undefined | string,
-    firebaseConfig: FirebaseConfig
+    firebaseConfig: FirebaseConfig,
+    token?: string
 ) {
     const params = new URLSearchParams()
     if (documentId) toFirestoreParams({ 'documentId': documentId }, params)
     const doc = toFirestoreDocument(object)
 
-    const data = await makeFirestoreRequest('post', collection, params, doc, firebaseConfig)
+    const data = await makeFirestoreRequest('post', collection, params, doc, firebaseConfig, token)
     return fromFirestoreDocument(data, makeParent(collection, firebaseConfig))
 }
 
@@ -183,13 +190,14 @@ export async function patchDocument(
     collection: string,
     object: any,
     documentId: string,
-    firebaseConfig: FirebaseConfig
+    firebaseConfig: FirebaseConfig,
+    token?: string
 ) {
     const params = new URLSearchParams()
     // if (documentId) toFirestoreParams({ 'documentId': documentId }, params)
     const doc = toFirestoreDocument(object)
 
-    const data = await makeFirestoreRequest('patch', [collection, documentId], params, doc, firebaseConfig)
+    const data = await makeFirestoreRequest('patch', [collection, documentId], params, doc, firebaseConfig, token)
     return fromFirestoreDocument(data, makeParent(collection, firebaseConfig))
 }
 
@@ -197,12 +205,13 @@ export async function getDocument(
     collection: string,
     documentId: string,
     options: { mask?: string[] },
-    firebaseConfig: FirebaseConfig
+    firebaseConfig: FirebaseConfig, 
+    token?: string
 ) {
     const params = new URLSearchParams()
     if (options.mask) toFirestoreParams({ mask: { fieldPaths: options.mask } }, params)
 
-    const data = await makeFirestoreRequest('get', [collection, documentId], params, undefined, firebaseConfig)
+    const data = await makeFirestoreRequest('get', [collection, documentId], params, undefined, firebaseConfig, token)
     return fromFirestoreDocument(data, makeParent(collection, firebaseConfig))
 }
 
@@ -210,10 +219,11 @@ export async function hasDocument(
     collection: string,
     documentId: string,
     testField: undefined | string,
-    firebaseConfig: FirebaseConfig
+    firebaseConfig: FirebaseConfig, 
+    token?: string
 ) {
     try {
-        await getDocument(collection, documentId, testField ? { mask: [testField] } : {}, firebaseConfig)
+        await getDocument(collection, documentId, testField ? { mask: [testField] } : {}, firebaseConfig, token)
         return true
     }
     catch (error) {
@@ -224,13 +234,14 @@ export async function hasDocument(
 export async function listDocuments(
     collection: string,
     options: { mask?: string[], orderBy?: string },
-    firebaseConfig: FirebaseConfig
+    firebaseConfig: FirebaseConfig,
+    token?: string
 ) {
     const params = new URLSearchParams()
     if (options.mask) toFirestoreParams({ mask: { fieldPaths: options.mask } }, params)
     if (options.orderBy) toFirestoreParams({ orderBy: options.orderBy }, params)
 
-    const data = await makeFirestoreRequest('get', collection, params, undefined, firebaseConfig)
+    const data = await makeFirestoreRequest('get', collection, params, undefined, firebaseConfig, token)
     return data.documents.map((doc: any) => fromFirestoreDocument(doc, makeParent(collection, firebaseConfig)))
 }
 
@@ -238,7 +249,8 @@ export async function deleteDocument(
     collection: string,
     documentId: string,
     options: {},
-    firebaseConfig: FirebaseConfig
+    firebaseConfig: FirebaseConfig,
+    token?: string
 ) {
-    return await makeFirestoreRequest('delete', collection + '/' + documentId, undefined, undefined, firebaseConfig)
+    return await makeFirestoreRequest('delete', collection + '/' + documentId, undefined, undefined, firebaseConfig, token)
 }

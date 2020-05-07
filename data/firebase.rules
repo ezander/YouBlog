@@ -1,0 +1,22 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Only the authors themselves may write to their posts
+    match /blog_entries/{entry} {
+      // Allow all to read posts
+      allow read: if true;
+
+      // Only logged in users may create documents
+      allow create: if request.auth.uid != null;
+
+			// Let only the authors change or delete their docs
+      allow update, delete: if request.auth.uid == resource.data.author_id;
+    }
+
+    // Deny access to all other documents (none here so far, just in case...)
+	match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

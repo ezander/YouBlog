@@ -85,6 +85,9 @@ export class HTTPError extends AppError {
 }
 
 export function parseError(error: any) {
+    if( !error.isAxiosError ) {
+        return error
+    }
     const { response } = error;
     const { status, statusText } = response
 
