@@ -1,4 +1,4 @@
-import { logInUser, signUpUser } from '../src/FirebaseAuthTools'
+import { logInUser, signUpUser, getUserData } from '../src/FirebaseAuthTools'
 import firebaseConfig from '../firebaseConfig.json'
 import { ReactReduxContext } from 'react-redux'
 
@@ -13,10 +13,14 @@ export function login(username: string, password: string) {
     return asyncLogin.bind(null, username, password)
 }
 
-async function asyncLogin(username: string, password: string, dispatch) {
+async function asyncLogin(username: string, password: string, dispatch: any) {
     const email = username
     try {
         const logInResponse = await logInUser({ email, password }, firebaseConfig)
+
+        const userData = await getUserData( logInResponse.idToken, firebaseConfig)
+        console.log("UserData: ", userData)
+        
         return dispatch({ type: AuthActionTypes.LOGIN, user: logInResponse })
     }
     catch (error) {
@@ -32,7 +36,7 @@ export function signUp(username: string, password: string) {
     return asyncSignUp.bind(null, username, password)
 }
 
-async function asyncSignUp(username: string, password: string, dispatch) {
+async function asyncSignUp(username: string, password: string, dispatch: any) {
     const email = username
     try {
         const signUpResponse = await signUpUser({ email, password }, firebaseConfig)

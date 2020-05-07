@@ -1,4 +1,4 @@
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 
 export function delay(delay: Number) {
   return new Promise(resolve => setTimeout(resolve, delay))
@@ -37,15 +37,19 @@ function asyncActionReducer<ResType>(state: AsyncActionState<ResType>, action: A
   }
 }
 interface ActionReducerType<ResType> {
-  (state: AsyncActionState<ResType>, action: AsyncAction<ResType>): AsyncActionState<ResType>  
+  (state: AsyncActionState<ResType>, action: AsyncAction<ResType>): AsyncActionState<ResType>
 }
 
 export function useAsyncAction<ResType>(func: () => Promise<ResType>) 
-: AsyncActionState<ResType>
+: AsyncActionState<ResType>  & {doRefresh: any}
 {
   const initialState = { hasRun: false, isWorking: false, error: undefined, result: undefined } as AsyncActionState<ResType>
   const reducer : ActionReducerType<ResType> = asyncActionReducer
   const [state, dispatch] = useReducer(reducer, initialState)
+
+  const [refresh, setRefresh] = useState(0)
+  const doRefresh = () => {setRefresh(refresh => refresh+1)}
+
 
   useEffect(() => {
     let componentIsMounted = true;
@@ -63,6 +67,6 @@ export function useAsyncAction<ResType>(func: () => Promise<ResType>)
     }
     doAsyncCall();
     return () => { componentIsMounted = false; };
-  }, [func, dispatch]);
-  return state;
+  }, [func, refresh, dispatch]);
+  return {...state, doRefresh};
 }

@@ -8,6 +8,7 @@ import TextScreen from '../components/TextScreen';
 import firebaseConfig from '../firebaseConfig.json';
 import { useAsyncAction } from '../src/AsyncTools';
 import { listDocuments } from '../src/FirestoreTools';
+import ErrorScreen from '../components/ErrorScreen';
 
 async function fetchBlogEntries(): Promise<BlogList> {
     const mask = ["title", "author", "date", "image_url"]
@@ -31,14 +32,11 @@ function BlogListEntry({ entry, onSelect }: { entry: BlogEntryWithId, onSelect: 
 }
 
 function BlogListScreen({ navigation }: { navigation: any }) {
-    const [refresh, setRefresh] = useState(0)
 
-    const doFetchBlogEntries = useCallback(() => fetchBlogEntries(), [refresh])
-
-    const { hasRun, isWorking, error, result } = useAsyncAction<BlogList>(doFetchBlogEntries)
+    const { hasRun, isWorking, error, result, doRefresh } = useAsyncAction<BlogList>(fetchBlogEntries)
 
     if (error) {
-        return <TextScreen text="An error occurred loading blog entries" />
+        return <ErrorScreen text="An error occurred loading blog entries" error={error} onRetry={doRefresh}/>
     }
 
     const entrySelected = (entry: BlogEntryWithId) => {
@@ -61,7 +59,7 @@ function BlogListScreen({ navigation }: { navigation: any }) {
                 data={result}
                 renderItem={({ item }) => <BlogListEntry entry={item} onSelect={() => entrySelected(item)} />}
                 refreshing={!hasRun || isWorking}
-                onRefresh={() => { setRefresh(refresh => refresh + 1) }}
+                onRefresh={doRefresh}
             />
         </View>
     </Screen>

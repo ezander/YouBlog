@@ -5,6 +5,7 @@
 
 var fs = require('fs');
 import * as Firestore from '../src/FirestoreTools'
+import * as Auth from '../src/FirebaseAuthTools'
 
 //@ts-ignore
 console = console.Console({ stdout: process.stdout, stderr: process.stderr, colorMode: true, inspectOptions: { depth: 56 } })
@@ -65,7 +66,7 @@ async function processFile(
     }
 }
 
-async function doIt() {
+async function storeBlogEntries() {
     // console.log(firebaseConfig)
     await processFile(
         "Alex Alabbas", "_aa",
@@ -116,5 +117,22 @@ async function doIt() {
     const docs = await Firestore.listDocuments(COLLECTION, { mask: ["author", "date", "title"], orderBy: "date desc" }, firebaseConfig)
     console.log(docs)
 }
+
+async function registerUser(email: string, password: string, displayName: string, photoUrl: string) {
+    const user = await Auth.signUpUser({email, password}, firebaseConfig)
+    console.log(user)
+    const foo = await Auth.updateProfile(user.idToken, {displayName, photoUrl}, firebaseConfig)
+    console.log(foo)
+}
+
+async function registerUsers() {
+    registerUser("aa@testmail.com", "test1234", "Alex Alabbas", "https://mediatemple.net/blog/wp-content/uploads/2019/10/IMG_8950-400x400.jpg")
+}
+
+async function doIt() {
+    await registerUsers()
+    //await storeBlogEntries()
+}
+
 doIt()
 

@@ -6,6 +6,7 @@ const initialState = {
     user: undefined
 }
 
+// @ts-ignore
 function authProducer(draft, action) {
     switch (action.type) {
         case AuthActionTypes.LOGIN:

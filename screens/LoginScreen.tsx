@@ -5,7 +5,7 @@ import Screen from '../components/Screen';
 import * as AuthActions from '../store/AuthActions';
 import { useIsLoggedIn, useAuthState } from '../components/AuthItem';
 
-
+// @ts-ignore
 export default function LoginScreen({navigation}) {
 
     const isLoggedIn = useIsLoggedIn()
