@@ -12,6 +12,7 @@ import { getDocument } from '../src/FirestoreTools'
 import Markdown from '../components/Markdown'
 import { BlogTheme, BlogFontSizes } from '../config/Theming'
 import { Item } from 'react-navigation-header-buttons'
+import { useAuthItem, useIsLoggedIn } from '../components/AuthItem'
 
 async function fetchBlogEntry(id: string): Promise<BlogEntryWithId> {
     return getDocument("blog_entries", id, {}, firebaseConfig)
@@ -21,6 +22,7 @@ async function fetchBlogEntry(id: string): Promise<BlogEntryWithId> {
 function BlogReadScreen({ navigation, route }) {
     const id = route.params.urlId || route.params.id
     const from_params = !route.params.urlId
+    const isLoggedIn = useIsLoggedIn()
 
     const fetchThisBlogEntry = useCallback(fetchBlogEntry.bind(null, id), [id])
     const { hasRun, isWorking, error, result } = useAsyncAction<BlogEntryWithId>(fetchThisBlogEntry)
@@ -56,7 +58,7 @@ function BlogReadScreen({ navigation, route }) {
     const handleEdit = () => {
         navigation.navigate("BlogEdit", { id, title, author, image_url })
     }
-    const editAllowed = true // check whether logged in and owner of entry
+    const editAllowed = isLoggedIn // check whether logged in and owner of entry
 
     const handleShare = () => {
         const path = `post/${id}`
@@ -67,12 +69,15 @@ function BlogReadScreen({ navigation, route }) {
         })
     }
 
+    const authItem = useAuthItem()
+
     navigation.setOptions({
         title: title,
         extraHeaderItems: [
             editAllowed && <Item key="edit" title="Edit" iconName="edit" onPress={handleEdit} />,
             <Item key="share" title="Share" iconName="share" onPress={handleShare} />,
-            <Item key="login" title="Login" iconName="sign_up" onPress={handleLogin} />
+            // <Item key="login" title="Login" iconName="sign_up" onPress={handleLogin} />
+            authItem
         ]
     })
 
