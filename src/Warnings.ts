@@ -7,14 +7,16 @@ export class Warnings {
     static ignoreList: Array<string> = []
 
     static ignore(toIgnore: string) {
-        YellowBox.ignoreWarnings([toIgnore]);
-        console.ignoredYellowBox = [toIgnore];
         Warnings.ignoreList.push(toIgnore)
+        YellowBox.ignoreWarnings(Warnings.ignoreList);
+        console.ignoredYellowBox = Warnings.ignoreList.slice();
     }
 
     static warn(message: string) {
         for( const ignored of Warnings.ignoreList ) {
-            if (message.indexOf(ignored) >= 0) return 
+            if (message.startsWith(ignored)) {
+                return 
+            }
         }
         Warnings._console.warn(message);
     }

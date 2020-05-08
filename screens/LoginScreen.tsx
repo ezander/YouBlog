@@ -21,23 +21,23 @@ export default function LoginScreen({ navigation }) {
         const email = "aa@testmail.com"
         const password = "test1234"
 
-        dispatch(AuthActions.login(email, password))
+        dispatch(AuthActions.doLogin(email, password))
     }
     function handleLoginCC() {
         const email = "cc@testmail.com"
         const password = "test1234"
 
-        dispatch(AuthActions.login(email, password))
+        dispatch(AuthActions.doLogin(email, password))
     }
     function handleLoginErr() {
         const email = "cc@testmail.com"
         const password = "test1235"
 
-        dispatch(AuthActions.login(email, password))
+        dispatch(AuthActions.doLogin(email, password))
     }
-    function handleSignUp() {
-        dispatch(AuthActions.signUp(email, password))
-    }
+    // function handleSignUp() {
+    //     dispatch(AuthActions.doSignUp(email, password))
+    // }
 
     return (
         <Screen>

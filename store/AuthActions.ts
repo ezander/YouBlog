@@ -1,6 +1,4 @@
-import { logInUser, signUpUser, getUserData } from '../src/FirebaseAuthTools'
-import firebaseConfig from '../firebaseConfig.json'
-import { ReactReduxContext } from 'react-redux'
+import {login, signUp} from '../model/Auth'
 
 export enum AuthActionTypes {
     LOGIN = "LOGIN",
@@ -9,40 +7,35 @@ export enum AuthActionTypes {
     AUTHERROR = "AUTHERROR"
 }
 
-export function login(username: string, password: string) {
-    return asyncLogin.bind(null, username, password)
+
+export function doLogin(username: string, password: string) {
+    return asyncLogin.bind(null, username, password);
 }
 
 async function asyncLogin(username: string, password: string, dispatch: any) {
-    const email = username
     try {
-        const logInResponse = await logInUser({ email, password }, firebaseConfig)
-
-        const userData = await getUserData( logInResponse.idToken, firebaseConfig)
-        console.log("UserData: ", userData)
-        
-        return dispatch({ type: AuthActionTypes.LOGIN, user: logInResponse })
+        const user = await login(username, password);
+        return dispatch({ type: AuthActionTypes.LOGIN, user });
     }
     catch (error) {
-        dispatch({ type: AuthActionTypes.AUTHERROR, error })
+        dispatch({ type: AuthActionTypes.AUTHERROR, error });
     }
 }
 
-export function logout() {
-    return { type: AuthActionTypes.LOGOUT }
+export function doLogout() {
+    return { type: AuthActionTypes.LOGOUT };
 }
 
-export function signUp(username: string, password: string) {
-    return asyncSignUp.bind(null, username, password)
+export function doSignUp(username: string, password: string) {
+    return asyncSignUp.bind(null, username, password);
 }
 
 async function asyncSignUp(username: string, password: string, dispatch: any) {
-    const email = username
     try {
-        const signUpResponse = await signUpUser({ email, password }, firebaseConfig)
-        dispatch({ type: AuthActionTypes.SIGNUP, user: signUpResponse })
+        const user = await signUp(username, password);
+        dispatch({ type: AuthActionTypes.SIGNUP, user });
     }
     catch (error) {
-        dispatch({ type: AuthActionTypes.AUTHERROR, error })
+        dispatch({ type: AuthActionTypes.AUTHERROR, error });
     }
 }

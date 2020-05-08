@@ -1,7 +1,7 @@
-import firebaseConfig from '../firebaseConfig.json'
-import { getDocument, listDocuments } from '../src/FirestoreTools'
 import * as firebase from 'firebase'
 import 'firebase/firestore'
+import firebaseConfig from '../firebaseConfig.json'
+import { getDocument, listDocuments } from '../src/FirestoreTools'
 
 export interface BlogEntry {
     author: string,
@@ -20,20 +20,6 @@ export type WithId<T> = {
 export type BlogEntryWithId = WithId<BlogEntry>
 
 export type BlogList = Array<BlogEntryWithId>
-
-class REST {
-    static async fetchBlogEntry(id: string): Promise<BlogEntryWithId> {
-        return getDocument("blog_entries", id, {}, firebaseConfig)
-    }
-
-    static async fetchBlogEntries(): Promise<BlogList> {
-        const mask = ["title", "author", "date", "image_url"]
-        const orderBy = "date desc"
-    
-        console.log("Fetching documents...")
-        return listDocuments("blog_entries", { mask, orderBy }, firebaseConfig)
-    }
-}
 
 class SDK {
     static db = SDK.getDB()
@@ -65,24 +51,35 @@ class SDK {
         const coll = SDK.db.collection('blog_entries')
         const docRef = coll.doc(id)
         const docData = (await docRef.get()).data()
-        if( !docData ) throw new Error(`Error fetching blog entry ${id}`)
+        if (!docData) throw new Error(`Error fetching blog entry ${id}`)
         const doc = SDK.convertBlogEntry(id, docData)
         return doc
     }
 
     static async fetchBlogEntries(): Promise<BlogList> {
-        const mask = ["title", "author", "date", "image_url"]
-        const orderBy = "date desc"
-    
+        // no mask support in firestore sdk, need to split the data if really wanted
+
         const coll = SDK.db.collection('blog_entries').orderBy("date", "desc")
         const docRefs = (await coll.get()).docs
-        const docs = docRefs.map(docSnap => SDK.convertBlogEntry(docSnap.id, docSnap.data() ))
+        const docs = docRefs.map(docSnap => SDK.convertBlogEntry(docSnap.id, docSnap.data()))
         return docs
     }
+}
 
+class REST {
+    static async fetchBlogEntry(id: string): Promise<BlogEntryWithId> {
+        return getDocument("blog_entries", id, {}, firebaseConfig)
+    }
 
+    static async fetchBlogEntries(): Promise<BlogList> {
+        const mask = ["title", "author", "date", "image_url"]
+        const orderBy = "date desc"
+
+        console.log("Fetching documents...")
+        return listDocuments("blog_entries", { mask, orderBy }, firebaseConfig)
+    }
 }
 
 const blogAPI = SDK
-export const fetchBlogEntry = blogAPI.fetchBlogEntry
-export const fetchBlogEntries = blogAPI.fetchBlogEntries
+
+export const { fetchBlogEntry, fetchBlogEntries } = blogAPI

@@ -138,13 +138,13 @@ async function registerUser(email: string, password: string, displayName: string
         // console.log("SignUp: ", userData)
         user = { ...user, ...userData }
 
-        const profileData = await Auth.updateProfile(userData.idToken, { displayName, photoUrl }, firebaseConfig)
+        const profileData = await Auth.updateUserProfile(userData.idToken, { displayName, photoUrl }, firebaseConfig)
         // console.log("Profile: ", profileData)
         user = { ...user, ...profileData }
     }
     catch (error) {
         // console.error(error)
-        const userData = await Auth.logInUser({ email, password }, firebaseConfig)
+        const userData = await Auth.loginUser({ email, password }, firebaseConfig)
         // console.log("Login: ", userData)
         user = { ...user, ...userData }
     }

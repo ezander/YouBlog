@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native'
 import React from 'react'
 import { Item } from 'react-navigation-header-buttons'
 import { useDispatch, useSelector } from 'react-redux'
-import { logout } from '../store/AuthActions'
+import { doLogout } from '../store/AuthActions'
 import { Alert } from 'react-native'
 
 export function useAuthState() {
@@ -33,7 +33,7 @@ export function useAuthItem() {
             [
                 {
                     text: "Sure as hell!",
-                    onPress: ()=>dispatch(logout())
+                    onPress: ()=>dispatch(doLogout())
                 }, 
                 {
                     text: "No, keep me logged in!",

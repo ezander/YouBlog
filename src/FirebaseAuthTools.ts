@@ -34,7 +34,7 @@ export async function signUpUser(
 }
 
 
-export interface LogInResponseType {
+export interface LoginResponseType {
     idToken: string,      // An Identity Platform ID token for the authenticated user.
     email: string,        // The email for the authenticated user.
     refreshToken: string, // An Identity Platform refresh token for the authenticated user.
@@ -42,7 +42,7 @@ export interface LogInResponseType {
     localId: string,      // The uid of the authenticated user.
     registered: boolean,  // Whether the email is for an existing account.
 }
-export async function logInUser(
+export async function loginUser(
     { email, password }: LoginData,
     firebaseConfig: FirebaseConfig) {
 
@@ -51,7 +51,7 @@ export async function logInUser(
 
     try {
         const response = await axios.post(url, body)
-        return response.data as LogInResponseType
+        return response.data as LoginResponseType
     }
     catch (error) {
         throw parseError(error)
@@ -99,7 +99,7 @@ interface UpdateProfile {
     displayName?: null | string,
     photoUrl?: null | string
 }
-export async function updateProfile(
+export async function updateUserProfile(
     idToken: string,
     {displayName, photoUrl} : UpdateProfile,
     firebaseConfig: FirebaseConfig) {
