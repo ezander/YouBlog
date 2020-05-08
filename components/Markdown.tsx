@@ -15,7 +15,7 @@ export type MarkdownProps = MarkdownRendererProps & {
 
 export default function Markdown<Props>({ 
     fontSize, codeFontFamily, textFontFamily, children, ...props }: MarkdownProps) {
-    const text = (typeof children === "string") ? children : children.join("\n")
+    const text = Array.isArray(children)  ? children.join("\n") : children
 
     const style = markdownStyles(fontSize, textFontFamily, codeFontFamily)
     return <MarkdownRenderer style={style} {...props}>
