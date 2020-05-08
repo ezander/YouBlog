@@ -5,19 +5,15 @@ import { Image, Text } from 'react-native-elements'
 import { ScrollView } from 'react-native-gesture-handler'
 import { Item } from 'react-navigation-header-buttons'
 import { withErrorBoundary } from '../components/AppErrorBoundary'
-import { useAuthItem, useIsLoggedIn, useAuthState } from '../components/AuthItem'
+import { useAuthItem, useAuthState, useIsLoggedIn } from '../components/AuthItem'
 import ErrorScreen from '../components/ErrorScreen'
 import LoadingScreen from '../components/LoadingScreen'
 import Markdown from '../components/Markdown'
 import Screen from '../components/Screen'
 import { BlogFontSizes, BlogTheme } from '../config/Theming'
-import firebaseConfig from '../firebaseConfig.json'
+import { BlogEntryWithId, fetchBlogEntry } from '../model/Blog'
 import { useAsyncAction } from '../src/AsyncTools'
-import { getDocument } from '../src/FirestoreTools'
 
-async function fetchBlogEntry(id: string): Promise<BlogEntryWithId> {
-    return getDocument("blog_entries", id, {}, firebaseConfig)
-}
 
 // @ts-ignore
 function BlogReadScreen({ navigation, route }) {
@@ -31,7 +27,6 @@ function BlogReadScreen({ navigation, route }) {
 
     const fetchThisBlogEntry = useCallback(fetchBlogEntry.bind(null, id), [id])
     const { hasRun, isWorking, error, result, doRefresh } = useAsyncAction<BlogEntryWithId>(fetchThisBlogEntry)
-    // console.log("ASync: ", hasRun, isWorking, error)
 
     if (error) {
         const text = "An error occurred loading blog entry"
@@ -43,16 +38,10 @@ function BlogReadScreen({ navigation, route }) {
     const date = from_params ? new Date(date_str) : entry?.document?.date
     const author_id = entry?.document?.author_id
 
-    const handleLogin = () => {
-        navigation.navigate("Login")
-    }
     const handleEdit = () => {
         navigation.navigate("BlogEdit", { id, title, author, image_url })
     }
-    console.log("Loggedin: ", authState)
-    console.log("Loggedin user: ", authState.user)
-    console.log("Author: ", author_id)
-    const editAllowed = isLoggedIn && authState.user.localId===author_id // check whether logged in and owner of entry
+    const editAllowed = isLoggedIn && authState.user.localId === author_id // check whether logged in and owner of entry
 
 
     const handleShare = () => {

@@ -5,17 +5,9 @@ import { ListItem, Text } from 'react-native-elements';
 import { withErrorBoundary } from '../components/AppErrorBoundary';
 import ErrorScreen from '../components/ErrorScreen';
 import Screen from '../components/Screen';
-import firebaseConfig from '../firebaseConfig.json';
+import { BlogEntryWithId, BlogList, fetchBlogEntries } from '../model/Blog';
 import { useAsyncAction } from '../src/AsyncTools';
-import { listDocuments } from '../src/FirestoreTools';
 
-async function fetchBlogEntries(): Promise<BlogList> {
-    const mask = ["title", "author", "date", "image_url"]
-    const orderBy = "date desc"
-
-    console.log("Fetching documents...")
-    return listDocuments("blog_entries", { mask, orderBy }, firebaseConfig)
-}
 
 function BlogListEntry({ entry, onSelect }: { entry: BlogEntryWithId, onSelect: (() => void) }) {
     const blog = entry.document
