@@ -17,6 +17,9 @@ import ReduxLogger from 'redux-logger'
 import { authReducer } from './store/AuthReducer'
 
 
+import Warnings from './src/Warnings'
+Warnings.ignore('Setting a timer')
+
 const rootReducer = combineReducers({
   auth: authReducer,
   // blog: blogReducer,
