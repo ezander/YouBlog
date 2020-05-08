@@ -3,6 +3,7 @@ import React from 'react'
 import { Item } from 'react-navigation-header-buttons'
 import { useDispatch, useSelector } from 'react-redux'
 import { logout } from '../store/AuthActions'
+import { Alert } from 'react-native'
 
 export function useAuthState() {
     return useSelector( (state: any) => state.auth )
@@ -19,13 +20,28 @@ export function useAuthItem() {
     const navigation = useNavigation()
     const dispatch = useDispatch()
     const isLoggedIn = useIsLoggedIn()
+    const auth = useAuthState()
 
 
     function handleLogin() {
         navigation.navigate("Login")
     }
     function handleLogout() {
-        dispatch(logout())
+        Alert.alert(
+            `Hey ${auth.user.displayName}!`, 
+            'Are you sure? Really log out?',
+            [
+                {
+                    text: "Sure as hell!",
+                    onPress: ()=>dispatch(logout())
+                }, 
+                {
+                    text: "No, keep me logged in!",
+                }
+            ],
+            {cancelable: true}
+            )
+        
     }
 
     // console.log("IsLoggedIn: ", isLoggedIn)
