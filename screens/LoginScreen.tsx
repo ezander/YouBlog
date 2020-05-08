@@ -6,10 +6,10 @@ import * as AuthActions from '../store/AuthActions';
 import { useIsLoggedIn, useAuthState } from '../components/AuthItem';
 
 // @ts-ignore
-export default function LoginScreen({navigation}) {
+export default function LoginScreen({ navigation }) {
 
     const isLoggedIn = useIsLoggedIn()
-    if( isLoggedIn ) {
+    if (isLoggedIn) {
         navigation.goBack()
     }
 
@@ -17,14 +17,23 @@ export default function LoginScreen({navigation}) {
 
     const dispatch = useDispatch()
 
-    const email = "elmar.zander5@googlemail.com"
-    const password = "293478"
+    function handleLoginAA() {
+        const email = "aa@testmail.com"
+        const password = "test1234"
 
-    function handleLogin() {
+        dispatch(AuthActions.login(email, password))
+    }
+    function handleLoginCC() {
+        const email = "cc@testmail.com"
+        const password = "test1234"
+
         dispatch(AuthActions.login(email, password))
     }
     function handleLoginErr() {
-        dispatch(AuthActions.login(email, password+"asdlfkjsldjslfjdlk"))
+        const email = "cc@testmail.com"
+        const password = "test1235"
+
+        dispatch(AuthActions.login(email, password))
     }
     function handleSignUp() {
         dispatch(AuthActions.signUp(email, password))
@@ -35,11 +44,11 @@ export default function LoginScreen({navigation}) {
             {
                 authState.error && <Text>{JSON.stringify(authState.error)}</Text>
             }
-            <Button title="Login" onPress={handleLogin} />
-            <Text/>
+            <Button title="Login AA" onPress={handleLoginAA} />
+            <Text />
             <Button title="Login (w. Error)" onPress={handleLoginErr} />
-            <Text/>
-            <Button title="Sign up" onPress={handleSignUp} />
+            <Text />
+            <Button title="Login CC" onPress={handleLoginCC} />
         </Screen>
     );
 }

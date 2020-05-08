@@ -5,7 +5,7 @@ import { Image, Text } from 'react-native-elements'
 import { ScrollView } from 'react-native-gesture-handler'
 import { Item } from 'react-navigation-header-buttons'
 import { withErrorBoundary } from '../components/AppErrorBoundary'
-import { useAuthItem, useIsLoggedIn } from '../components/AuthItem'
+import { useAuthItem, useIsLoggedIn, useAuthState } from '../components/AuthItem'
 import ErrorScreen from '../components/ErrorScreen'
 import LoadingScreen from '../components/LoadingScreen'
 import Markdown from '../components/Markdown'
@@ -26,6 +26,8 @@ function BlogReadScreen({ navigation, route }) {
 
     const authItem = useAuthItem()
     const isLoggedIn = useIsLoggedIn()
+    const authState = useAuthState()
+    console.log(authState)
 
     const fetchThisBlogEntry = useCallback(fetchBlogEntry.bind(null, id), [id])
     const { hasRun, isWorking, error, result, doRefresh } = useAsyncAction<BlogEntryWithId>(fetchThisBlogEntry)
@@ -39,6 +41,7 @@ function BlogReadScreen({ navigation, route }) {
     const text = entry?.document?.text
     const { title, author, date_str, image_url } = from_params ? route.params : (entry?.document || {})
     const date = from_params ? new Date(date_str) : entry?.document?.date
+    const author_id = entry?.document?.author_id
 
     const handleLogin = () => {
         navigation.navigate("Login")
@@ -46,7 +49,11 @@ function BlogReadScreen({ navigation, route }) {
     const handleEdit = () => {
         navigation.navigate("BlogEdit", { id, title, author, image_url })
     }
-    const editAllowed = isLoggedIn // check whether logged in and owner of entry
+    console.log("Loggedin: ", authState)
+    console.log("Loggedin user: ", authState.user)
+    console.log("Author: ", author_id)
+    const editAllowed = isLoggedIn && authState.user.localId===author_id // check whether logged in and owner of entry
+
 
     const handleShare = () => {
         const path = `post/${id}`

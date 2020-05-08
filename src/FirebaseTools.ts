@@ -47,28 +47,28 @@ export class AppError extends Error {
         this.errorType = errorType
     }
 
-    get mayRetry() {
+    mayRetry() {
         return this.errorType === ErrorType.INVALID_DATA || this.errorType === ErrorType.TEMPORARY_PROBLEM
     }
-    get mustChangeData() {
+    mustChangeData() {
         return this.errorType === ErrorType.INVALID_DATA;
     }
-    get isProgrammerError() {
+    isProgrammerError() {
         return this.errorType === ErrorType.INTERNAL_PROBLEM;
     }
-    get title() {
+    title() {
         return this.info.title
     }
-    get details() {
+    details() {
         return this.info.details
     }
-    get resolutions() {
+    resolutions() {
         return this.info.resolutions
     }
-    get data() {
+    data() {
         return this.info.data
     }
-    get rootError() {
+    rootError() {
         return this.info.rootError
     }
 
