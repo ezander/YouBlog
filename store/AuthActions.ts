@@ -1,4 +1,4 @@
-import {login, signUp} from '../model/Auth'
+import {login, signUp, logout, updateProfile} from '../model/Auth'
 
 export enum AuthActionTypes {
     LOGIN = "LOGIN",
@@ -23,16 +23,22 @@ async function asyncLogin(username: string, password: string, dispatch: any) {
 }
 
 export function doLogout() {
-    return { type: AuthActionTypes.LOGOUT };
+    return asyncLogout;
 }
 
-export function doSignUp(username: string, password: string) {
-    return asyncSignUp.bind(null, username, password);
+async function asyncLogout(dispatch: any) {
+    await logout();
+    dispatch({ type: AuthActionTypes.LOGOUT })
 }
 
-async function asyncSignUp(username: string, password: string, dispatch: any) {
+export function doSignUp(email: string, password: string, username: string, photo_url: string) {
+    return asyncSignUp.bind(null, email, password, username, photo_url);
+}
+
+async function asyncSignUp(email: string, password: string, username: string, photo_url: string, dispatch: any) {
     try {
         const user = await signUp(username, password);
+        await updateProfile(user, username, photo_url)
         dispatch({ type: AuthActionTypes.SIGNUP, user });
     }
     catch (error) {

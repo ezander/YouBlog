@@ -30,10 +30,6 @@ function BlogListScreen({ navigation }: { navigation: any }) {
 
     const { hasRun, isWorking, error, result, doRefresh } = useAsyncAction<BlogList>(fetchBlogEntries)
 
-    if (error) {
-        return <ErrorScreen text="An error occurred loading blog entries" error={error} onRetry={doRefresh} />
-    }
-
     const entrySelected = (entry: BlogEntryWithId) => {
         const blog = entry.document
         navigation.navigate("BlogRead", {
@@ -66,6 +62,10 @@ function BlogListScreen({ navigation }: { navigation: any }) {
             authItem
         ]
     })
+
+    if (error) {
+        return <ErrorScreen text="An error occurred loading blog entries" error={error} onRetry={doRefresh} />
+    }
 
     return <Screen>
         <View style={{ padding: 10 }}>

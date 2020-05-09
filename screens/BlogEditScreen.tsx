@@ -1,10 +1,25 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import React, { useState } from "react";
-import { Dimensions, View } from "react-native";
+import React, { useState, useCallback } from "react";
+import { Dimensions, View, ActivityIndicator } from "react-native";
 import { Button, Image } from "react-native-elements";
 import TextScreen from "../components/TextScreen";
 import * as ImageTool from "../model/ImageTool";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { RootStackParamList } from "../App";
+import { RouteProp } from "@react-navigation/native";
 
+export interface BlogEditParams {
+  id: string;
+  extra: {
+    id: string;
+    author: string;
+    author_id: string;
+    title: string;
+    date_str: string;
+    image_url: string;
+    text: string;
+  };
+}
 
 const Tab = createBottomTabNavigator();
 
@@ -16,8 +31,8 @@ function EditTextView() {
   return <TextScreen text={"This is the blog edit screen for Text"} />;
 }
 
-function EditImageView() {
-  const [imageUri, setImageUri] = useState<string | false>(false);
+function EditImageView({ imageUri }: { imageUri: string | undefined }) {
+  const [newImageUri, setImageUri] = useState<string | undefined>(imageUri);
   // useEffect(() => {ImagePicker.getCameraPermissionsAsync()}, [])
   // useEffect(() => {ImagePicker.getCameraRollPermissionsAsync()}, [])
 
@@ -39,10 +54,11 @@ function EditImageView() {
         title="Pick an image from camera roll"
         onPress={() => takeOrPickImage(false)}
       />
-      {imageUri && (
+      {newImageUri && (
         <Image
-          source={{ uri: imageUri }}
+          source={{ uri: newImageUri }}
           containerStyle={{ borderWidth: 2 }}
+          PlaceholderContent={<ActivityIndicator />}
           style={{ width: Dimensions.get("window").width, height: 300 }}
         />
       )}
@@ -51,8 +67,26 @@ function EditImageView() {
   // return <TextScreen text={"This is the blog edit screen for Image"} />;
 }
 
-export function BlogEditScreen({ navigation, route, ...props }) {
+// @ts -ignore
+interface BlogReadScreenProps {
+  navigation: StackNavigationProp<RootStackParamList, "BlogEdit">;
+  route: RouteProp<RootStackParamList, "BlogEdit">;
+}
+
+export function BlogEditScreen({
+  navigation,
+  route,
+  ...props
+}: BlogReadScreenProps) {
   // <TextScreen text={"This is the blog edit screen for:\n" + route.params.id}/>
+
+  const params = route.params;
+  const image_url = params.extra.image_url;
+
+  const LocalImageView = useCallback(
+    () => <EditImageView imageUri={image_url} />,
+    [image_url]
+  );
 
   return (
     <Tab.Navigator
@@ -63,7 +97,11 @@ export function BlogEditScreen({ navigation, route, ...props }) {
     >
       <Tab.Screen name="Props" component={EditPropsView} />
       <Tab.Screen name="Text" component={EditTextView} />
-      <Tab.Screen name="Image" component={EditImageView} />
+      <Tab.Screen
+        name="Image"
+        component={LocalImageView}
+        initialParams={{ imageUri: image_url }}
+      />
     </Tab.Navigator>
   );
 }
