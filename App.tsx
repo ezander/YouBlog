@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { Text } from 'react-native-elements';
 import ErrorBoundary from 'react-native-error-boundary';
 import NavHeader from './components/NavHeader';
-import { LinkingNavigationContainer } from './LinkingNavigationContainer';
+import { LinkingNavigationContainer } from './components/LinkingNavigationContainer';
 import BlogEditScreen from './screens/BlogEditScreen';
 import BlogListScreen from './screens/BlogListScreen';
 import BlogReadScreen from './screens/BlogReadScreen';
@@ -32,11 +32,12 @@ const store = createStore(rootReducer, applyMiddleware(...middleware))
 
 export type RootStackParamList = {
   BlogList: undefined,
-  BlogRead: {urlId: string, id: string},
+  BlogRead: { id: string, title: string },
   BlogEdit: undefined,
   Login: undefined,
 }
 
+const DummyStack = createStackNavigator()
 const Stack = createStackNavigator<RootStackParamList>()
 
 const navigatorOptions = {
@@ -51,16 +52,49 @@ const linking = {
     'https://expo.io/@ezander/YouBlog',
     'https://zandere.de/youblog'
   ],
+  // initialRouteName: 'BlogList',
   config: {
-    "BlogList": "list",
-    "BlogEntry": {
-      path: 'post/:urlId'
+    "Foo": {
+      initialRouteName: "BlogList",
+      screens: {
+        "BlogList": {
+          path: "list"
+        },
+        "BlogRead": {
+          path: 'post/:id'
+        }
+      }
     }
   }
 }
 
+
+function RootStackNavigator() {
+  return <Stack.Navigator {...navigatorOptions}>
+    <Stack.Screen
+      name="BlogList"
+      component={BlogListScreen}
+      options={{ title: "All Blog Entries" }} />
+    <Stack.Screen
+      name="BlogRead"
+      component={BlogReadScreen}
+      options={{ title: "Single Blog Entry" }}
+      initialParams={{ title: "Foobar" }}
+    />
+
+    <Stack.Screen
+      name="BlogEdit"
+      component={BlogEditScreen}
+      options={{ title: "Edit Blog Entry" }} />
+    <Stack.Screen
+      name="Login"
+      component={LoginScreen}
+      options={{ title: "Log in or Sign up" }} />
+  </Stack.Navigator>
+}
+
 async function performStartupStuff() {
-  await delay(500) 
+  await delay(100)
 }
 export default function App() {
 
@@ -72,7 +106,7 @@ export default function App() {
         startAsync={performStartupStuff}
         onFinish={() => setStartUpFinished(true)}
         onError={console.warn}
-        // autoHideconsoconsole.log(Splash={false}
+      // autoHideconsoconsole.log(Splash={false}
       />
     );
   }
@@ -81,24 +115,11 @@ export default function App() {
     <ErrorBoundary>
       <Provider store={store}>
         <LinkingNavigationContainer linking={linking} fallback={<Text>Loading...</Text>}>
-          <Stack.Navigator {...navigatorOptions}>
-            <Stack.Screen
-              name="BlogList"
-              component={BlogListScreen}
-              options={{ title: "All Blog Entries" }} />
-            <Stack.Screen
-              name="BlogRead"
-              component={BlogReadScreen}
-              options={{ title: "Single Blog Entry" }} />
-            <Stack.Screen
-              name="BlogEdit"
-              component={BlogEditScreen}
-              options={{ title: "Edit Blog Entry" }} />
-            <Stack.Screen
-              name="Login"
-              component={LoginScreen}
-              options={{ title: "Log in or Sign up" }} />
-          </Stack.Navigator>
+          <DummyStack.Navigator screenOptions={{headerShown: false}}>
+            <DummyStack.Screen
+              name="Foo"
+              component={RootStackNavigator} />
+          </DummyStack.Navigator>
         </LinkingNavigationContainer>
       </Provider>
     </ErrorBoundary >

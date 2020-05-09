@@ -32,7 +32,7 @@ function BlogListScreen({ navigation }: { navigation: any }) {
 
     const entrySelected = (entry: BlogEntryWithId) => {
         const blog = entry.document
-        navigation.navigate("BlogEntry", {
+        navigation.navigate("BlogRead", {
             id: entry.id,
             title: blog.title,
             date_str: blog.date.toISOString(),

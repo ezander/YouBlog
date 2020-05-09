@@ -15,15 +15,18 @@ import Screen from '../components/Screen'
 import { BlogFontSizes, BlogTheme } from '../config/Theming'
 import { BlogEntryWithId, fetchBlogEntry } from '../model/Blog'
 import { useAsyncAction } from '../src/AsyncTools'
+import { RouteProp } from '@react-navigation/native'
 
 // @ts -ignore
 interface BlogReadScreenProps {
-    navigation: StackNavigationProp<RootStackParamList, 'BlogRead'>, //NavigationProp,
-    route: any, //RouteProp
+    navigation: StackNavigationProp<RootStackParamList, 'BlogRead'>,
+    route: RouteProp<RootStackParamList, 'BlogRead'>,
 }
 function BlogReadScreen({ navigation, route } : BlogReadScreenProps ) {
     const id = route.params.urlId || route.params.id
     const from_params = !route.params.urlId
+
+    console.log(route)
 
     const authItem = useAuthItem()
     const isLoggedIn = useIsLoggedIn()
