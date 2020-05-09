@@ -13,7 +13,7 @@ import LoadingScreen from '../components/LoadingScreen'
 import Markdown from '../components/Markdown'
 import Screen from '../components/Screen'
 import { BlogFontSizes, BlogTheme } from '../config/Theming'
-import { BlogEntryWithId, fetchBlogEntry } from '../model/Blog'
+import { BlogEntryWithId, fetchBlogEntry, BlogEntry } from '../model/Blog'
 import { useAsyncAction } from '../src/AsyncTools'
 import { RouteProp } from '@react-navigation/native'
 
@@ -22,9 +22,23 @@ interface BlogReadScreenProps {
     navigation: StackNavigationProp<RootStackParamList, 'BlogRead'>,
     route: RouteProp<RootStackParamList, 'BlogRead'>,
 }
-function BlogReadScreen({ navigation, route } : BlogReadScreenProps ) {
-    const id = route.params.urlId || route.params.id
-    const from_params = !route.params.urlId
+export interface BlogReadParams { id: string, 
+    extra?: { 
+        id: string,
+        author: string,
+        author_id: string,
+        title: string, 
+        date_str: string,
+        image_url: string
+    } 
+}
+
+function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
+    const params = route.params
+    const id = params.id
+    const from_params = params.extra?.id === id
+    const extra_params = (from_params && params.extra) ? params.extra : undefined
+
 
     console.log(route)
 
@@ -40,14 +54,19 @@ function BlogReadScreen({ navigation, route } : BlogReadScreenProps ) {
         const text = "An error occurred loading blog entry"
         return <ErrorScreen text={text} error={error} onRetry={doRefresh} />
     }
+
+
     const entry = result as BlogEntryWithId
-    const text = entry?.document?.text
-    const { title, author, date_str, image_url } = from_params ? route.params : (entry?.document || {})
-    const date = from_params ? new Date(date_str) : entry?.document?.date
-    const author_id = entry?.document?.author_id
+    const doc = entry?.document
+    const text = doc?.text
+    const title = from_params ? extra_params?.title : doc?.title
+    const author = from_params ? extra_params?.author : doc?.author
+    const author_id = from_params ? extra_params?.author_id : doc?.author_id
+    const image_url = from_params ? extra_params?.image_url : doc?.image_url
+    const date = from_params ? new Date(extra_params?.date_str!) : doc?.date
 
     const handleEdit = () => {
-        navigation.navigate("BlogEdit", { id, title, author, image_url })
+        navigation.navigate("BlogEdit", { id, extra: { id, title, author, image_url } })
     }
     const editAllowed = isLoggedIn && authState.user.localId === author_id // check whether logged in and owner of entry
 
@@ -64,6 +83,7 @@ function BlogReadScreen({ navigation, route } : BlogReadScreenProps ) {
 
     navigation.setOptions({
         title: title,
+        // @ts-ignore
         extraHeaderItems: [
             editAllowed && <Item key="edit" title="Edit" iconName="edit" onPress={handleEdit} />,
             <Item key="share" title="Share" iconName="share" onPress={handleShare} />,

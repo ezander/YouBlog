@@ -7,7 +7,7 @@ import NavHeader from './components/NavHeader';
 import { LinkingNavigationContainer } from './components/LinkingNavigationContainer';
 import BlogEditScreen from './screens/BlogEditScreen';
 import BlogListScreen from './screens/BlogListScreen';
-import BlogReadScreen from './screens/BlogReadScreen';
+import BlogReadScreen, {BlogReadParams} from './screens/BlogReadScreen';
 import LoginScreen from './screens/LoginScreen';
 
 import { createStore, combineReducers, applyMiddleware, Middleware } from 'redux'
@@ -19,6 +19,7 @@ import { authReducer } from './store/AuthReducer'
 
 import Warnings from './src/Warnings'
 import { useAsyncAction, delay } from './src/AsyncTools';
+import { BlogEntry } from './model/Blog';
 Warnings.ignore('Setting a timer')
 
 const rootReducer = combineReducers({
@@ -32,7 +33,8 @@ const store = createStore(rootReducer, applyMiddleware(...middleware))
 
 export type RootStackParamList = {
   BlogList: undefined,
-  BlogRead: { id: string, title: string },
+  BlogRead: BlogReadParams,
+  // BlogRead: { id: string, extra?: BlogEntry },
   BlogEdit: undefined,
   Login: undefined,
 }
@@ -52,9 +54,8 @@ const linking = {
     'https://expo.io/@ezander/YouBlog',
     'https://zandere.de/youblog'
   ],
-  // initialRouteName: 'BlogList',
   config: {
-    "Foo": {
+    "Dummy": {
       initialRouteName: "BlogList",
       screens: {
         "BlogList": {
@@ -79,9 +80,7 @@ function RootStackNavigator() {
       name="BlogRead"
       component={BlogReadScreen}
       options={{ title: "Single Blog Entry" }}
-      initialParams={{ title: "Foobar" }}
     />
-
     <Stack.Screen
       name="BlogEdit"
       component={BlogEditScreen}
@@ -117,7 +116,7 @@ export default function App() {
         <LinkingNavigationContainer linking={linking} fallback={<Text>Loading...</Text>}>
           <DummyStack.Navigator screenOptions={{headerShown: false}}>
             <DummyStack.Screen
-              name="Foo"
+              name="Dummy"
               component={RootStackNavigator} />
           </DummyStack.Navigator>
         </LinkingNavigationContainer>

@@ -5,7 +5,7 @@ import { ListItem, Text } from 'react-native-elements';
 import { withErrorBoundary } from '../components/AppErrorBoundary';
 import ErrorScreen from '../components/ErrorScreen';
 import Screen from '../components/Screen';
-import { BlogEntryWithId, BlogList, fetchBlogEntries } from '../model/Blog';
+import { BlogEntryWithId, BlogList, fetchBlogEntries, BlogEntry } from '../model/Blog';
 import { useAsyncAction } from '../src/AsyncTools';
 
 
@@ -34,10 +34,14 @@ function BlogListScreen({ navigation }: { navigation: any }) {
         const blog = entry.document
         navigation.navigate("BlogRead", {
             id: entry.id,
-            title: blog.title,
-            date_str: blog.date.toISOString(),
-            author: blog.author,
-            image_url: blog.image_url
+            extra: {
+                id: entry.id,
+                title: blog.title,
+                date_str: blog.date.toISOString(),
+                author: blog.author,
+                author_id: blog.author_id,
+                image_url: blog.image_url
+            } as Partial<BlogEntry>
         })
     }
 
