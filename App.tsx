@@ -1,25 +1,27 @@
-import { createStackNavigator, StackHeaderProps } from '@react-navigation/stack';
-import { Linking, AppLoading } from 'expo';
+import 'react-native-gesture-handler';
 import React, { useState } from 'react';
+
+import { createStackNavigator, StackHeaderProps } from '@react-navigation/stack';
+import { AppLoading, Linking } from 'expo';
 import { Text } from 'react-native-elements';
 import ErrorBoundary from 'react-native-error-boundary';
-import NavHeader from './components/NavHeader';
+import { Provider } from 'react-redux';
+import { applyMiddleware, combineReducers, createStore } from 'redux';
+import ReduxLogger from 'redux-logger';
+import ReduxThunk from 'redux-thunk';
 import { LinkingNavigationContainer } from './components/LinkingNavigationContainer';
+import NavHeader from './components/NavHeader';
 import BlogEditScreen from './screens/BlogEditScreen';
 import BlogListScreen from './screens/BlogListScreen';
-import BlogReadScreen, {BlogReadParams} from './screens/BlogReadScreen';
+import BlogReadScreen, { BlogReadParams } from './screens/BlogReadScreen';
 import LoginScreen from './screens/LoginScreen';
-
-import { createStore, combineReducers, applyMiddleware, Middleware } from 'redux'
-import { Provider } from 'react-redux'
-import ReduxThunk from 'redux-thunk'
-import ReduxLogger from 'redux-logger'
-import { authReducer } from './store/AuthReducer'
+import { delay } from './src/AsyncTools';
+import Warnings from './src/Warnings';
+import { authReducer } from './store/AuthReducer';
 
 
-import Warnings from './src/Warnings'
-import { useAsyncAction, delay } from './src/AsyncTools';
-import { BlogEntry } from './model/Blog';
+
+
 Warnings.ignore('Setting a timer')
 
 const rootReducer = combineReducers({

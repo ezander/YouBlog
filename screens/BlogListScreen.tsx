@@ -2,11 +2,14 @@ import moment from 'moment';
 import React from 'react';
 import { FlatList, View } from 'react-native';
 import { ListItem, Text } from 'react-native-elements';
+import { Item } from 'react-navigation-header-buttons';
 import { withErrorBoundary } from '../components/AppErrorBoundary';
 import ErrorScreen from '../components/ErrorScreen';
 import Screen from '../components/Screen';
-import { BlogEntryWithId, BlogList, fetchBlogEntries, BlogEntry } from '../model/Blog';
+import { BlogEntry, BlogEntryWithId, BlogList, fetchBlogEntries } from '../model/Blog';
 import { useAsyncAction } from '../src/AsyncTools';
+import { useAuthItem } from '../components/AuthItem';
+import {Share} from 'react-native'
 
 
 function BlogListEntry({ entry, onSelect }: { entry: BlogEntryWithId, onSelect: (() => void) }) {
@@ -23,6 +26,7 @@ function BlogListEntry({ entry, onSelect }: { entry: BlogEntryWithId, onSelect: 
 }
 
 function BlogListScreen({ navigation }: { navigation: any }) {
+    const authItem = useAuthItem()
 
     const { hasRun, isWorking, error, result, doRefresh } = useAsyncAction<BlogList>(fetchBlogEntries)
 
@@ -44,6 +48,24 @@ function BlogListScreen({ navigation }: { navigation: any }) {
             } as Partial<BlogEntry>
         })
     }
+
+    const handleShare = () => {
+        const path = `list`
+        const url = "https://expo.io/@ezander/YouBlog/" + path
+        const message = `Check out this cool blogging app! \n "${url}"`
+        Share.share({
+            title: "Share this blogging app", message, url
+        })
+    }
+
+    navigation.setOptions({
+        // title: title,
+        // @ts-ignore
+        extraHeaderItems: [
+            <Item key="share" title="Share" iconName="share" onPress={handleShare} />,
+            authItem
+        ]
+    })
 
     return <Screen>
         <View style={{ padding: 10 }}>

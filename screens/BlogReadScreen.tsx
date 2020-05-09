@@ -1,4 +1,4 @@
-import { StackNavigationProp } from '@react-navigation/stack'
+import { StackNavigationProp, StackNavigationOptions } from '@react-navigation/stack'
 import moment from 'moment'
 import React, { useCallback } from 'react'
 import { ActivityIndicator, RefreshControl, Share, StyleSheet } from 'react-native'
@@ -38,7 +38,6 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
     const id = params.id
     const from_params = params.extra?.id === id
     const extra_params = (from_params && params.extra) ? params.extra : undefined
-
 
     console.log(route)
 
