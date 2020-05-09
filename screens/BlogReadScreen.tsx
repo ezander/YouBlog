@@ -1,9 +1,11 @@
+import { StackNavigationProp } from '@react-navigation/stack'
 import moment from 'moment'
 import React, { useCallback } from 'react'
 import { ActivityIndicator, RefreshControl, Share, StyleSheet } from 'react-native'
 import { Image, Text } from 'react-native-elements'
 import { ScrollView } from 'react-native-gesture-handler'
 import { Item } from 'react-navigation-header-buttons'
+import { RootStackParamList } from '../App'
 import { withErrorBoundary } from '../components/AppErrorBoundary'
 import { useAuthItem, useAuthState, useIsLoggedIn } from '../components/AuthItem'
 import ErrorScreen from '../components/ErrorScreen'
@@ -14,9 +16,12 @@ import { BlogFontSizes, BlogTheme } from '../config/Theming'
 import { BlogEntryWithId, fetchBlogEntry } from '../model/Blog'
 import { useAsyncAction } from '../src/AsyncTools'
 
-
-// @ts-ignore
-function BlogReadScreen({ navigation, route }) {
+// @ts -ignore
+interface BlogReadScreenProps {
+    navigation: StackNavigationProp<RootStackParamList, 'BlogRead'>, //NavigationProp,
+    route: any, //RouteProp
+}
+function BlogReadScreen({ navigation, route } : BlogReadScreenProps ) {
     const id = route.params.urlId || route.params.id
     const from_params = !route.params.urlId
 

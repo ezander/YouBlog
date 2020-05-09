@@ -16,7 +16,7 @@ export function LinkingNavigationContainer<Props>({ linking, fallback, ...props 
         console.log("getStateFromPath: ", path, options)
     
         const state = getStateFromPath(path, options)
-        // console.log("State: ", state)
+        console.log("State: ", state)
         return state
       }
     

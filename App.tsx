@@ -1,6 +1,6 @@
 import { createStackNavigator, StackHeaderProps } from '@react-navigation/stack';
-import { Linking } from 'expo';
-import React from 'react';
+import { Linking, AppLoading } from 'expo';
+import React, { useState } from 'react';
 import { Text } from 'react-native-elements';
 import ErrorBoundary from 'react-native-error-boundary';
 import NavHeader from './components/NavHeader';
@@ -18,6 +18,7 @@ import { authReducer } from './store/AuthReducer'
 
 
 import Warnings from './src/Warnings'
+import { useAsyncAction, delay } from './src/AsyncTools';
 Warnings.ignore('Setting a timer')
 
 const rootReducer = combineReducers({
@@ -29,7 +30,14 @@ const middleware = [ReduxThunk, ReduxLogger]
 const store = createStore(rootReducer, applyMiddleware(...middleware))
 
 
-const Stack = createStackNavigator()
+export type RootStackParamList = {
+  BlogList: undefined,
+  BlogRead: {urlId: string, id: string},
+  BlogEdit: undefined,
+  Login: undefined,
+}
+
+const Stack = createStackNavigator<RootStackParamList>()
 
 const navigatorOptions = {
   screenOptions: {
@@ -51,7 +59,24 @@ const linking = {
   }
 }
 
+async function performStartupStuff() {
+  await delay(500) 
+}
 export default function App() {
+
+  const [startUpFinished, setStartUpFinished] = useState(false)
+
+  if (!startUpFinished) {
+    return (
+      <AppLoading
+        startAsync={performStartupStuff}
+        onFinish={() => setStartUpFinished(true)}
+        onError={console.warn}
+        // autoHideconsoconsole.log(Splash={false}
+      />
+    );
+  }
+
   return (
     <ErrorBoundary>
       <Provider store={store}>
@@ -62,7 +87,7 @@ export default function App() {
               component={BlogListScreen}
               options={{ title: "All Blog Entries" }} />
             <Stack.Screen
-              name="BlogEntry"
+              name="BlogRead"
               component={BlogReadScreen}
               options={{ title: "Single Blog Entry" }} />
             <Stack.Screen
