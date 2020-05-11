@@ -1,8 +1,7 @@
 import chroma from "chroma-js";
 import * as Font from "expo-font";
-import { useContext } from "react";
 import { Dimensions, Platform } from "react-native";
-import { ThemeContext, FullTheme } from "react-native-elements";
+import { FullTheme } from "react-native-elements";
 import { IconTheme } from "../components/ThemedIcon";
 
 // const primaryColor = "#4455DD",
@@ -120,12 +119,6 @@ export type ExtendedTheme = FullTheme & {
   TabView: any;
 };
 
-export function useTheme(): Partial<ExtendedTheme> {
-  // const foo : FullTheme = null
-  const { theme } = useContext(ThemeContext);
-  return theme;
-}
-
 export const SCREEN_WIDTH = Dimensions.get("window").width;
 export const SCREEN_HEIGHT = Dimensions.get("window").height;
 
@@ -159,7 +152,10 @@ export const defaultTheme = {
       textShadowRadius: 20,
     },
   },
-  LoginInput: {
+};
+
+export const loginTheme = {
+  Input: {
     containerStyle: {
       width: SCREEN_WIDTH - 60,
     },
@@ -181,15 +177,13 @@ export const defaultTheme = {
     keyboardAppearance: "light",
     blurOnSubmit: false,
   },
-  LoginButton: {
+  Button: {
     containerStyle: {
       width: SCREEN_WIDTH - 120,
       borderRadius: 10,
       borderWidth: 1,
-      // borderColor: Colors.paperLight,
       height: 50,
       marginVertical: 10,
-      backgroundColor: "green",
     },
     buttonStyle: {
       backgroundColor: "transparent",

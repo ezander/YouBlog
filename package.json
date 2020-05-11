@@ -19,6 +19,7 @@
     "@react-navigation/stack": "^5.2.13",
     "axios": "^0.19.2",
     "chroma-js": "^2.1.0",
+    "deepmerge": "^4.2.2",
     "expo": "^37.0.0",
     "expo-image-picker": "~8.1.0",
     "expo-permissions": "~8.1.0",

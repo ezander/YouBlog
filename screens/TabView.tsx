@@ -1,14 +1,16 @@
 import React, { useState } from "react";
 import { LayoutAnimation, StyleSheet, UIManager, View } from "react-native";
 import { Button, ButtonProps } from "react-native-elements";
-import { SCREEN_WIDTH, useTheme } from "../config/Theming";
+import { SCREEN_WIDTH } from "../config/Theming";
+import { useTheme } from "../components/ThemeMerger";
 
 // Enable LayoutAnimation on Android
 UIManager.setLayoutAnimationEnabledExperimental &&
   UIManager.setLayoutAnimationEnabledExperimental(true);
 
 const TabSelector = ({ selected }: { selected: boolean }) => {
-  const theme = useTheme()
+  const theme = useTheme() as any
+  
   const themeStyles = theme.TabView
 
   return (
