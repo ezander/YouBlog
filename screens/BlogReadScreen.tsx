@@ -7,6 +7,7 @@ import {
   RefreshControl,
   Share,
   StyleSheet,
+  View,
 } from "react-native";
 import { Image, Text } from "react-native-elements";
 import { ScrollView } from "react-native-gesture-handler";
@@ -22,7 +23,7 @@ import ErrorScreen from "../components/ErrorScreen";
 import LoadingScreen from "../components/LoadingScreen";
 import Markdown from "../components/Markdown";
 import Screen from "../components/Screen";
-import { BlogFontSizes, BlogTheme } from "../config/Theming";
+import { BlogFontSizes, BlogTheme, GeneralTheme } from "../config/Theming";
 import { BlogEntryWithId, fetchBlogEntry } from "../model/Blog";
 import { useAsyncAction } from "../src/AsyncTools";
 
@@ -43,6 +44,13 @@ export interface BlogReadParams {
   };
 }
 
+function MyActivityIndicator() {
+  return (
+    <View style={styles.blogContainer}>
+      <ActivityIndicator />
+    </View>
+  );
+}
 function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
   const params = route.params;
   const id = params.id;
@@ -82,7 +90,7 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
     });
   };
   // const editAllowed = isLoggedIn && authState.user.localId === author_id // check whether logged in and owner of entry
-  const editAllowed = true; // todo: remove
+  const editAllowed = true || author_id || isLoggedIn; // todo: remove
 
   const handleShare = () => {
     const path = `post/${id}`;
@@ -107,55 +115,49 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
     ],
   });
 
+  const { fontScale, ...blogMarkdownStyle } = BlogTheme;
+  blogMarkdownStyle.fontSize = BlogFontSizes[BlogTheme.fontScale];
   const fontSize = BlogFontSizes[BlogTheme.fontScale];
-  const codeFF = BlogTheme.codeFontFamily;
-  const textFF = BlogTheme.textFontFamily;
+  // const codeFF = BlogTheme.codeFontFamily;
+  // const textFF = BlogTheme.textFontFamily;
+  // const bgColor = BlogTheme.backgroundColor
 
   const fdate = moment(date).format("LLL");
   const header = `\n # ${title} \n _${author}_ | _${fdate}_ \n`;
 
   return (
-    <Screen>
-      <ScrollView
-        style={styles.blogContainer}
-        refreshControl={
-          <RefreshControl
-            refreshing={!hasRun || isWorking}
-            onRefresh={doRefresh}
-          />
-        }
-      >
-        <Text></Text>
-        {title && (
-          <Markdown
-            fontSize={fontSize}
-            textFontFamily={textFF}
-            codeFontFamily={codeFF}
-          >
-            {header}
-          </Markdown>
-        )}
-        {image_url && (
-          <Image
-            resizeMethod="auto"
-            resizeMode="cover"
-            source={{ uri: image_url }}
-            style={{ width: "100%", height: 200 }}
-            PlaceholderContent={<ActivityIndicator />}
-          />
-        )}
-        {!hasRun || isWorking ? (
-          <LoadingScreen text={"Loading blog entry..."} />
-        ) : (
-          <Markdown
-            fontSize={fontSize}
-            textFontFamily={textFF}
-            codeFontFamily={codeFF}
-          >
-            {text}
-          </Markdown>
-        )}
-      </ScrollView>
+    <Screen backgroundImage={require("../assets/handwriting-1362879_1280.jpg")}>
+      {/* <Screen> */}
+      <View style={styles.blogContainer}>
+        <ScrollView
+          refreshControl={
+            <RefreshControl
+              refreshing={!hasRun || isWorking}
+              onRefresh={doRefresh}
+            />
+          }
+        >
+          {title && <Markdown {...blogMarkdownStyle}>{header}</Markdown>}
+          {image_url && (
+            <Image
+              resizeMethod="auto"
+              resizeMode="cover"
+              source={{ uri: image_url }}
+              style={{ width: "100%", height: 200 }}
+              PlaceholderContent={<ActivityIndicator size="large"/>}
+            />
+          )}
+          {!hasRun || isWorking ? (
+            <Screen style={{backgroundColor: BlogTheme.backgroundColor}}>
+              <Text></Text>
+              <ActivityIndicator size="large"/>
+              <Text style={{...GeneralTheme.headingStyle, fontSize: 24}}>{"Loading blog entry..."} </Text>
+            </Screen>
+          ) : (
+            <Markdown {...blogMarkdownStyle}>{text}</Markdown>
+          )}
+        </ScrollView>
+      </View>
     </Screen>
   );
 }
@@ -164,6 +166,9 @@ export default withErrorBoundary(BlogReadScreen);
 
 const styles = StyleSheet.create({
   blogContainer: {
-    paddingHorizontal: 10,
+    // paddingHorizontal: 10,
+    margin: 15,
+    padding: 10,
+    backgroundColor: BlogTheme.backgroundColor,
   },
 });

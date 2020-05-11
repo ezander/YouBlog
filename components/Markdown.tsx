@@ -10,6 +10,7 @@ export type MarkdownProps = MarkdownRendererProps & {
   fontSize?: number;
   textFontFamily?: string;
   codeFontFamily?: string;
+  backgroundColor?: string,
   children: string | string[];
 };
 
@@ -17,14 +18,15 @@ export default function Markdown<Props>({
   fontSize,
   codeFontFamily,
   textFontFamily,
+  backgroundColor,
   children,
   ...props
 }: MarkdownProps) {
   const text = Array.isArray(children) ? children.join("\n") : children;
 
-  const style = markdownStyles(fontSize, textFontFamily, codeFontFamily);
+  const style = markdownStyles(fontSize, textFontFamily, codeFontFamily, backgroundColor);
   return (
-    <MarkdownRenderer style={style} {...props}>
+    <MarkdownRenderer style={{...style}} {...props}>
       {text}
     </MarkdownRenderer>
   );
@@ -33,7 +35,8 @@ export default function Markdown<Props>({
 function markdownStyles(
   baseFontSize: number = 14,
   textFontFamily: string = FontFaces.serif,
-  codeFontFamily: string = FontFaces.monospace
+  codeFontFamily: string = FontFaces.monospace,
+  backgroundColor: string = "white"
 ) {
   const codeProps = {
     fontFamily: codeFontFamily,
@@ -76,6 +79,7 @@ function markdownStyles(
     },
     body: {
       fontSize: 14,
+      backgroundColor: backgroundColor
     },
   };
 

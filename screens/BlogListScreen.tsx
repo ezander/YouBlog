@@ -14,6 +14,7 @@ import {
   fetchBlogEntries,
 } from "../model/Blog";
 import { useAsyncAction } from "../src/AsyncTools";
+import { GeneralTheme } from "../config/Theming";
 
 function BlogListEntry({
   entry,
@@ -29,8 +30,10 @@ function BlogListEntry({
       subtitle={blog.author + " | " + moment(blog.date).fromNow()}
       onPress={onSelect}
       bottomDivider
-      chevron
-      containerStyle={{ backgroundColor: "#e4e1cc" }}
+      chevron={{size: 40}}
+      containerStyle={GeneralTheme.screen}
+      titleStyle={GeneralTheme.listItems.title}
+      subtitleStyle={GeneralTheme.listItems.subtitle}
     />
   );
 }
@@ -69,7 +72,7 @@ function BlogListScreen({ navigation }: { navigation: any }) {
   };
 
   navigation.setOptions({
-    // title: title,
+    title: "YouBlog",
     // @ts-ignore
     extraHeaderItems: [
       <Item key="share" title="Share" iconName="share" onPress={handleShare} />,
@@ -89,8 +92,8 @@ function BlogListScreen({ navigation }: { navigation: any }) {
 
   return (
     <Screen backgroundImage={require("../assets/handwriting-1362879_1280.jpg")}>
-      <View style={{ padding: 10 }}>
-        <Text h4>Latest blog entries</Text>
+      <View style={{ paddingTop: 10 }}>
+        <Text style={GeneralTheme.headingStyle}>Latest Blog Entries</Text>
       </View>
       <View style={{ width: "100%", padding: 10, flex: 1 }}>
         <FlatList<BlogEntryWithId>
@@ -100,7 +103,7 @@ function BlogListScreen({ navigation }: { navigation: any }) {
           )}
           refreshing={!hasRun || isWorking}
           onRefresh={doRefresh}
-          style={{ backgroundColor: "#e4e1cc" }}
+          style={GeneralTheme.screen}
         />
       </View>
     </Screen>

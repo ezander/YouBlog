@@ -1,12 +1,13 @@
+import "react-native-gesture-handler";
+import React, { useState } from "react";
+
 import {
   createStackNavigator,
   StackHeaderProps,
 } from "@react-navigation/stack";
 import { AppLoading, Linking } from "expo";
-import React, { useState } from "react";
 import { Text } from "react-native-elements";
 import ErrorBoundary from "react-native-error-boundary";
-import "react-native-gesture-handler";
 import { Provider } from "react-redux";
 import { applyMiddleware, combineReducers, createStore } from "redux";
 import ReduxThunk from "redux-thunk";
@@ -20,6 +21,7 @@ import { delay } from "./src/AsyncTools";
 import Warnings from "./src/Warnings";
 import { doRestoreLogin } from "./store/AuthActions";
 import { authReducer } from "./store/AuthReducer";
+import { loadFonts } from "./config/Theming";
 
 Warnings.ignore("Setting a timer");
 
@@ -100,9 +102,15 @@ function RootStackNavigator() {
 async function performStartupStuff() {
   // this is all kind of silly, but that's only
   // because firebase initialization is slow and stupid...
-  await store.dispatch(doRestoreLogin());
-  await delay(100);
-  await store.dispatch(doRestoreLogin());
+  const results = await Promise.all([
+    store.dispatch(doRestoreLogin()),
+    delay(100),
+    loadFonts()
+  ])
+  return results
+  // await store.dispatch(doRestoreLogin());
+  // await delay(100);
+  // await store.dispatch(doRestoreLogin());
 }
 
 export default function App() {

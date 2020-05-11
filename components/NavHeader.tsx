@@ -3,7 +3,7 @@ import {
   StackNavigationOptions,
 } from "@react-navigation/stack";
 import React from "react";
-import { Platform } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { Header } from "react-native-elements";
 import {
   HeaderButton,
@@ -16,6 +16,23 @@ import ThemedIcon, { SpecialisedThemedIconProps } from "./ThemedIcon";
 export type ExtendedNavigationOptions = StackNavigationOptions & {
   onOpenMenu?: any;
   extraHeaderItems?: Array<JSX.Element>;
+};
+
+export function IconComponent(props: SpecialisedThemedIconProps) {
+  const iconSize = HeaderTheme.iconSize;
+  const iconColor = HeaderTheme.iconColor;
+  return (
+    <ThemedIcon
+      theme={HeaderTheme.iconTheme}
+      {...props}
+      size={iconSize}
+      color={iconColor}
+    />
+  );
+}
+
+export const ThemedHeaderButton = (props: any) => {
+  return <HeaderButton IconComponent={IconComponent} {...props} />;
 };
 
 function NavHeader({ headerProps }: { headerProps: StackHeaderProps }) {
@@ -55,23 +72,6 @@ function NavHeader({ headerProps }: { headerProps: StackHeaderProps }) {
 
   // rightHeaderItems.push(<Avatar rounded title="EZ" key="avatar" />)
 
-  function IconComponent(props: SpecialisedThemedIconProps) {
-    const iconSize = HeaderTheme.iconSize;
-    const iconColor = HeaderTheme.iconColor;
-    return (
-      <ThemedIcon
-        theme={HeaderTheme.iconTheme}
-        {...props}
-        size={iconSize}
-        color={iconColor}
-      />
-    );
-  }
-
-  const ThemedHeaderButton = (props: any) => {
-    return <HeaderButton IconComponent={IconComponent} {...props} />;
-  };
-
   const leftComponent = (
     <HeaderButtons
       HeaderButtonComponent={ThemedHeaderButton}
@@ -91,10 +91,7 @@ function NavHeader({ headerProps }: { headerProps: StackHeaderProps }) {
 
   const centerComponent = {
     text: title,
-    style: {
-      color: HeaderTheme.textColor,
-      fontSize: HeaderTheme.fontSize,
-    },
+    style: styles.headerComponents,
   };
 
   return (
@@ -102,15 +99,24 @@ function NavHeader({ headerProps }: { headerProps: StackHeaderProps }) {
       leftComponent={leftComponent}
       centerComponent={centerComponent}
       rightComponent={rightComponent}
-      containerStyle={{
-        paddingTop: 0,
-        height: Platform.select({
-          android: 50,
-          default: 44,
-        }),
-      }}
+      containerStyle={styles.headerContainer}
     />
   );
 }
 
 export default NavHeader;
+
+const styles = StyleSheet.create({
+  headerContainer: {
+    paddingTop: 0,
+    height: Platform.select({
+      android: 50,
+      default: 44,
+    }),
+    backgroundColor: HeaderTheme.backgroundColor,
+  },
+  headerComponents: {
+    color: HeaderTheme.textColor,
+    fontSize: HeaderTheme.fontSize,
+  }
+});
