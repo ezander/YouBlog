@@ -6,7 +6,7 @@ import {
   StackHeaderProps,
 } from "@react-navigation/stack";
 import { AppLoading, Linking } from "expo";
-import { Text } from "react-native-elements";
+import { Text, ThemeProvider } from "react-native-elements";
 import ErrorBoundary from "react-native-error-boundary";
 import { Provider } from "react-redux";
 import { applyMiddleware, combineReducers, createStore } from "redux";
@@ -21,7 +21,8 @@ import { delay } from "./src/AsyncTools";
 import Warnings from "./src/Warnings";
 import { doRestoreLogin } from "./store/AuthActions";
 import { authReducer } from "./store/AuthReducer";
-import { loadFonts } from "./config/Theming";
+import { loadFonts, defaultTheme } from "./config/Theming";
+
 
 Warnings.ignore("Setting a timer");
 
@@ -76,6 +77,11 @@ function RootStackNavigator() {
   return (
     <Stack.Navigator {...navigatorOptions}>
       <Stack.Screen
+        name="LoginTest"
+        component={LoginScreen}
+        options={{ title: "Log in or Sign up" }}
+      />
+      <Stack.Screen
         name="BlogList"
         component={BlogListScreen}
         options={{ title: "All Blog Entries" }}
@@ -105,9 +111,9 @@ async function performStartupStuff() {
   const results = await Promise.all([
     store.dispatch(doRestoreLogin()),
     delay(100),
-    loadFonts()
-  ])
-  return results
+    loadFonts(),
+  ]);
+  return results;
   // await store.dispatch(doRestoreLogin());
   // await delay(100);
   // await store.dispatch(doRestoreLogin());
@@ -129,16 +135,18 @@ export default function App() {
 
   return (
     <ErrorBoundary>
-      <Provider store={store}>
-        <LinkingNavigationContainer
-          linking={linking}
-          fallback={<Text>Loading...</Text>}
-        >
-          <DummyStack.Navigator screenOptions={{ headerShown: false }}>
-            <DummyStack.Screen name="Dummy" component={RootStackNavigator} />
-          </DummyStack.Navigator>
-        </LinkingNavigationContainer>
-      </Provider>
+      <ThemeProvider theme={defaultTheme}>
+        <Provider store={store}>
+          <LinkingNavigationContainer
+            linking={linking}
+            fallback={<Text>Loading...</Text>}
+          >
+            <DummyStack.Navigator screenOptions={{ headerShown: false }}>
+              <DummyStack.Screen name="Dummy" component={RootStackNavigator} />
+            </DummyStack.Navigator>
+          </LinkingNavigationContainer>
+        </Provider>
+      </ThemeProvider>
     </ErrorBoundary>
   );
 }

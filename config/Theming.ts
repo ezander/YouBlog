@@ -1,7 +1,9 @@
 import chroma from "chroma-js";
-import { Platform } from "react-native";
-import { IconTheme } from "../components/ThemedIcon";
 import * as Font from "expo-font";
+import { useContext } from "react";
+import { Dimensions, Platform } from "react-native";
+import { ThemeContext, FullTheme } from "react-native-elements";
+import { IconTheme } from "../components/ThemedIcon";
 
 // const primaryColor = "#4455DD",
 // const accentColor = "#785634",
@@ -70,29 +72,27 @@ export interface HeaderTheme {
   [others: string]: any;
 }
 
-
 export const GeneralTheme = {
   headingStyle: {
     // fontFamily: "Pacifico",
     fontFamily: "MyUnderwood",
-    fontSize: 36
+    fontSize: 36,
   },
   screen: {
-    backgroundColor: Colors.paperColor
+    backgroundColor: Colors.paperColor,
   },
   listItems: {
     title: {
       fontFamily: "Baskerville",
-      fontSize: 20
+      fontSize: 20,
     },
     subtitle: {
       fontFamily: "Baskerville",
-      fontSize: 16
-    }
-  }
-}
-
-
+      fontSize: 16,
+    },
+  },
+  forms: {},
+};
 
 export const BlogFontSizes = {
   small: 10,
@@ -106,11 +106,106 @@ export const BlogTheme: BlogTheme = {
   fontScale: "large",
   textFontFamily: FontFaces.serif,
   codeFontFamily: FontFaces.monospace,
-  backgroundColor: Colors.paperLight
+  backgroundColor: Colors.paperLight,
 };
 export interface BlogTheme {
   fontScale: BlogFontScale;
-  textFontFamily: string,
-  codeFontFamily: string,
-  backgroundColor: string
+  textFontFamily: string;
+  codeFontFamily: string;
+  backgroundColor: string;
 }
+
+export type ExtendedTheme = FullTheme & {
+  Extra: any;
+  TabView: any;
+};
+
+export function useTheme(): Partial<ExtendedTheme> {
+  // const foo : FullTheme = null
+  const { theme } = useContext(ThemeContext);
+  return theme;
+}
+
+export const SCREEN_WIDTH = Dimensions.get("window").width;
+export const SCREEN_HEIGHT = Dimensions.get("window").height;
+
+export const defaultTheme = {
+  Extra: {
+    View: {
+      backgroundColor: Colors.primaryColor, // "rgba(46, 50, 72, 1)",
+      // width: SCREEN_WIDTH - 10,
+      alignItems: "center",
+      paddingVertical: 30,
+    },
+    Text: {
+      color: "white",
+      fontSize: 30,
+      marginVertical: 10,
+      fontWeight: "300",
+    },
+  },
+  TabView: {
+    selected: {
+      borderColor: Colors.primaryColor,
+      backgroundColor: Colors.primaryColor,
+    },
+    categoryText: {
+      textAlign: "center",
+      color: "black",
+      fontFamily: "MyUnderwood",
+      fontSize: 36,
+      textShadowOffset: { width: 5, height: 2 },
+      textShadowColor: "black",
+      textShadowRadius: 20,
+    },
+  },
+  LoginInput: {
+    containerStyle: {
+      width: SCREEN_WIDTH - 60,
+    },
+    inputContainerStyle: {
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: Colors.paperLight,
+      height: 50,
+      marginVertical: 10,
+    },
+    placeholderTextColor: chroma
+      .interpolate(Colors.paperLight, Colors.primaryColor, 0.8)
+      .hex(),
+    inputStyle: {
+      marginLeft: 10,
+      color: "white",
+      fontFamily: "MyUnderwood",
+    },
+    keyboardAppearance: "light",
+    blurOnSubmit: false,
+  },
+  LoginButton: {
+    containerStyle: {
+      width: SCREEN_WIDTH - 120,
+      borderRadius: 10,
+      borderWidth: 1,
+      // borderColor: Colors.paperLight,
+      height: 50,
+      marginVertical: 10,
+      backgroundColor: "green",
+    },
+    buttonStyle: {
+      backgroundColor: "transparent",
+    },
+    titleStyle: {
+      // backgroundColor: "red",
+      marginLeft: 10,
+      color: "black",
+      fontFamily: "MyUnderwood",
+      fontSize: 24,
+    },
+    raised: true,
+    type: "solid",
+  },
+  Icon: {
+    color: Colors.paperLight, //"rgba(110, 120, 170, 1)",
+    size: 25,
+  },
+};

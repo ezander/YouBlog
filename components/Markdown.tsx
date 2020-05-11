@@ -14,7 +14,7 @@ export type MarkdownProps = MarkdownRendererProps & {
   children: string | string[];
 };
 
-export default function Markdown<Props>({
+export default function Markdown({
   fontSize,
   codeFontFamily,
   textFontFamily,
