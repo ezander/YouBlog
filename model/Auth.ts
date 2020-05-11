@@ -1,5 +1,6 @@
 import * as firebase from "firebase";
-import "firebase/auth";
+import * as FirebaseSDK from "./FirebaseSDK";
+
 import {
   loginUser,
   signUpUser,
@@ -21,23 +22,16 @@ export interface User {
 }
 
 class SDK {
-  static getAuth() {
-    try {
-      firebase.app();
-    } catch (error) {
-      firebase.initializeApp(firebaseConfig);
-    }
-    return firebase.auth();
-  }
+  static auth = FirebaseSDK.getAuth()
 
-  static async userFromResponse(fbUser: firebase.User): User {
+  static async userFromResponse(fbUser: firebase.User): Promise<User> {
     return {
       localId: fbUser.uid,
       email: fbUser.email!,
       displayName: fbUser.displayName!,
       profilePicture: fbUser.photoURL!,
-      idToken: fbUser.getIdToken(),
-      expiresIn: undefined,
+      idToken: await fbUser.getIdToken(),
+      expiresIn: -1,
       refreshToken: fbUser.refreshToken,
       registered: undefined,
     };
@@ -45,8 +39,7 @@ class SDK {
 
   static async login(email: string, password: string): Promise<User> {
     // firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error)
-    const auth = SDK.getAuth();
-    const userCredential = await auth.signInWithEmailAndPassword(
+    const userCredential = await SDK.auth.signInWithEmailAndPassword(
       email,
       password
     );
@@ -54,15 +47,14 @@ class SDK {
     if (!userCredential.user)
       throw Error("Firebase did not return a user structure");
     const user = SDK.userFromResponse(userCredential.user);
-    
+
     return user;
   }
 
   static async logout() {
-    const auth = SDK.getAuth();
-    await auth.signOut()
-    if( auth.currentUser ) {
-        console.error("User not logged  out. what the fuck?")
+    await SDK.auth.signOut();
+    if (SDK.auth.currentUser) {
+      console.error("User not logged  out. what the fuck?");
     }
   }
 
@@ -82,7 +74,20 @@ class SDK {
     // return REST.userFromResponse(response)
   }
 
-  // Not yet ...
+  static async persistLogin(user: User) {
+    // automatic with SDK, only tell the SDK to do so
+    await SDK.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+  }
+
+  static async restoreLogin() {
+    await SDK.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+    const fbUser = SDK.auth.currentUser;
+    console.log(
+      "Checked for current user: ",
+      fbUser && [fbUser.displayName, fbUser.uid, await fbUser.getIdToken()]
+    );
+    return fbUser && SDK.userFromResponse(fbUser);
+  }
 }
 
 class REST {
@@ -123,10 +128,26 @@ class REST {
   }
 
   static async logout() {
-    // a noop for REST      
+    // a noop for REST
+  }
+
+  static async persistLogin(user: User) {
+    return await AsyncStorage.setItem("LoginData", JSON.stringify(user));
+  }
+
+  static async restoreLogin() {
+    const loginData = await AsyncStorage.getItem("LoginData");
+    return loginData && JSON.parse(loginData);
   }
 }
 
 const AuthAPI = SDK;
 
-export const { login, signUp, updateProfile, logout } = AuthAPI;
+export const {
+  login,
+  signUp,
+  updateProfile,
+  logout,
+  persistLogin,
+  restoreLogin,
+} = AuthAPI;

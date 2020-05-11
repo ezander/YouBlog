@@ -1,6 +1,4 @@
-import * as firebase from 'firebase'
-import 'firebase/firestore'
-import firebaseConfig from '../firebaseConfig.json'
+import * as FirebaseSDK from "./FirebaseSDK";
 import { getDocument, listDocuments } from '../src/FirestoreTools'
 
 export interface BlogEntry {
@@ -22,17 +20,7 @@ export type BlogEntryWithId = WithId<BlogEntry>
 export type BlogList = Array<BlogEntryWithId>
 
 class SDK {
-    static db = SDK.getDB()
-
-    static getDB() {
-        try {
-            firebase.app()
-        }
-        catch (error) {
-            firebase.initializeApp(firebaseConfig)
-        }
-        return firebase.firestore()
-    }
+    static db = FirebaseSDK.getDB()
 
     static convertBlogEntry(id: string, doc: firebase.firestore.DocumentData): BlogEntryWithId {
         return {
