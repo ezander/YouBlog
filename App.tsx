@@ -22,6 +22,7 @@ import Warnings from "./src/Warnings";
 import { doRestoreLogin } from "./store/AuthActions";
 import { authReducer } from "./store/AuthReducer";
 import { loadFonts, defaultTheme } from "./config/Theming";
+import LoginForm from "./screens/LoginForm";
 
 
 Warnings.ignore("Setting a timer");
@@ -74,13 +75,14 @@ const linking = {
 };
 
 function RootStackNavigator() {
+  const TestLoginScreen = (props) => <LoginScreen showDebugButtons={true} {...props}/>
   return (
     <Stack.Navigator {...navigatorOptions}>
-      <Stack.Screen
+      {/* <Stack.Screen
         name="LoginTest"
-        component={LoginScreen}
+        component={TestLoginScreen}
         options={{ title: "Log in or Sign up" }}
-      />
+      /> */}
       <Stack.Screen
         name="BlogList"
         component={BlogListScreen}
@@ -113,7 +115,7 @@ async function performStartupStuff() {
     delay(100),
     loadFonts(),
   ]);
-  return results;
+  return// results;
   // await store.dispatch(doRestoreLogin());
   // await delay(100);
   // await store.dispatch(doRestoreLogin());

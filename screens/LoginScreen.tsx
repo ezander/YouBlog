@@ -14,7 +14,7 @@ interface LoginScreenProps {
   navigation: StackNavigationProp<RootStackParamList, "Login">;
 }
 
-export default function LoginScreen({ navigation }: LoginScreenProps) {
+export default function LoginScreen({ navigation, showDebugButtons }: LoginScreenProps) {
   const isLoggedIn = useIsLoggedIn();
   if (isLoggedIn) {
     navigation.goBack();
@@ -50,7 +50,6 @@ export default function LoginScreen({ navigation }: LoginScreenProps) {
   // function handleSignUp() {
   //     dispatch(AuthActions.doSignUp(email, password))
   // }
-  const showDebugButtons = !true;
 
   return (
     <Screen backgroundImage={require("../assets/handwriting-1362879_1280.jpg")}>

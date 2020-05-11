@@ -131,7 +131,7 @@ export const defaultTheme = {
       paddingVertical: 30,
     },
     Text: {
-      color: "white",
+      color: Colors.paperLight,
       fontSize: 30,
       marginVertical: 10,
       fontWeight: "300",
@@ -147,9 +147,9 @@ export const defaultTheme = {
       color: "black",
       fontFamily: "MyUnderwood",
       fontSize: 36,
-      textShadowOffset: { width: 5, height: 2 },
+      textShadowOffset: { width: 5, height: 5 },
       textShadowColor: "black",
-      textShadowRadius: 20,
+      textShadowRadius: 14,
     },
   },
 };
@@ -171,7 +171,7 @@ export const loginTheme = {
       .hex(),
     inputStyle: {
       marginLeft: 10,
-      color: "white",
+      color: Colors.paperLight,
       fontFamily: "MyUnderwood",
     },
     keyboardAppearance: "light",
