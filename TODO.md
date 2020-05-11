@@ -4,6 +4,7 @@
 
 * Authentication: Login, Logoff, SignUp, Change Profile
 * Creating, Editing, and Deleting of blog posts
+* Taking and uploading photos
 
 ## Done
 

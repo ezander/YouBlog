@@ -9,6 +9,5 @@
     "resolveJsonModule": true,
     "strict": true,
     "diagnostics": true
-
   }
 }

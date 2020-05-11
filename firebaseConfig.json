@@ -1,10 +1,10 @@
 {
-    "apiKey": "AIzaSyAQTVQFCvpyWy9KDXTz2NZcHllUsaNWdvY",
-    "authDomain": "youblog-814ae.firebaseapp.com",
-    "databaseURL": "https://youblog-814ae.firebaseio.com",
-    "projectId": "youblog-814ae",
-    "storageBucket": "youblog-814ae.appspot.com",
-    "messagingSenderId": "190341047514",
-    "appId": "1:190341047514:web:cd71d86d84a99215f4b1e3",
-    "measurementId": "G-6Q8X5LE57K"
+  "apiKey": "AIzaSyAQTVQFCvpyWy9KDXTz2NZcHllUsaNWdvY",
+  "authDomain": "youblog-814ae.firebaseapp.com",
+  "databaseURL": "https://youblog-814ae.firebaseio.com",
+  "projectId": "youblog-814ae",
+  "storageBucket": "youblog-814ae.appspot.com",
+  "messagingSenderId": "190341047514",
+  "appId": "1:190341047514:web:cd71d86d84a99215f4b1e3",
+  "measurementId": "G-6Q8X5LE57K"
 }

@@ -9,11 +9,11 @@
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/LogoMakr_9AokN1.png" ,
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash_new.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#e4e1cc"
     },
     "updates": {
       "fallbackToCacheTimeout": 0

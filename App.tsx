@@ -1,79 +1,144 @@
-import { createStackNavigator, StackHeaderProps } from '@react-navigation/stack';
-import { Linking } from 'expo';
-import React from 'react';
-import { Text } from 'react-native-elements';
-import ErrorBoundary from 'react-native-error-boundary';
-import NavHeader from './components/NavHeader';
-import { LinkingNavigationContainer } from './LinkingNavigationContainer';
-import BlogEditScreen from './screens/BlogEditScreen';
-import BlogListScreen from './screens/BlogListScreen';
-import BlogReadScreen from './screens/BlogReadScreen';
-import LoginScreen from './screens/LoginScreen';
+import "react-native-gesture-handler";
+import React, { useState } from "react";
 
-import { createStore, combineReducers, applyMiddleware, Middleware } from 'redux'
-import { Provider } from 'react-redux'
-import ReduxThunk from 'redux-thunk'
-import ReduxLogger from 'redux-logger'
-import { authReducer } from './store/AuthReducer'
+import {
+  createStackNavigator,
+  StackHeaderProps,
+} from "@react-navigation/stack";
+import { AppLoading, Linking } from "expo";
+import { Text } from "react-native-elements";
+import ErrorBoundary from "react-native-error-boundary";
+import { Provider } from "react-redux";
+import { applyMiddleware, combineReducers, createStore } from "redux";
+import ReduxThunk from "redux-thunk";
+import { LinkingNavigationContainer } from "./components/LinkingNavigationContainer";
+import NavHeader from "./components/NavHeader";
+import BlogEditScreen, { BlogEditParams } from "./screens/BlogEditScreen";
+import BlogListScreen from "./screens/BlogListScreen";
+import BlogReadScreen, { BlogReadParams } from "./screens/BlogReadScreen";
+import LoginScreen from "./screens/LoginScreen";
+import { delay } from "./src/AsyncTools";
+import Warnings from "./src/Warnings";
+import { doRestoreLogin } from "./store/AuthActions";
+import { authReducer } from "./store/AuthReducer";
+import { loadFonts } from "./config/Theming";
 
+Warnings.ignore("Setting a timer");
 
 const rootReducer = combineReducers({
   auth: authReducer,
   // blog: blogReducer,
   // edit: editReducer
-})
-const middleware = [ReduxThunk, ReduxLogger]
-const store = createStore(rootReducer, applyMiddleware(...middleware))
+});
+const middleware = [ReduxThunk]; //, ReduxLogger]
+const store = createStore(rootReducer, applyMiddleware(...middleware));
 
+export type RootStackParamList = {
+  BlogList: undefined;
+  BlogRead: BlogReadParams;
+  BlogEdit: BlogEditParams;
+  Login: undefined;
+};
 
-const Stack = createStackNavigator()
+const DummyStack = createStackNavigator();
+const Stack = createStackNavigator<RootStackParamList>();
 
 const navigatorOptions = {
   screenOptions: {
-    header: (headerProps: StackHeaderProps) => <NavHeader headerProps={headerProps} />
-  }
-}
+    header: (headerProps: StackHeaderProps) => (
+      <NavHeader headerProps={headerProps} />
+    ),
+  },
+};
 
 const linking = {
   prefixes: [
-    Linking.makeUrl('/'),
-    'https://expo.io/@ezander/YouBlog',
-    'https://zandere.de/youblog'
+    Linking.makeUrl("/"),
+    "https://expo.io/@ezander/YouBlog",
+    "https://zandere.de/youblog",
   ],
   config: {
-    "BlogList": "list",
-    "BlogEntry": {
-      path: 'post/:urlId'
-    }
-  }
+    Dummy: {
+      initialRouteName: "BlogList",
+      screens: {
+        BlogList: {
+          path: "list",
+        },
+        BlogRead: {
+          path: "post/:id",
+        },
+      },
+    },
+  },
+};
+
+function RootStackNavigator() {
+  return (
+    <Stack.Navigator {...navigatorOptions}>
+      <Stack.Screen
+        name="BlogList"
+        component={BlogListScreen}
+        options={{ title: "All Blog Entries" }}
+      />
+      <Stack.Screen
+        name="BlogRead"
+        component={BlogReadScreen}
+        options={{ title: "Single Blog Entry" }}
+      />
+      <Stack.Screen
+        name="BlogEdit"
+        component={BlogEditScreen}
+        options={{ title: "Edit Blog Entry" }}
+      />
+      <Stack.Screen
+        name="Login"
+        component={LoginScreen}
+        options={{ title: "Log in or Sign up" }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+async function performStartupStuff() {
+  // this is all kind of silly, but that's only
+  // because firebase initialization is slow and stupid...
+  const results = await Promise.all([
+    store.dispatch(doRestoreLogin()),
+    delay(100),
+    loadFonts()
+  ])
+  return results
+  // await store.dispatch(doRestoreLogin());
+  // await delay(100);
+  // await store.dispatch(doRestoreLogin());
 }
 
 export default function App() {
+  const [startUpFinished, setStartUpFinished] = useState(false);
+
+  if (!startUpFinished) {
+    return (
+      <AppLoading
+        startAsync={performStartupStuff}
+        onFinish={() => setStartUpFinished(true)}
+        onError={console.warn}
+        // autoHideconsoconsole.log(Splash={false}
+      />
+    );
+  }
+
   return (
     <ErrorBoundary>
       <Provider store={store}>
-        <LinkingNavigationContainer linking={linking} fallback={<Text>Loading...</Text>}>
-          <Stack.Navigator {...navigatorOptions}>
-            <Stack.Screen
-              name="BlogList"
-              component={BlogListScreen}
-              options={{ title: "All Blog Entries" }} />
-            <Stack.Screen
-              name="BlogEntry"
-              component={BlogReadScreen}
-              options={{ title: "Single Blog Entry" }} />
-            <Stack.Screen
-              name="BlogEdit"
-              component={BlogEditScreen}
-              options={{ title: "Edit Blog Entry" }} />
-            <Stack.Screen
-              name="Login"
-              component={LoginScreen}
-              options={{ title: "Log in or Sign up" }} />
-          </Stack.Navigator>
+        <LinkingNavigationContainer
+          linking={linking}
+          fallback={<Text>Loading...</Text>}
+        >
+          <DummyStack.Navigator screenOptions={{ headerShown: false }}>
+            <DummyStack.Screen name="Dummy" component={RootStackNavigator} />
+          </DummyStack.Navigator>
         </LinkingNavigationContainer>
       </Provider>
-    </ErrorBoundary >
+    </ErrorBoundary>
   );
-
 }
