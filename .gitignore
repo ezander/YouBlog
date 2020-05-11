@@ -1,5 +1,5 @@
-node_modules/**/*
-.expo/*
+/node_modules
+/.expo
 npm-debug.*
 *.jks
 *.p8
@@ -9,11 +9,14 @@ npm-debug.*
 *.orig.*
 web-build/
 web-report/
-
+.vscode
 # macOS
 .DS_Store
 /data/temp
 /data/firebaseConfig.json
 /dist
+/build
+/foo
 /.temp
-/YouBlog-*.apk
+YouBlog-*.apk
+

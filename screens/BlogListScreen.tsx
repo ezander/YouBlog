@@ -30,7 +30,7 @@ function BlogListEntry({
       subtitle={blog.author + " | " + moment(blog.date).fromNow()}
       onPress={onSelect}
       bottomDivider
-      chevron={{size: 40}}
+      chevron={{size: 40, color: "darkgray"}}
       containerStyle={GeneralTheme.screen}
       titleStyle={GeneralTheme.listItems.title}
       subtitleStyle={GeneralTheme.listItems.subtitle}
