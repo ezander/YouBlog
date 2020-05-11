@@ -1,12 +1,12 @@
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import React, { useState, useCallback } from "react";
-import { Dimensions, View, ActivityIndicator } from "react-native";
+import { RouteProp } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import React, { useCallback, useState } from "react";
+import { ActivityIndicator, Dimensions, View } from "react-native";
 import { Button, Image } from "react-native-elements";
+import { RootStackParamList } from "../App";
 import TextScreen from "../components/TextScreen";
 import * as ImageTool from "../model/ImageTool";
-import { StackNavigationProp } from "@react-navigation/stack";
-import { RootStackParamList } from "../App";
-import { RouteProp } from "@react-navigation/native";
 
 export interface BlogEditParams {
   id: string;

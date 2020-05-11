@@ -1,14 +1,12 @@
 import * as firebase from "firebase";
-import * as FirebaseSDK from "./FirebaseSDK";
-
+import { AsyncStorage } from "react-native";
+import firebaseConfig from "../firebaseConfig.json";
 import {
   loginUser,
   signUpUser,
   updateUserProfile,
 } from "../src/FirebaseAuthTools";
-import firebaseConfig from "../firebaseConfig.json";
-
-import { AsyncStorage } from "react-native";
+import * as FirebaseSDK from "./FirebaseSDK";
 
 export interface User {
   localId: string;
@@ -22,7 +20,7 @@ export interface User {
 }
 
 class SDK {
-  static auth = FirebaseSDK.getAuth()
+  static auth = FirebaseSDK.getAuth();
 
   static async userFromResponse(fbUser: firebase.User): Promise<User> {
     return {
@@ -141,7 +139,7 @@ class REST {
   }
 }
 
-const AuthAPI = SDK;
+const AuthAPI = REST;
 
 export const {
   login,

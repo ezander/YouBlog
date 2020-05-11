@@ -1,9 +1,10 @@
 import moment from "moment";
 import React from "react";
-import { FlatList, View, ImageBackground } from "react-native";
+import { FlatList, Share, View } from "react-native";
 import { ListItem, Text } from "react-native-elements";
 import { Item } from "react-navigation-header-buttons";
 import { withErrorBoundary } from "../components/AppErrorBoundary";
+import { useAuthItem } from "../components/AuthItem";
 import ErrorScreen from "../components/ErrorScreen";
 import Screen from "../components/Screen";
 import {
@@ -13,8 +14,6 @@ import {
   fetchBlogEntries,
 } from "../model/Blog";
 import { useAsyncAction } from "../src/AsyncTools";
-import { useAuthItem } from "../components/AuthItem";
-import { Share } from "react-native";
 
 function BlogListEntry({
   entry,

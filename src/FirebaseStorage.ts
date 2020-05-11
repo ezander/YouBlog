@@ -1,11 +1,6 @@
-import axios, { Method, AxiosRequestConfig, AxiosResponse } from "axios";
-import {
-  HTTPError,
-  FirebaseError,
-  FirebaseConfig,
-  ErrorType,
-} from "./FirebaseTools";
+import axios, { AxiosRequestConfig, AxiosResponse, Method } from "axios";
 import { createError } from "./FirebaseErrors";
+import { FirebaseConfig, HTTPError } from "./FirebaseTools";
 
 // export function mapObject<T>(
 //     obj: T,
@@ -56,7 +51,7 @@ function handleResponse(response: AxiosResponse) {
 
 function makeParent(path: PathDef, firebaseConfig: FirebaseConfig) {
   const { storageBucket } = firebaseConfig;
-  const fullPath = pathDefToString(path)
+  const fullPath = pathDefToString(path);
   return `b/${storageBucket}/o/${fullPath}`;
 }
 // https://firebasestorage.googleapis.com/v0/b/youblog-814ae.appspot.com/o/books-1245690_1280.jpg
@@ -92,14 +87,14 @@ export async function makeStorageRequest(
     method,
     validateStatus: () => true,
     headers,
-    ...extraConfig
+    ...extraConfig,
   };
   if (params) config.params = params;
   if (data) config.data = data;
 
   const response = await axios(config);
-  console.log(response.headers['content-length'])
-  return response
+  console.log(response.headers["content-length"]);
+  return response;
   // return await handleResponse(response);
 }
 
@@ -114,7 +109,7 @@ export async function createResource(
   // if (resourceId) toFirestoreParams({ documentId: resourceId }, params);
   // const doc = toFirestoreDocument(data)
 
-  if( !resourceId) throw "al;ksdjf;laskdjf;la"
+  if (!resourceId) throw "al;ksdjf;laskdjf;la";
 
   const response = await makeStorageRequest(
     "post",
@@ -134,7 +129,7 @@ export async function getResource(
   token?: string
 ) {
   const params = new URLSearchParams();
-  params.append("alt", "media")
+  params.append("alt", "media");
 
   const data = await makeStorageRequest(
     "get",
@@ -143,7 +138,7 @@ export async function getResource(
     undefined,
     firebaseConfig,
     token,
-    {responseType: "stream"}
+    { responseType: "stream" }
   );
   return data;
   // return fromFirestoreDocument(data, makeParent(path, firebaseConfig))

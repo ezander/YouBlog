@@ -1,16 +1,18 @@
-import React from 'react'
-import Screen from './Screen'
-import { Text, ActivityIndicator } from 'react-native'
+import React from "react";
+import Screen from "./Screen";
+import { Text, ActivityIndicator } from "react-native";
 
 interface TextScreenProps {
-    text: string
+  text: string;
 }
 
 function LoadingScreen({ text }: TextScreenProps) {
-    return (<Screen>
-        <ActivityIndicator size="large" color="red"/>
-        <Text>{text}</Text>
-    </Screen>)
+  return (
+    <Screen>
+      <ActivityIndicator size="large" color="red" />
+      <Text>{text}</Text>
+    </Screen>
+  );
 }
 
-export default LoadingScreen
+export default LoadingScreen;

@@ -1,27 +1,27 @@
-import { YellowBox } from 'react-native';
-import _ from 'lodash';
+import _ from "lodash";
+import { YellowBox } from "react-native";
 
 export class Warnings {
-    static _console = _.clone(console);
+  static _console = _.clone(console);
 
-    static ignoreList: Array<string> = []
+  static ignoreList: Array<string> = [];
 
-    static ignore(toIgnore: string) {
-        Warnings.ignoreList.push(toIgnore)
-        YellowBox.ignoreWarnings(Warnings.ignoreList);
-        console.ignoredYellowBox = Warnings.ignoreList.slice();
+  static ignore(toIgnore: string) {
+    Warnings.ignoreList.push(toIgnore);
+    YellowBox.ignoreWarnings(Warnings.ignoreList);
+    console.ignoredYellowBox = Warnings.ignoreList.slice();
+  }
+
+  static warn(message: string) {
+    for (const ignored of Warnings.ignoreList) {
+      if (message.startsWith(ignored)) {
+        return;
+      }
     }
-
-    static warn(message: string) {
-        for( const ignored of Warnings.ignoreList ) {
-            if (message.startsWith(ignored)) {
-                return 
-            }
-        }
-        Warnings._console.warn(message);
-    }
+    Warnings._console.warn(message);
+  }
 }
 
-console.warn = Warnings.warn
+console.warn = Warnings.warn;
 
-export default Warnings
+export default Warnings;

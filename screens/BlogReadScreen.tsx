@@ -1,7 +1,5 @@
-import {
-  StackNavigationProp,
-  StackNavigationOptions,
-} from "@react-navigation/stack";
+import { RouteProp } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 import moment from "moment";
 import React, { useCallback } from "react";
 import {
@@ -25,9 +23,8 @@ import LoadingScreen from "../components/LoadingScreen";
 import Markdown from "../components/Markdown";
 import Screen from "../components/Screen";
 import { BlogFontSizes, BlogTheme } from "../config/Theming";
-import { BlogEntryWithId, fetchBlogEntry, BlogEntry } from "../model/Blog";
+import { BlogEntryWithId, fetchBlogEntry } from "../model/Blog";
 import { useAsyncAction } from "../src/AsyncTools";
-import { RouteProp } from "@react-navigation/native";
 
 // @ts -ignore
 interface BlogReadScreenProps {

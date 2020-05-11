@@ -1,10 +1,10 @@
 import {
   login,
-  signUp,
   logout,
-  updateProfile,
-  restoreLogin,
   persistLogin,
+  restoreLogin,
+  signUp,
+  updateProfile,
 } from "../model/Auth";
 
 export enum AuthActionTypes {
@@ -21,7 +21,7 @@ export function doLogin(username: string, password: string) {
 async function asyncLogin(username: string, password: string, dispatch: any) {
   try {
     const user = await login(username, password);
-    await persistLogin(user)
+    await persistLogin(user);
     return dispatch({ type: AuthActionTypes.LOGIN, user });
   } catch (error) {
     dispatch({ type: AuthActionTypes.AUTHERROR, error });
@@ -29,14 +29,14 @@ async function asyncLogin(username: string, password: string, dispatch: any) {
 }
 
 export function doRestoreLogin() {
-    return asyncRestoreLogin;
-  }
-  
+  return asyncRestoreLogin;
+}
+
 async function asyncRestoreLogin(dispatch: any) {
-    const user = await restoreLogin();
-    return user && dispatch({ type: AuthActionTypes.LOGIN, user });
-  }
-  
+  const user = await restoreLogin();
+  return user && dispatch({ type: AuthActionTypes.LOGIN, user });
+}
+
 export function doLogout() {
   return asyncLogout;
 }

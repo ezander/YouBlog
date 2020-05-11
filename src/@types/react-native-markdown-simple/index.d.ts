@@ -1,11 +1,10 @@
-declare module 'react-native-markdown-simple' {
+declare module "react-native-markdown-simple" {
+  export interface MarkdownProps {
+    styles?: any;
+    children?: any;
+  }
 
-    export interface MarkdownProps {
-        styles?: any,
-        children?: any
-    }
+  export class Markdown extends React.Component<MarkdownProps> {}
 
-    export class Markdown extends React.Component<MarkdownProps>{ }
-
-    export default Markdown
+  export default Markdown;
 }

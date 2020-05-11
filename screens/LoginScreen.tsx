@@ -1,17 +1,17 @@
 import React, { useRef } from "react";
+import { Dimensions, View } from "react-native";
 import {
   Button,
-  Text,
-  Input,
-  ThemeProvider,
   Icon,
+  Input,
+  Text,
+  ThemeProvider,
 } from "react-native-elements";
+import { ScrollView } from "react-native-gesture-handler";
 import { useDispatch } from "react-redux";
+import { useAuthState, useIsLoggedIn } from "../components/AuthItem";
 import Screen from "../components/Screen";
 import * as AuthActions from "../store/AuthActions";
-import { useIsLoggedIn, useAuthState } from "../components/AuthItem";
-import { View, Dimensions } from "react-native";
-import { ScrollView } from "react-native-gesture-handler";
 
 const SCREEN_WIDTH = Dimensions.get("window").width;
 
@@ -118,7 +118,7 @@ export default function LoginScreen({ navigation }) {
                 returnKeyType="next"
                 ref={usernameInput}
                 onSubmitEditing={() => {
-                  email2Input.current.focus();
+                  email2Input.current?.focus();
                 }}
               />
               <Input
@@ -132,7 +132,7 @@ export default function LoginScreen({ navigation }) {
                 returnKeyType="next"
                 ref={email2Input}
                 onSubmitEditing={() => {
-                  password2Input.current.focus();
+                  password2Input.current?.focus();
                 }}
               />
               <Input
@@ -145,7 +145,7 @@ export default function LoginScreen({ navigation }) {
                 returnKeyType="next"
                 ref={password2Input}
                 onSubmitEditing={() => {
-                  confirmPassword2Input.current.focus();
+                  confirmPassword2Input.current?.focus();
                 }}
               />
               <Input

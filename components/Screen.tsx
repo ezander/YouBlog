@@ -1,12 +1,10 @@
 import React from "react";
 import {
-  View,
-  StyleSheet,
-  StyleProp,
-  ViewStyle,
   ImageBackground,
   ImageSourcePropType,
-  ImageBackgroundProps,
+  StyleSheet,
+  View,
+  ViewStyle,
 } from "react-native";
 
 export interface ScreenProps {
@@ -29,7 +27,12 @@ function Screen({
       <View style={{ ...styles.screen, ...style }} {...rest}>
         <ImageBackground
           source={backgroundImage}
-          style={{ ...styles.screen, width: "100%", height: "100%", ...backgroundImageStyle }}
+          style={{
+            ...styles.screen,
+            width: "100%",
+            height: "100%",
+            ...backgroundImageStyle,
+          }}
         >
           {children}
         </ImageBackground>

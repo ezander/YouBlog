@@ -18,9 +18,9 @@ export async function takeOrPickImage(
     base64: false,
   };
   // let result = await ImagePicker.launchImageLibraryAsync();
-  let result = take ? 
-    await ImagePicker.launchCameraAsync(options) : 
-    await ImagePicker.launchImageLibraryAsync(options)
+  let result = take
+    ? await ImagePicker.launchCameraAsync(options)
+    : await ImagePicker.launchImageLibraryAsync(options);
 
   if (!result.cancelled) {
     onSelect(result.uri);
