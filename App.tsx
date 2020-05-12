@@ -1,4 +1,4 @@
-import "react-native-gesture-handler";
+import "react-native-gesture-handler"; // must be the first import
 import React, { useState } from "react";
 
 import {
@@ -20,18 +20,18 @@ import LoginScreen from "./screens/LoginScreen";
 import { delay } from "./src/AsyncTools";
 import Warnings from "./src/Warnings";
 import { doRestoreLogin } from "./store/AuthActions";
-import { authReducer } from "./store/AuthReducer";
+import authReducer from "./store/AuthReducer";
+import blogReducer from "./store/BlogReducer";
 import { loadFonts, defaultTheme } from "./config/Theming";
-import {ReduxLogger} from "./src/Logging"
+import { ReduxLogger } from "./src/Logging";
 
 Warnings.ignore("Setting a timer");
 
 const rootReducer = combineReducers({
   auth: authReducer,
-  // blog: blogReducer,
-  // edit: editReducer
+  blog: blogReducer,
 });
-const middleware = [ReduxThunk, ReduxLogger]
+const middleware = [ReduxThunk, ReduxLogger];
 const store = createStore(rootReducer, applyMiddleware(...middleware));
 
 export type RootStackParamList = {
@@ -114,7 +114,7 @@ async function performStartupStuff() {
     delay(100),
     loadFonts(),
   ]);
-  return// results;
+  return; // results;
   // await store.dispatch(doRestoreLogin());
   // await delay(100);
   // await store.dispatch(doRestoreLogin());

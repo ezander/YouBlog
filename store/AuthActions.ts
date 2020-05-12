@@ -5,6 +5,7 @@ import {
   restoreLogin,
   signUp,
   updateProfile,
+  User,
 } from "../model/Auth";
 import { authLogger } from "../src/Logging";
 
@@ -13,6 +14,11 @@ export enum AuthActionTypes {
   LOGOUT = "LOGOUT",
   SIGNUP = "SIGNUP",
 }
+
+export type AuthAction =
+  | {type: AuthActionTypes.LOGIN, user: User}
+  | {type: AuthActionTypes.LOGOUT}
+  | {type: AuthActionTypes.SIGNUP, user: User}
 
 export function doLogin(username: string, password: string) {
   return asyncLogin.bind(null, username, password);
