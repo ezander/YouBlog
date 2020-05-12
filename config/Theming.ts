@@ -202,4 +202,14 @@ export const loginTheme = {
     color: Colors.paperLight, //"rgba(110, 120, 170, 1)",
     size: 25,
   },
+  Text: {
+    style: {
+      fontFamily: "MyUnderwood",
+      fontSize: 16,
+    },
+    containerStyle: {
+      alignItems: "flex-start",
+      textAlign: "left"
+    }
+  },
 };

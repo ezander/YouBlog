@@ -12,39 +12,30 @@ import TabView from "./TabView";
 
 interface LoginScreenProps {
   navigation: StackNavigationProp<RootStackParamList, "Login">;
+  showDebugButtons?: boolean;
 }
 
-export default function LoginScreen({ navigation, showDebugButtons }: LoginScreenProps) {
+export default function LoginScreen({
+  navigation,
+  showDebugButtons,
+}: LoginScreenProps) {
   const isLoggedIn = useIsLoggedIn();
-  if (isLoggedIn) {
-    navigation.goBack();
-  }
-
   const authState = useAuthState();
-
   const dispatch = useDispatch();
 
-  function handleLoginAA() {
-    const email = "aa@testmail.com";
-    const password = "test1234";
+  // if (isLoggedIn) {
+  //   navigation.goBack();
+  // }
 
-    dispatch(AuthActions.doLogin(email, password));
-  }
-  function handleLoginCC() {
-    const email = "cc@testmail.com";
-    const password = "test1234";
+  const handleLoginAA = () =>
+    dispatch(AuthActions.doLogin("aa@testmail.com", "test1234"));
+  const handleLoginCC = () =>
+    dispatch(AuthActions.doLogin("cc@testmail.com", "test1234"));
+  const handleLoginErr = () =>
+    dispatch(AuthActions.doLogin("cc@testmail.com", "test1235"));
 
-    dispatch(AuthActions.doLogin(email, password));
-  }
-  function handleLoginErr() {
-    const email = "cc@testmail.com";
-    const password = "test1235";
-
-    dispatch(AuthActions.doLogin(email, password));
-  }
-
-  function handleCatChange(category: number, catTitle: string) {
-    navigation.setOptions({ title: catTitle });
+  function handleCatChange(category: number, title: string) {
+    navigation.setOptions({ title });
   }
 
   // function handleSignUp() {
