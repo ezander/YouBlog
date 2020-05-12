@@ -22,8 +22,7 @@ import Warnings from "./src/Warnings";
 import { doRestoreLogin } from "./store/AuthActions";
 import { authReducer } from "./store/AuthReducer";
 import { loadFonts, defaultTheme } from "./config/Theming";
-import LoginForm from "./screens/LoginForm";
-
+import {ReduxLogger} from "./src/Logging"
 
 Warnings.ignore("Setting a timer");
 
@@ -32,7 +31,7 @@ const rootReducer = combineReducers({
   // blog: blogReducer,
   // edit: editReducer
 });
-const middleware = [ReduxThunk]; //, ReduxLogger]
+const middleware = [ReduxThunk, ReduxLogger]
 const store = createStore(rootReducer, applyMiddleware(...middleware));
 
 export type RootStackParamList = {

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { LayoutAnimation, StyleSheet, UIManager, View } from "react-native";
 import { Button, ButtonProps } from "react-native-elements";
 import { SCREEN_WIDTH } from "../config/Theming";
-import { useTheme } from "../components/ThemeMerger";
+import { useTheme } from "./ThemeMerger";
 
 // Enable LayoutAnimation on Android
 UIManager.setLayoutAnimationEnabledExperimental &&
@@ -36,6 +36,7 @@ export function TabView({
   children,
 }: TabViewProps) {
   const theme = useTheme()
+  // @ts-ignore: Maybe useTheme should give back an extended theme?
   const themeStyles = theme.TabView
   const [category, setCategory] = useState(initialCategory || 0);
 
@@ -87,11 +88,7 @@ export function TabView({
 export default TabView;
 
 const styles = StyleSheet.create({
-  //   container: {
-  //     flex: 1,
-  //   },
   contentView: {
-    // width: SCREEN_WIDTH-20,
     overflow: "hidden",
     marginHorizontal: 20,
   },

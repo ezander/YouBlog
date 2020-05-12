@@ -1,6 +1,7 @@
 import { logger } from "react-native-logs";
 import { consoleSync } from "react-native-logs/dist/transports/consoleSync";
 import { ConfigAPI } from "@babel/core";
+import  {createLogger as createReduxLogger} from "redux-logger"
 
 const severityLevels = {
   error: 6,
@@ -26,21 +27,29 @@ const defaultConfig = {
 //   // Eg. a console log: console.log(level.text, msg)
 // };
 
-function createLogger(name: string, severity: SeverityLevel) {
+function createConsoleLogger(name: string, severity: SeverityLevel) {
   const config = { ...defaultConfig, severity };
 
   const oldTransport = config.transport;
   config.transport = (msg, level, options) => {
-    return oldTransport(name.toUpperCase() + " | " + msg, level, options);
+    return oldTransport(name.toUpperCase().padEnd(4) + " | " + msg, level, options);
   };
 
   return logger.createLogger(config);
 }
 
-export const dbLogger = createLogger("DB", "info");
-export const authLogger = createLogger("Auth", "info");
-export const networkLogger = createLogger("Net", "info");
-export const appLogger = createLogger("App", "info");
+export const dbLogger = createConsoleLogger("DB", "info");
+export const authLogger = createConsoleLogger("Auth", "info");
+export const networkLogger = createConsoleLogger("Net", "info");
+export const appLogger = createConsoleLogger("App", "info");
 
 // navigation events
 // handled errors?
+
+const logReduxAction = ["noLOGIN", "noLOGOUT"]
+export const ReduxLogger = createReduxLogger({
+  logger: console, 
+  level: "log",
+  predicate: (getState: ()=>any, action: {type: string}) => logReduxAction.indexOf(action.type)>=0
+})
+

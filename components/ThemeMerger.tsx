@@ -9,7 +9,6 @@ import { ThemeContext, ThemeProvider } from "react-native-elements";
 // }
 
 export function useTheme() {
-  // const foo : FullTheme = null
   const { theme } = useContext(ThemeContext);
   return theme;
 }

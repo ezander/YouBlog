@@ -8,7 +8,7 @@ import { useAuthState, useIsLoggedIn } from "../components/AuthItem";
 import Screen from "../components/Screen";
 import * as AuthActions from "../store/AuthActions";
 import LoginForm from "./LoginForm";
-import TabView from "./TabView";
+import TabView from "../components/TabView";
 import { delay } from "../src/AsyncTools";
 import { Colors, loginTheme } from "../config/Theming";
 

@@ -2,6 +2,7 @@ import * as firebase from "firebase";
 import "firebase/auth";
 import "firebase/firestore";
 import firebaseConfig from "../firebaseConfig.json";
+import { authLogger } from "../src/Logging";
 
 export function getApp() {
   try {
@@ -9,7 +10,7 @@ export function getApp() {
   } catch (error) {
     const app = firebase.initializeApp(firebaseConfig);
     // console.log("Initialised firebase: ", app);
-    app.auth().onAuthStateChanged((user) => console.log("AuthState: ", !!user));
+    app.auth().onAuthStateChanged((user) => authLogger.debug("AuthState changed (SDK): loggedIn=", !!user));
     return app;
   }
 }

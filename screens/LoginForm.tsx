@@ -68,10 +68,10 @@ export function LoginForm({ showTitle, ...rest }: LoginFormProps) {
   const passwordRef = useRef<Input>(null);
   const confirmPwdRef = useRef<Input>(null);
 
-  const [username, setUsername] = useState("Alibaba");
-  const [email, setEmail] = useState("aad@testmail.com");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("cc@testmail.com");
   const [password, setPassword] = useState("test1234");
-  const [confirmPwd, setConfirmPwd] = useState("test1234");
+  const [confirmPwd, setConfirmPwd] = useState("");
 
   const noErrors = {
     email: [],
@@ -186,6 +186,7 @@ export function LoginForm({ showTitle, ...rest }: LoginFormProps) {
         <Error error={errors?.email} />
         <Input
           leftIcon={<Icon name="lock" type="simple-line-icon" />}
+          rightIcon={<Icon name="md-eye-off" type="ionicon" />}
           placeholder="Password"
           autoCapitalize="none"
           secureTextEntry={true}
@@ -204,6 +205,8 @@ export function LoginForm({ showTitle, ...rest }: LoginFormProps) {
           <>
             <Input
               leftIcon={<Icon name="lock" type="simple-line-icon" />}
+              rightIcon={<Icon name="md-eye" type="ionicon" />}
+              containerStyle={{paddingRight: 10}}
               placeholder="Confirm Password"
               autoCapitalize="none"
               secureTextEntry={true}
