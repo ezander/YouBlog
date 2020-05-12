@@ -75,7 +75,7 @@ function BlogListScreen({ navigation }: { navigation: any }) {
     title: "YouBlog",
     // @ts-ignore
     extraHeaderItems: [
-      <Item key="share" title="Share" iconName="share" onPress={handleShare} />,
+      <Item key="share" title="Share" iconName="share" onPress={handleShare}  style={{paddingRight: 5}}/>,
       authItem,
     ],
   });

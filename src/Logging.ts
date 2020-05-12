@@ -1,19 +1,23 @@
 import { logger } from "react-native-logs";
 import { consoleSync } from "react-native-logs/dist/transports/consoleSync";
+import { ConfigAPI } from "@babel/core";
+
+const severityLevels = {
+  error: 6,
+  warn: 5,
+  info: 4,
+  http: 3,
+  verbose: 2,
+  debug: 1,
+  silly: 0,
+};
+type SeverityLevel = keyof typeof severityLevels;
 
 const defaultConfig = {
   severity: "info",
   transport: consoleSync,
   transportOptions: null,
-  levels: {
-    error: 6,
-    warn: 5,
-    info: 4,
-    http: 3,
-    verbose: 2,
-    debug: 1,
-    silly: 0,
-  },
+  levels: severityLevels,
 };
 
 // const customTransport: transportFunctionType = (msg, level, options) => {
@@ -22,12 +26,21 @@ const defaultConfig = {
 //   // Eg. a console log: console.log(level.text, msg)
 // };
 
-var log = logger.createLogger(defaultConfig);
+function createLogger(name: string, severity: SeverityLevel) {
+  const config = { ...defaultConfig, severity };
 
-export const dbLogger = logger.createLogger(defaultConfig)
-export const authLogger = logger.createLogger(defaultConfig)
-export const networkLogger = logger.createLogger(defaultConfig)
-export const appLogger = logger.createLogger(defaultConfig)
+  const oldTransport = config.transport;
+  config.transport = (msg, level, options) => {
+    return oldTransport(name.toUpperCase() + " | " + msg, level, options);
+  };
+
+  return logger.createLogger(config);
+}
+
+export const dbLogger = createLogger("DB", "info");
+export const authLogger = createLogger("Auth", "info");
+export const networkLogger = createLogger("Net", "info");
+export const appLogger = createLogger("App", "info");
 
 // navigation events
 // handled errors?

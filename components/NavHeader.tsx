@@ -94,12 +94,20 @@ function NavHeader({ headerProps }: { headerProps: StackHeaderProps }) {
     style: styles.headerComponents,
   };
 
+  const leftContainerStyle = { flex: 1 };
+  const centerContainerStyle = { flex: 5 };
+  const rightContainerStyle = { flex: 2 };
+
   return (
     <Header
+      placement="center"
       leftComponent={leftComponent}
       centerComponent={centerComponent}
       rightComponent={rightComponent}
       containerStyle={styles.headerContainer}
+      leftContainerStyle={leftContainerStyle}
+      centerContainerStyle={centerContainerStyle}
+      rightContainerStyle={rightContainerStyle}
     />
   );
 }
@@ -111,6 +119,7 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     height: Platform.select({
       android: 50,
+      ios: 44,
       default: 44,
     }),
     backgroundColor: HeaderTheme.backgroundColor,
@@ -118,5 +127,6 @@ const styles = StyleSheet.create({
   headerComponents: {
     color: HeaderTheme.textColor,
     fontSize: HeaderTheme.fontSize,
-  }
+    fontFamily: HeaderTheme.fontFamily,
+  },
 });

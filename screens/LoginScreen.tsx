@@ -43,7 +43,7 @@ export default function LoginScreen({
   async function handleAuthAction(action: any, mode: string) {
     setIsWorking(true);
     try {
-      await delay(1000);
+      await delay(200);
       await dispatch(action);
       setAuthError(false);
       navigation.goBack();
@@ -54,7 +54,7 @@ export default function LoginScreen({
     }
   }
   async function handleLogin(email: string, password: string) {
-    setWorkingOn("Logging you in...")
+    setWorkingOn("Logging you in...");
     handleAuthAction(AuthActions.doLogin(email, password), "Login");
   }
 
@@ -63,7 +63,7 @@ export default function LoginScreen({
     password: string,
     username: string
   ) {
-    setWorkingOn("Signing you up...")
+    setWorkingOn("Signing you up...");
     handleAuthAction(
       AuthActions.doSignUp(email, password, username),
       "Sign up"
@@ -77,12 +77,13 @@ export default function LoginScreen({
         overlayStyle={{
           backgroundColor: Colors.paperColor,
           alignItems: "center",
-          justifyContent: "space-evenly"
+          justifyContent: "space-evenly",
         }}
       >
         <View>
-          <ActivityIndicator size="large" />
           <Text {...loginTheme.Working}>{workingOn}</Text>
+          <Text></Text>
+          <ActivityIndicator size="large" />
         </View>
       </Overlay>
       <View style={{ alignItems: "center", justifyContent: "center" }}>

@@ -106,14 +106,15 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
     // @ts-ignore
     extraHeaderItems: [
       editAllowed && (
-        <Item key="edit" title="Edit" iconName="edit" onPress={handleEdit} />
+        <Item key="edit" title="Edit" iconName="edit" onPress={handleEdit} style={{paddingRight: 5}}/>
       ),
-      <Item key="share" title="Share" iconName="share" onPress={handleShare} />,
+      <Item key="share" title="Share" iconName="share" onPress={handleShare} style={{paddingRight: 5}} />,
       authItem,
     ],
   });
 
   const { fontScale, ...blogMarkdownStyle } = BlogTheme;
+  // @ts-ignore
   blogMarkdownStyle.fontSize = BlogFontSizes[BlogTheme.fontScale];
   const fontSize = BlogFontSizes[BlogTheme.fontScale];
 
@@ -145,10 +146,11 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
           {!hasRun || isWorking ? (
             <Screen style={{ backgroundColor: BlogTheme.backgroundColor }}>
               <Text></Text>
-              <ActivityIndicator size="large" />
               <Text style={{ ...GeneralTheme.headingStyle, fontSize: 24 }}>
                 {"Loading blog entry..."}{" "}
               </Text>
+              <Text></Text>
+              <ActivityIndicator size="large" />
             </Screen>
           ) : (
             <Markdown {...blogMarkdownStyle}>{text}</Markdown>

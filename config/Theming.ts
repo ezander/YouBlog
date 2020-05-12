@@ -52,6 +52,7 @@ export const HeaderTheme: HeaderTheme = {
   iconTheme: "material",
   iconSize: 25,
   fontSize: 20,
+  // fontFamily: "Baskerville",
   backgroundColor: Platform.select({
     ios: "white",
     default: Colors.primaryColor,
