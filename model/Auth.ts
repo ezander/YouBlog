@@ -6,7 +6,7 @@ import {
   signUpUser,
   updateUserProfile,
 } from "../src/FirebaseAuthTools";
-import * as FirebaseSDK from "./FirebaseSDK";
+import * as FirebaseSDK from "../src/FirebaseSDK";
 
 export interface User {
   localId: string;

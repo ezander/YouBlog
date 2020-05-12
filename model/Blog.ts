@@ -1,6 +1,6 @@
 import firebaseConfig from "../firebaseConfig.json";
 import { getDocument, listDocuments } from "../src/FirestoreTools";
-import * as FirebaseSDK from "./FirebaseSDK";
+import * as FirebaseSDK from "../src/FirebaseSDK";
 
 export interface BlogEntry {
   author: string;

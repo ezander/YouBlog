@@ -74,7 +74,7 @@ const linking = {
 };
 
 function RootStackNavigator() {
-  const TestLoginScreen = (props) => <LoginScreen showDebugButtons={true} {...props}/>
+  // const TestLoginScreen = (props: any) => <LoginScreen showDebugButtons={true} {...props}/>
   return (
     <Stack.Navigator {...navigatorOptions}>
       {/* <Stack.Screen
