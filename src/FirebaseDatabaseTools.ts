@@ -6,7 +6,6 @@ function toArray(dictData: any) {
   for (const id in dictData) {
     arrayData.push({ ...dictData[id], id });
   }
-  console.log(arrayData);
   return arrayData;
 }
 
@@ -32,7 +31,6 @@ export async function fetchItem(
   options = {}
 ) {
   const url = `https://${firebaseConfig.projectId}.firebaseio.com/${endpoint}/${id}.json`;
-  console.log(url);
   try {
     const response = await axios.get(url);
     return { ...response.data, id };

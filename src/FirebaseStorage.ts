@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse, Method } from "axios";
 import { createError } from "./FirebaseErrors";
 import { FirebaseConfig, HTTPError } from "./FirebaseTools";
+import { networkLogger } from "./Logging";
 
 // export function mapObject<T>(
 //     obj: T,
@@ -14,14 +15,14 @@ import { FirebaseConfig, HTTPError } from "./FirebaseTools";
 // }
 
 function handleResponse(response: AxiosResponse) {
-  console.log(
+  networkLogger.info(
     "Axios: ",
     response.status,
     response.statusText,
     response.request.method,
     response.config.url,
     response.config.method,
-    response.config.params
+    // response.config.params
   );
   const between = (low: number, number: number, high: number) =>
     low <= number && number < high;

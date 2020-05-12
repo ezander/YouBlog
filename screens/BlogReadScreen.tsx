@@ -57,12 +57,9 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
   const from_params = params.extra?.id === id;
   const extra_params = from_params && params.extra ? params.extra : undefined;
 
-  console.log(route);
-
   const authItem = useAuthItem();
   const isLoggedIn = useIsLoggedIn();
   const authState = useAuthState();
-  console.log(authState);
 
   const fetchThisBlogEntry = useCallback(fetchBlogEntry.bind(null, id), [id]);
   const { hasRun, isWorking, error, result, doRefresh } = useAsyncAction<
@@ -89,8 +86,9 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
       extra: { id, title, author, image_url },
     });
   };
-  // const editAllowed = isLoggedIn && authState.user.localId === author_id // check whether logged in and owner of entry
-  const editAllowed = true || author_id || isLoggedIn; // todo: remove
+
+  const editAllowed = isLoggedIn && authState.user.localId === author_id; // check whether logged in and owner of entry
+  // const editAllowed = true || author_id || isLoggedIn; // todo: remove
 
   const handleShare = () => {
     const path = `post/${id}`;
@@ -118,9 +116,6 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
   const { fontScale, ...blogMarkdownStyle } = BlogTheme;
   blogMarkdownStyle.fontSize = BlogFontSizes[BlogTheme.fontScale];
   const fontSize = BlogFontSizes[BlogTheme.fontScale];
-  // const codeFF = BlogTheme.codeFontFamily;
-  // const textFF = BlogTheme.textFontFamily;
-  // const bgColor = BlogTheme.backgroundColor
 
   const fdate = moment(date).format("LLL");
   const header = `\n # ${title} \n _${author}_ | _${fdate}_ \n`;
@@ -144,14 +139,16 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
               resizeMode="cover"
               source={{ uri: image_url }}
               style={{ width: "100%", height: 200 }}
-              PlaceholderContent={<ActivityIndicator size="large"/>}
+              PlaceholderContent={<ActivityIndicator size="large" />}
             />
           )}
           {!hasRun || isWorking ? (
-            <Screen style={{backgroundColor: BlogTheme.backgroundColor}}>
+            <Screen style={{ backgroundColor: BlogTheme.backgroundColor }}>
               <Text></Text>
-              <ActivityIndicator size="large"/>
-              <Text style={{...GeneralTheme.headingStyle, fontSize: 24}}>{"Loading blog entry..."} </Text>
+              <ActivityIndicator size="large" />
+              <Text style={{ ...GeneralTheme.headingStyle, fontSize: 24 }}>
+                {"Loading blog entry..."}{" "}
+              </Text>
             </Screen>
           ) : (
             <Markdown {...blogMarkdownStyle}>{text}</Markdown>

@@ -1,7 +1,7 @@
 import { StackNavigationProp } from "@react-navigation/stack";
-import React from "react";
-import { View } from "react-native";
-import { Button, Text } from "react-native-elements";
+import React, { useState } from "react";
+import { View, ActivityIndicator } from "react-native";
+import { Button, Text, Overlay } from "react-native-elements";
 import { useDispatch } from "react-redux";
 import { RootStackParamList } from "../App";
 import { useAuthState, useIsLoggedIn } from "../components/AuthItem";
@@ -9,6 +9,8 @@ import Screen from "../components/Screen";
 import * as AuthActions from "../store/AuthActions";
 import LoginForm from "./LoginForm";
 import TabView from "./TabView";
+import { delay } from "../src/AsyncTools";
+import { Colors, loginTheme } from "../config/Theming";
 
 interface LoginScreenProps {
   navigation: StackNavigationProp<RootStackParamList, "Login">;
@@ -23,9 +25,9 @@ export default function LoginScreen({
   const authState = useAuthState();
   const dispatch = useDispatch();
 
-  // if (isLoggedIn) {
-  //   navigation.goBack();
-  // }
+  const [isWorking, setIsWorking] = useState(false);
+  const [workingOn, setWorkingOn] = useState("");
+  const [authError, setAuthError] = useState<any>();
 
   const handleLoginAA = () =>
     dispatch(AuthActions.doLogin("aa@testmail.com", "test1234"));
@@ -38,12 +40,51 @@ export default function LoginScreen({
     navigation.setOptions({ title });
   }
 
-  // function handleSignUp() {
-  //     dispatch(AuthActions.doSignUp(email, password))
-  // }
+  async function handleAuthAction(action: any, mode: string) {
+    setIsWorking(true);
+    try {
+      await delay(1000);
+      await dispatch(action);
+      setAuthError(false);
+      navigation.goBack();
+    } catch (error) {
+      setAuthError(error);
+    } finally {
+      setIsWorking(false);
+    }
+  }
+  async function handleLogin(email: string, password: string) {
+    setWorkingOn("Logging you in...")
+    handleAuthAction(AuthActions.doLogin(email, password), "Login");
+  }
+
+  async function handleSignUp(
+    email: string,
+    password: string,
+    username: string
+  ) {
+    setWorkingOn("Signing you up...")
+    handleAuthAction(
+      AuthActions.doSignUp(email, password, username),
+      "Sign up"
+    );
+  }
 
   return (
     <Screen backgroundImage={require("../assets/handwriting-1362879_1280.jpg")}>
+      <Overlay
+        isVisible={isWorking}
+        overlayStyle={{
+          backgroundColor: Colors.paperColor,
+          alignItems: "center",
+          justifyContent: "space-evenly"
+        }}
+      >
+        <View>
+          <ActivityIndicator size="large" />
+          <Text {...loginTheme.Working}>{workingOn}</Text>
+        </View>
+      </Overlay>
       <View style={{ alignItems: "center", justifyContent: "center" }}>
         {authState.error && <Text>{JSON.stringify(authState.error)}</Text>}
         <TabView
@@ -51,8 +92,8 @@ export default function LoginScreen({
           titles={["Login", "Sign up"]}
           onChangeCat={handleCatChange}
         >
-          <LoginForm isSignUp={false} />
-          <LoginForm isSignUp={true} />
+          <LoginForm isSignUp={false} onLogin={handleLogin} />
+          <LoginForm isSignUp={true} onSignUp={handleSignUp} />
         </TabView>
 
         {showDebugButtons && (

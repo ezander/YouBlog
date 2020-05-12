@@ -49,8 +49,8 @@ async function asyncLogout(dispatch: any) {
 export function doSignUp(
   email: string,
   password: string,
-  username: string,
-  photo_url: string
+  username?: string,
+  photo_url?: string
 ) {
   return asyncSignUp.bind(null, email, password, username, photo_url);
 }
@@ -58,12 +58,12 @@ export function doSignUp(
 async function asyncSignUp(
   email: string,
   password: string,
-  username: string,
-  photo_url: string,
+  username: undefined | string,
+  photo_url: undefined | string,
   dispatch: any
 ) {
   try {
-    const user = await signUp(username, password);
+    const user = await signUp(email, password);
     await updateProfile(user, username, photo_url);
     dispatch({ type: AuthActionTypes.SIGNUP, user });
   } catch (error) {

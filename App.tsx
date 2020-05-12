@@ -78,11 +78,11 @@ function RootStackNavigator() {
   const TestLoginScreen = (props) => <LoginScreen showDebugButtons={true} {...props}/>
   return (
     <Stack.Navigator {...navigatorOptions}>
-      <Stack.Screen
+      {/* <Stack.Screen
         name="LoginTest"
         component={TestLoginScreen}
         options={{ title: "Log in or Sign up" }}
-      />
+      /> */}
       <Stack.Screen
         name="BlogList"
         component={BlogListScreen}

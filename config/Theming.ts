@@ -209,7 +209,14 @@ export const loginTheme = {
     },
     containerStyle: {
       alignItems: "flex-start",
-      textAlign: "left"
-    }
+      textAlign: "left",
+    },
+  },
+  Working: {
+    style: {
+      color: "black",
+      fontFamily: "MyUnderwood",
+      fontSize: 24,
+    },
   },
 };

@@ -52,7 +52,7 @@ class SDK {
   static async logout() {
     await SDK.auth.signOut();
     if (SDK.auth.currentUser) {
-      console.error("User not logged  out. what the fuck?");
+      console.error("User not logged out. Why the hell?");
     }
   }
 
@@ -80,10 +80,10 @@ class SDK {
   static async restoreLogin() {
     await SDK.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
     const fbUser = SDK.auth.currentUser;
-    console.log(
-      "Checked for current user: ",
-      fbUser && [fbUser.displayName, fbUser.uid, await fbUser.getIdToken()]
-    );
+    // console.log(
+    //   "Checked for current user: ",
+    //   fbUser && [fbUser.displayName, fbUser.uid, await fbUser.getIdToken()]
+    // );
     return fbUser && SDK.userFromResponse(fbUser);
   }
 }

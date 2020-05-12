@@ -1,6 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse, Method } from "axios";
 import { createError } from "./FirebaseErrors";
 import { FirebaseConfig, HTTPError } from "./FirebaseTools";
+import { networkLogger } from "./Logging";
 
 export function mapObject<T>(
   obj: T,
@@ -117,7 +118,7 @@ export function toFirestoreParams(obj: any, params?: URLSearchParams) {
 }
 
 function handleResponse(response: AxiosResponse) {
-  console.log(
+  networkLogger.debug(
     "Axios: ",
     response.status,
     response.statusText,

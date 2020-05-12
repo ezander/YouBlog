@@ -13,22 +13,65 @@ import { loginTheme, SCREEN_WIDTH, Colors } from "../config/Theming";
 import validate from "validate.js";
 import { useLinkProps } from "@react-navigation/native";
 import chroma from "chroma-js";
+import { appLogger } from "../src/Logging";
 
-interface LoginFormProps {
-  isSignUp: boolean;
-  showTitle?: boolean;
+type ErrorProps = TextProps & {
+  error: undefined | Array<string>;
+};
+
+function Error({ error, ...props }: ErrorProps) {
+  return !!error && error.length > 0 ? (
+    <View
+      style={{
+        width: SCREEN_WIDTH - 60,
+        height: 20,
+        marginLeft: 20,
+        marginTop: -5,
+      }}
+    >
+      <Text
+        style={{
+          color: chroma("red").darken().hex(),
+          textAlign: "left",
+          fontSize: 14,
+        }}
+        {...props}
+      >
+        {error[0]}
+      </Text>
+    </View>
+  ) : (
+    <></>
+  );
 }
 
-export function LoginForm({ isSignUp, showTitle }: LoginFormProps) {
+export interface SignUpProps {
+  isSignUp: true;
+  onSignUp: (
+    email: string,
+    password: string,
+    username: string,
+  ) => Promise<void>;
+}
+export interface LoginProps {
+  isSignUp: false;
+  onLogin: (email: string, password: string) => Promise<void>;
+}
+type LoginFormProps = (SignUpProps | LoginProps) & {
+  showTitle?: boolean;
+};
+
+export function LoginForm({ showTitle, ...rest }: LoginFormProps) {
+  const isSignUp = rest.isSignUp;
   const usernameRef = useRef<Input>(null);
   const emailRef = useRef<Input>(null);
   const passwordRef = useRef<Input>(null);
   const confirmPwdRef = useRef<Input>(null);
 
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPwd, setConfirmPwd] = useState("");
+  const [username, setUsername] = useState("Alibaba");
+  const [email, setEmail] = useState("aa@testmail.com");
+  const [password, setPassword] = useState("test1234");
+  const [confirmPwd, setConfirmPwd] = useState("test1234a");
 
   const noErrors = {
     email: [],
@@ -36,56 +79,9 @@ export function LoginForm({ isSignUp, showTitle }: LoginFormProps) {
     password: [],
     confirmPwd: [],
   };
-  const [errors, setErrors] = useState(noErrors)
+  const [errors, setErrors] = useState(noErrors);
 
   const theme = useTheme() as any;
-
-  type InputComponentProps = InputProps & {
-    error: undefined | Array<string>;
-  };
-
-  function _InputComponent(props: InputComponentProps, ref: any) {
-    const { error, ...inputProps } = props;
-    return (
-      <>
-        <Input {...inputProps} />
-        {/* {!!error && error.length > 0 && (
-          <Text style={{ color: "red" }}>{error[0]}</Text>
-        )} */}
-      </>
-    );
-  }
-
-  type ErrorProps = TextProps & {
-    error: undefined | Array<string>;
-  };
-
-  function Error({ error, ...props }: ErrorProps) {
-    return !!error && error.length > 0 ? (
-      <View
-        style={{
-          width: SCREEN_WIDTH - 60,
-          height: 20,
-          marginLeft: 20,
-          marginTop: -5,
-        }}
-      >
-        <Text
-          style={{
-            color: chroma("red").darken().hex(),
-            textAlign: "left",
-            fontSize: 14,
-          }}
-          {...props}
-        >
-          {error[0]}
-        </Text>
-      </View>
-    ) : (
-      <></>
-    );
-  }
-  const InputComponent = Input; // React.forwardRef(_InputComponent);
 
   function validateForm() {
     const constraints = {
@@ -126,7 +122,7 @@ export function LoginForm({ isSignUp, showTitle }: LoginFormProps) {
       constraints
     );
     if (result) {
-      console.log("Validation error: ", result);
+      appLogger.info("Validation error: ", result);
       setErrors(result);
       return false;
     } else {
@@ -137,9 +133,14 @@ export function LoginForm({ isSignUp, showTitle }: LoginFormProps) {
 
   function handleSubmit() {
     if (validateForm()) {
-      console.log("Ok we go ahead...");
+      appLogger.info("Login form was ok...");
+      if (rest.isSignUp) {
+        rest.onSignUp(email, password, username);
+      } else {
+        rest.onLogin(email, password);
+      }
     } else {
-      console.log("There was a form error...");
+      appLogger.info("Login form error");
     }
   }
 
@@ -151,7 +152,7 @@ export function LoginForm({ isSignUp, showTitle }: LoginFormProps) {
         )}
         {isSignUp && (
           <>
-            <InputComponent
+            <Input
               leftIcon={<Icon name="user" type="simple-line-icon" />}
               placeholder="Username"
               autoCapitalize="words"
@@ -162,14 +163,13 @@ export function LoginForm({ isSignUp, showTitle }: LoginFormProps) {
               onChangeText={setUsername}
               ref={usernameRef}
               onSubmitEditing={() => {
-                console.log(emailRef);
                 emailRef.current?.focus();
               }}
             />
             <Error error={errors?.username} />
           </>
         )}
-        <InputComponent
+        <Input
           leftIcon={<Icon name="email-outline" type="material-community" />}
           placeholder="Email"
           autoCapitalize="none"
@@ -184,7 +184,7 @@ export function LoginForm({ isSignUp, showTitle }: LoginFormProps) {
           }}
         />
         <Error error={errors?.email} />
-        <InputComponent
+        <Input
           leftIcon={<Icon name="lock" type="simple-line-icon" />}
           placeholder="Password"
           autoCapitalize="none"
@@ -202,7 +202,7 @@ export function LoginForm({ isSignUp, showTitle }: LoginFormProps) {
         <Error error={errors?.password} />
         {isSignUp && (
           <>
-            <InputComponent
+            <Input
               leftIcon={<Icon name="lock" type="simple-line-icon" />}
               placeholder="Confirm Password"
               autoCapitalize="none"

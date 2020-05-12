@@ -66,10 +66,10 @@ class REST {
   }
 
   static async fetchBlogEntries(): Promise<BlogList> {
-    const mask = ["title", "author", "date", "image_url"];
+    const mask = ["title", "author", "author_id", "date", "image_url"];
     const orderBy = "date desc";
 
-    console.log("Fetching documents...");
+    // console.log("Fetching documents...");
     return listDocuments("blog_entries", { mask, orderBy }, firebaseConfig);
   }
 }
