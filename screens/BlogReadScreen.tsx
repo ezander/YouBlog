@@ -123,7 +123,6 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
 
   return (
     <Screen backgroundImage={require("../assets/handwriting-1362879_1280.jpg")}>
-      {/* <Screen> */}
       <View style={styles.blogContainer}>
         <ScrollView
           refreshControl={
