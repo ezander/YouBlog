@@ -6,12 +6,13 @@ import {
   signUp,
   updateProfile,
 } from "../model/Auth";
+import { authLogger } from "../src/Logging";
 
 export enum AuthActionTypes {
   LOGIN = "LOGIN",
   LOGOUT = "LOGOUT",
   SIGNUP = "SIGNUP",
-  AUTHERROR = "AUTHERROR",
+  // AUTHERROR = "AUTHERROR",
 }
 
 export function doLogin(username: string, password: string) {
@@ -24,7 +25,8 @@ async function asyncLogin(username: string, password: string, dispatch: any) {
     await persistLogin(user);
     return dispatch({ type: AuthActionTypes.LOGIN, user });
   } catch (error) {
-    dispatch({ type: AuthActionTypes.AUTHERROR, error });
+    authLogger.info("Login failed", error.message);
+    throw error;
   }
 }
 
@@ -63,10 +65,11 @@ async function asyncSignUp(
   dispatch: any
 ) {
   try {
-    const user = await signUp(email, password);
-    await updateProfile(user, username, photo_url);
+    const _user = await signUp(email, password);
+    const user = await updateProfile(_user, username, photo_url);
     dispatch({ type: AuthActionTypes.SIGNUP, user });
   } catch (error) {
-    dispatch({ type: AuthActionTypes.AUTHERROR, error });
+    authLogger.info("Signup failed", error.message);
+    throw error;
   }
 }

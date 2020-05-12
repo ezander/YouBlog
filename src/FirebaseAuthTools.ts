@@ -58,7 +58,6 @@ export async function loginUser(
   } catch (error) {
     throw parseError(error);
   }
-  // EMAIL_NOT_FOUND, INVALID_PASSWORD, USER_DISABLED
 }
 
 export interface UserDataResponseType {
@@ -91,7 +90,6 @@ export async function getUserData(
   } catch (error) {
     throw parseError(error);
   }
-  // EMAIL_NOT_FOUND, INVALID_PASSWORD, USER_DISABLED
 }
 
 interface UpdateProfile {
@@ -121,32 +119,5 @@ export async function updateUserProfile(
   } catch (error) {
     throw parseError(error);
   }
-  // EMAIL_NOT_FOUND, INVALID_PASSWORD, USER_DISABLED
 }
 
-// API key not valid. Please pass a valid API key. (invalid API key provided)
-// CREDENTIAL_MISMATCH: The custom token corresponds to a different GCP project.
-// CREDENTIAL_TOO_OLD_LOGIN_AGAIN: The user's credential is no longer valid. The user must sign in again.
-// EMAIL_EXISTS: The email address is already in use by another account.
-// EMAIL_NOT_FOUND: There is no user record corresponding to this identifier. The user may have been deleted.
-// EXPIRED_OOB_CODE: The action code has expired.
-// FEDERATED_USER_ID_ALREADY_LINKED: This credential is already associated with a different user account.
-// Invalid JSON payload received. Unknown name \"refresh_tokens\": Cannot bind query parameter. Field 'refresh_tokens' could not be found in request message.
-// INVALID_CUSTOM_TOKEN: The custom token format is incorrect or the token is invalid for some reason (e.g. expired, invalid signature etc.)
-// INVALID_EMAIL: The email address is badly formatted.
-// INVALID_GRANT_TYPE: the grant type specified is invalid.
-// INVALID_ID_TOKEN: The user's credential is no longer valid. The user must sign in again.
-// INVALID_IDP_RESPONSE: The supplied auth credential is malformed or has expired.
-// INVALID_OOB_CODE: The action code is invalid. This can happen if the code is malformed, expired, or has already been used.
-// INVALID_PASSWORD: The password is invalid or the user does not have a password.
-// INVALID_REFRESH_TOKEN: An invalid refresh token is provided.
-// MISSING_REFRESH_TOKEN: no refresh token provided.
-// OPERATION_NOT_ALLOWED: Anonymous user sign-in is disabled for this project.
-// OPERATION_NOT_ALLOWED: Password sign-in is disabled for this project.
-// OPERATION_NOT_ALLOWED: The corresponding provider is disabled for this project.
-// TOKEN_EXPIRED: The user's credential is no longer valid. The user must sign in again.
-// TOO_MANY_ATTEMPTS_TRY_LATER: We have blocked all requests from this device due to unusual activity. Try again later.
-// USER_DISABLED: The user account has been disabled by an administrator.
-// USER_NOT_FOUND: The user corresponding to the refresh token was not found. It is likely the user was deleted.
-// USER_NOT_FOUND: There is no user record corresponding to this identifier. The user may have been deleted.
-// WEAK_PASSWORD: The password must be 6 characters long or more.

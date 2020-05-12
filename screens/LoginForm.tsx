@@ -69,9 +69,9 @@ export function LoginForm({ showTitle, ...rest }: LoginFormProps) {
   const confirmPwdRef = useRef<Input>(null);
 
   const [username, setUsername] = useState("Alibaba");
-  const [email, setEmail] = useState("aa@testmail.com");
+  const [email, setEmail] = useState("aad@testmail.com");
   const [password, setPassword] = useState("test1234");
-  const [confirmPwd, setConfirmPwd] = useState("test1234a");
+  const [confirmPwd, setConfirmPwd] = useState("test1234");
 
   const noErrors = {
     email: [],

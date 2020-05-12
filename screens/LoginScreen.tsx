@@ -1,6 +1,6 @@
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useState } from "react";
-import { View, ActivityIndicator } from "react-native";
+import { View, ActivityIndicator, Alert } from "react-native";
 import { Button, Text, Overlay } from "react-native-elements";
 import { useDispatch } from "react-redux";
 import { RootStackParamList } from "../App";
@@ -48,6 +48,8 @@ export default function LoginScreen({
       setAuthError(false);
       navigation.goBack();
     } catch (error) {
+      console.log(JSON.stringify(error.message))
+      console.log(JSON.stringify(error))
       setAuthError(error);
     } finally {
       setIsWorking(false);
@@ -68,6 +70,11 @@ export default function LoginScreen({
       AuthActions.doSignUp(email, password, username),
       "Sign up"
     );
+  }
+
+  if( authError ) {
+    Alert.alert("Authentication Error", authError.message)
+    setAuthError(undefined)
   }
 
   return (

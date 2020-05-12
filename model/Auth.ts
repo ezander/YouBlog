@@ -89,16 +89,16 @@ class SDK {
 }
 
 class REST {
-  static userFromResponse(response: any): User {
+  static userFromResponse(response: any, user?: User): User {
     return {
-      localId: response.localId,
-      email: response.email,
-      displayName: response.displayName,
-      profilePicture: response.profilePicture,
-      idToken: response.idToken,
-      expiresIn: response.expiresIn,
-      refreshToken: response.refreshToken,
-      registered: response.registered,
+      localId: response.localId || user?.localId,
+      email: response.email || user?.email,
+      displayName: response.displayName || user?.displayName,
+      profilePicture: response.profilePicture || user?.profilePicture,
+      idToken: response.idToken || user?.idToken,
+      expiresIn: response.expiresIn || user?.expiresIn,
+      refreshToken: response.refreshToken || user?.refreshToken,
+      registered: response.registered || user?.registered,
     };
   }
 
@@ -122,11 +122,11 @@ class REST {
       { displayName, photoUrl: profilePicture },
       firebaseConfig
     );
-    return REST.userFromResponse(response);
+    return REST.userFromResponse(response, user);
   }
 
   static async logout() {
-    // a noop for REST
+    return await AsyncStorage.removeItem("LoginData");
   }
 
   static async persistLogin(user: User) {
