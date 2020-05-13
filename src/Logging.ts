@@ -2,6 +2,8 @@ import { logger } from "react-native-logs";
 import { consoleSync } from "react-native-logs/dist/transports/consoleSync";
 import { ConfigAPI } from "@babel/core";
 import  {createLogger as createReduxLogger} from "redux-logger"
+import { BlogActionTypes } from "../store/BlogActions";
+import { AuthActionTypes } from "../store/AuthActions";
 
 const severityLevels = {
   error: 6,
@@ -20,12 +22,6 @@ const defaultConfig = {
   transportOptions: null,
   levels: severityLevels,
 };
-
-// const customTransport: transportFunctionType = (msg, level, options) => {
-//   // Do here whatever you want with the log message
-//   // You cas use any options setted in config.transportOptions
-//   // Eg. a console log: console.log(level.text, msg)
-// };
 
 function createConsoleLogger(name: string, severity: SeverityLevel) {
   const config = { ...defaultConfig, severity };
@@ -46,10 +42,25 @@ export const appLogger = createConsoleLogger("App", "info");
 // navigation events
 // handled errors?
 
-const logReduxAction = ["noLOGIN", "noLOGOUT"]
+const logReduxAction: string[] = [
+  // "SET_POST"
+  // "LOGIN",
+  // "LOGOUT",
+]
+
+// function replacer(key: string, value: any) {
+//   // Filtering out properties
+//   if (typeof value === 'string' && value.length>50) {
+//     return value.slice(0, 50) + "...";
+//   }
+//   return value;
+// }
+
 export const ReduxLogger = createReduxLogger({
   logger: console, 
   level: "log",
+  // stateTransformer: state => JSON.stringify(state, replacer, '  '),
+  // actionTransformer: action => ({type: "FOO", payload: "Transformed action"}), //JSON.stringify(state, replacer),
+
   predicate: (getState: ()=>any, action: {type: string}) => logReduxAction.indexOf(action.type)>=0
 })
-

@@ -4,6 +4,7 @@ import { BlogActionTypes, BlogAction } from "./BlogActions";
 import { BlogList, BlogEntryWithId } from "../model/Blog";
 import deepmerge from 'deepmerge'
 
+
 const initialState = {
   list: [] as BlogList,
   posts: new Map<string, Partial<BlogEntryWithId>>(),
@@ -11,6 +12,7 @@ const initialState = {
 };
 
 export type BlogState = Readonly<typeof initialState>
+export type BlogMap = typeof initialState.posts
 
 function blogProducer(draft: Draft<BlogState>, action: BlogAction) {
   switch (action.type) {

@@ -48,12 +48,11 @@ interface ActionReducerType<ResType> {
   ): AsyncActionState<ResType>;
 }
 
-export function useAsyncAction<ResType, ArgsType extends any[]>(
+export function useAsyncAction<ResType, ArgsType extends any[] = any[]>(
   func: (...args: ArgsType) => Promise<ResType>,
   initialResult?: ResType,
   ...args: ArgsType
 ): AsyncActionState<ResType> & { doRefresh: any } {
-
   const initialState = {
     hasRun: false,
     isWorking: false,

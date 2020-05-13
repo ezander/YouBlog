@@ -28,25 +28,21 @@ import {
 } from "../config/Theming";
 import { BlogEntryWithId, fetchBlogEntry } from "../model/Blog";
 import { shareDeeplink } from "../model/Sharing";
-import { useAsyncAction } from "../src/AsyncTools";
+import { useAsyncAction, delay } from "../src/AsyncTools";
 import { RootState, useAuthState } from "../store";
 import { doSetFontScale, Settings } from "../store/SettingsActions";
+import { stringToTokens } from "react-native-markdown-display";
+import { BlogMap } from "../store/BlogReducer";
+import { doSetPost } from "../store/BlogActions";
+import { appLogger } from "../src/Logging";
+import { Dispatch } from "redux";
 
-// @ts -ignore
 interface BlogReadScreenProps {
   navigation: StackNavigationProp<RootStackParamList, "BlogRead">;
   route: RouteProp<RootStackParamList, "BlogRead">;
 }
 export interface BlogReadParams {
   id: string;
-  extra?: {
-    id: string;
-    author: string;
-    author_id: string;
-    title: string;
-    date_str: string;
-    image_url: string;
-  };
 }
 
 function MyActivityIndicator() {
@@ -56,9 +52,30 @@ function MyActivityIndicator() {
     </View>
   );
 }
+
+
+async function handleFetchPost(id: string, dispatch: Dispatch<any>) {
+  try {
+    const entry = await fetchBlogEntry(id);
+    // await delay(1);
+    appLogger.info(`Fetched blog post: "${id} ".`);
+    return dispatch(doSetPost(entry));
+  } catch (error) {
+    appLogger.error(`Error fetching blog post: ${id}.`);
+    throw error;
+  }
+}
+
+
 function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
-  const settings = useSelector<RootState, Settings>((state) => state.settings);
   const dispatch = useDispatch();
+
+  // Auth state
+  const authItem = useAuthItem();
+  const authState = useAuthState();
+
+  // Zooming in and out
+  const settings = useSelector<RootState, Settings>((state) => state.settings);
   const fontScale = settings.blogFontScale;
   const zoomIn = useCallback(
     () => dispatch(doSetFontScale(BlogFontScales.zoomIn(fontScale))),
@@ -68,36 +85,37 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
     () => dispatch(doSetFontScale(BlogFontScales.zoomOut(fontScale))),
     [fontScale]
   );
-
   const canZoomIn = BlogFontScales.canZoomIn(fontScale);
   const canZoomOut = BlogFontScales.canZoomOut(fontScale);
 
-  const params = route.params;
-  const id = params.id;
-  const from_params = params.extra?.id === id;
-  const extra_params = from_params && params.extra ? params.extra : undefined;
+  // Fetching and merging the blog post
+  const id = route.params.id;
+  const posts = useSelector<RootState, BlogMap>((state) => state.blog.posts);
+  const entry = posts.get(id)
 
-  const authItem = useAuthItem();
-  const authState = useAuthState();
+  const { isWorking, error, doRefresh } = useAsyncAction(
+    handleFetchPost,
+    undefined,
+    id, dispatch
+  );
 
-  const fetchThisBlogEntry = useCallback(fetchBlogEntry.bind(null, id), [id]);
-  const { hasRun, isWorking, error, result, doRefresh } = useAsyncAction<
-    BlogEntryWithId
-  >(fetchThisBlogEntry);
+  // const fetchThisBlogEntry = useCallback(fetchBlogEntry.bind(null, id), [id]);
+  // const { hasRun, isWorking, error, result, doRefresh } = useAsyncAction<
+  //   BlogEntryWithId
+  // >(fetchThisBlogEntry);
 
   if (error) {
     const text = "An error occurred loading blog entry";
     return <ErrorScreen text={text} error={error} onRetry={doRefresh} />;
   }
 
-  const entry = result as BlogEntryWithId;
-  const doc = entry?.document;
-  const text = doc?.text;
-  const title = from_params ? extra_params?.title : doc?.title;
-  const author = from_params ? extra_params?.author : doc?.author;
-  const author_id = from_params ? extra_params?.author_id : doc?.author_id;
-  const image_url = from_params ? extra_params?.image_url : doc?.image_url;
-  const date = from_params ? new Date(extra_params?.date_str!) : doc?.date;
+  const post = entry?.document;
+  const text = post?.text || "";
+  const title = post?.title;
+  const author = post?.author;
+  const author_id = post?.author_id;
+  const image_url = post?.image_url;
+  const date = post?.date;
 
   const handleEdit = () => {
     navigation.navigate("BlogEdit", {
@@ -150,7 +168,7 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
         <ScrollView
           refreshControl={
             <RefreshControl
-              refreshing={!hasRun || isWorking}
+              refreshing={isWorking}
               onRefresh={doRefresh}
             />
           }
@@ -165,7 +183,7 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
               PlaceholderContent={<ActivityIndicator size="large" />}
             />
           )}
-          {!hasRun || isWorking ? (
+          {isWorking ? (
             <Screen style={{ backgroundColor: BlogTheme.backgroundColor }}>
               <Text></Text>
               <Text style={{ ...GeneralTheme.headingStyle, fontSize: 24 }}>
