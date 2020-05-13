@@ -15,6 +15,8 @@ import {
 } from "../model/Blog";
 import { useAsyncAction } from "../src/AsyncTools";
 import { GeneralTheme } from "../config/Theming";
+import { useSelector } from "react-redux";
+import { RootState } from "../App";
 
 function BlogListEntry({
   entry,
@@ -40,6 +42,8 @@ function BlogListEntry({
 
 function BlogListScreen({ navigation }: { navigation: any }) {
   const authItem = useAuthItem();
+
+  const list = useSelector<RootState, Readonly<BlogList>>( state => state.blog.list )
 
   const { hasRun, isWorking, error, result, doRefresh } = useAsyncAction<
     BlogList

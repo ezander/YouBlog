@@ -1,16 +1,17 @@
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useState } from "react";
-import { View, ActivityIndicator, Alert } from "react-native";
-import { Button, Text, Overlay } from "react-native-elements";
+import { ActivityIndicator, Alert, View } from "react-native";
+import { Button, Overlay, Text } from "react-native-elements";
 import { useDispatch } from "react-redux";
 import { RootStackParamList } from "../App";
-import { useAuthState, useIsLoggedIn } from "../components/AuthItem";
 import Screen from "../components/Screen";
+import TabView from "../components/TabView";
+import { Colors, loginTheme } from "../config/Theming";
+import { delay } from "../src/AsyncTools";
+import { useAuthState } from "../store";
 import * as AuthActions from "../store/AuthActions";
 import LoginForm from "./LoginForm";
-import TabView from "../components/TabView";
-import { delay } from "../src/AsyncTools";
-import { Colors, loginTheme } from "../config/Theming";
+import { authLogger } from "../src/Logging";
 
 interface LoginScreenProps {
   navigation: StackNavigationProp<RootStackParamList, "Login">;
@@ -21,7 +22,6 @@ export default function LoginScreen({
   navigation,
   showDebugButtons,
 }: LoginScreenProps) {
-  const isLoggedIn = useIsLoggedIn();
   const authState = useAuthState();
   const dispatch = useDispatch();
 
@@ -48,8 +48,8 @@ export default function LoginScreen({
       setAuthError(false);
       navigation.goBack();
     } catch (error) {
-      console.log(JSON.stringify(error.message))
-      console.log(JSON.stringify(error))
+      authLogger.info(`Authentication error: "${error?.message}"`)
+      authLogger.debug(`Detaild auth error: "${JSON.stringify(error)}"`)
       setAuthError(error);
     } finally {
       setIsWorking(false);
@@ -72,9 +72,9 @@ export default function LoginScreen({
     );
   }
 
-  if( authError ) {
-    Alert.alert("Authentication Error", authError.message)
-    setAuthError(undefined)
+  if (authError) {
+    Alert.alert("Authentication Error", authError.message);
+    setAuthError(undefined);
   }
 
   return (

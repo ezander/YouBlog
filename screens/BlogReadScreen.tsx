@@ -1,39 +1,35 @@
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import moment from "moment";
-import React, { useCallback, useState } from "react";
+import React, { useCallback } from "react";
 import {
   ActivityIndicator,
   RefreshControl,
+  ScrollView,
   Share,
   StyleSheet,
   View,
 } from "react-native";
 import { Image, Text } from "react-native-elements";
-import { ScrollView } from "react-native-gesture-handler";
 import { Item } from "react-navigation-header-buttons";
+import { useDispatch, useSelector } from "react-redux";
 import { RootStackParamList } from "../App";
 import { withErrorBoundary } from "../components/AppErrorBoundary";
-import {
-  useAuthItem,
-  useAuthState,
-  useIsLoggedIn,
-} from "../components/AuthItem";
+import { useAuthItem } from "../components/AuthItem";
 import ErrorScreen from "../components/ErrorScreen";
-import LoadingScreen from "../components/LoadingScreen";
 import Markdown from "../components/Markdown";
 import Screen from "../components/Screen";
+import ZoomTool from "../components/ZoomTool";
 import {
+  BlogFontScales,
   BlogFontSizes,
   BlogTheme,
   GeneralTheme,
-  BlogFontScales,
 } from "../config/Theming";
 import { BlogEntryWithId, fetchBlogEntry } from "../model/Blog";
 import { useAsyncAction } from "../src/AsyncTools";
-import ZoomTool from "../components/ZoomTool";
-import { useSelector, useDispatch } from "react-redux";
-import { Settings, doSetFontScale } from "../store/SettingsActions";
+import { RootState, useAuthState } from "../store";
+import { doSetFontScale, Settings } from "../store/SettingsActions";
 
 // @ts -ignore
 interface BlogReadScreenProps {
@@ -60,8 +56,7 @@ function MyActivityIndicator() {
   );
 }
 function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
-
-  const settings = useSelector((state) => state.settings) as Settings;
+  const settings = useSelector<RootState, Settings>((state) => state.settings);
   const dispatch = useDispatch();
   const fontScale = settings.blogFontScale;
   const zoomIn = useCallback(
@@ -82,7 +77,6 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
   const extra_params = from_params && params.extra ? params.extra : undefined;
 
   const authItem = useAuthItem();
-  const isLoggedIn = useIsLoggedIn();
   const authState = useAuthState();
 
   const fetchThisBlogEntry = useCallback(fetchBlogEntry.bind(null, id), [id]);
@@ -111,7 +105,7 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
     });
   };
 
-  const editAllowed = isLoggedIn && authState.user.localId === author_id; // check whether logged in and owner of entry
+  const editAllowed = !!authState.user && authState.user.localId === author_id; // check whether logged in and owner of entry
   // const editAllowed = true || author_id || isLoggedIn; // todo: remove
 
   const handleShare = () => {

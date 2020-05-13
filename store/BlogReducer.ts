@@ -1,4 +1,4 @@
-import { produce } from "immer";
+import { produce, Draft } from "immer";
 import { appLogger } from "../src/Logging";
 import { BlogActionTypes, BlogAction } from "./BlogActions";
 import { BlogList, BlogEntryWithId } from "../model/Blog";
@@ -10,7 +10,9 @@ const initialState = {
   edit: {} as Partial<BlogEntryWithId>,
 };
 
-function blogProducer(draft: typeof initialState, action: BlogAction) {
+export type BlogState = Readonly<typeof initialState>
+
+function blogProducer(draft: Draft<BlogState>, action: BlogAction) {
   switch (action.type) {
     case BlogActionTypes.SET_LIST:
       draft.list = action.list;

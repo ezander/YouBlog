@@ -16,9 +16,9 @@ export enum AuthActionTypes {
 }
 
 export type AuthAction =
-  | {type: AuthActionTypes.LOGIN, user: User}
-  | {type: AuthActionTypes.LOGOUT}
-  | {type: AuthActionTypes.SIGNUP, user: User}
+  | { type: AuthActionTypes.LOGIN; user: User }
+  | { type: AuthActionTypes.LOGOUT }
+  | { type: AuthActionTypes.SIGNUP; user: User };
 
 export function doLogin(username: string, password: string) {
   return asyncLogin.bind(null, username, password);
@@ -30,7 +30,7 @@ async function asyncLogin(username: string, password: string, dispatch: any) {
     await persistLogin(user);
     return dispatch({ type: AuthActionTypes.LOGIN, user });
   } catch (error) {
-   authLogger.info("Login failed", error.message);
+    authLogger.info("Login failed", error.message);
     throw error;
   }
 }

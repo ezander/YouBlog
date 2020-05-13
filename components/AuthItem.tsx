@@ -1,33 +1,23 @@
 import { useNavigation } from "@react-navigation/native";
 import React from "react";
-import { Item } from "react-navigation-header-buttons";
-import { useDispatch, useSelector } from "react-redux";
-import { doLogout } from "../store/AuthActions";
 import { Alert } from "react-native";
-
-export function useAuthState() {
-  return useSelector((state: any) => state.auth);
-}
-
-export function useIsLoggedIn() {
-  const authState = useAuthState();
-  // console.log("AuthState: ", authState)
-  const isLoggedIn = !!authState.user;
-  return isLoggedIn;
-}
+import { Item } from "react-navigation-header-buttons";
+import { useDispatch } from "react-redux";
+import { useAuthState } from "../store";
+import { doLogout } from "../store/AuthActions";
 
 export function useAuthItem() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const isLoggedIn = useIsLoggedIn();
   const auth = useAuthState();
 
   function handleLogin() {
     navigation.navigate("Login");
   }
+
   function handleLogout() {
     Alert.alert(
-      `Hey ${auth.user.displayName}!`,
+      `Hey ${auth.user?.displayName}!`,
       "Are you sure? Really log out?",
       [
         {
@@ -42,8 +32,7 @@ export function useAuthItem() {
     );
   }
 
-  // console.log("IsLoggedIn: ", isLoggedIn)
-  if (isLoggedIn) {
+  if (auth.user) {
     return (
       <Item
         key="logout"
@@ -58,5 +47,3 @@ export function useAuthItem() {
     );
   }
 }
-
-// export default AuthItem

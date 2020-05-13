@@ -9,8 +9,6 @@ import { AppLoading, Linking } from "expo";
 import { Text, ThemeProvider } from "react-native-elements";
 import ErrorBoundary from "react-native-error-boundary";
 import { Provider } from "react-redux";
-import { applyMiddleware, combineReducers, createStore } from "redux";
-import ReduxThunk from "redux-thunk";
 import { LinkingNavigationContainer } from "./components/LinkingNavigationContainer";
 import NavHeader from "./components/NavHeader";
 import BlogEditScreen, { BlogEditParams } from "./screens/BlogEditScreen";
@@ -20,21 +18,10 @@ import LoginScreen from "./screens/LoginScreen";
 import { delay } from "./src/AsyncTools";
 import Warnings from "./src/Warnings";
 import { doRestoreLogin } from "./store/AuthActions";
-import authReducer from "./store/AuthReducer";
-import blogReducer from "./store/BlogReducer";
 import { loadFonts, defaultTheme } from "./config/Theming";
-import { ReduxLogger } from "./src/Logging";
-import settingsReducer from "./store/SettingsReducer";
+import {store} from "./store/index"
 
 Warnings.ignore("Setting a timer");
-
-const rootReducer = combineReducers({
-  auth: authReducer,
-  blog: blogReducer,
-  settings: settingsReducer
-});
-const middleware = [ReduxThunk, ReduxLogger];
-const store = createStore(rootReducer, applyMiddleware(...middleware));
 
 export type RootStackParamList = {
   BlogList: undefined;
@@ -112,7 +99,7 @@ async function performStartupStuff() {
   // this is all kind of silly, but that's only
   // because firebase initialization is slow and stupid...
   const results = await Promise.all([
-    store.dispatch(doRestoreLogin()),
+    store.dispatch<any>(doRestoreLogin()),
     delay(100),
     loadFonts(),
   ]);

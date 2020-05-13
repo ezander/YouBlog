@@ -1,17 +1,14 @@
-//import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-// import { createMaterialBottomTabNavigator } from '@react-navigation/material-bottom-tabs';
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React, { useCallback, useState } from "react";
 import { ActivityIndicator, Dimensions, View } from "react-native";
-import { Button, Image, Icon, Text } from "react-native-elements";
+import { Button, Icon, Image } from "react-native-elements";
 import { RootStackParamList } from "../App";
-import TextScreen from "../components/TextScreen";
-import * as ImageTool from "../model/ImageTool";
 import Screen from "../components/Screen";
 import { ThemeMerger } from "../components/ThemeMerger";
 import { editTheme } from "../config/Theming";
+import * as ImageTool from "../model/ImageTool";
 
 export interface BlogEditParams {
   id: string;
@@ -27,8 +24,6 @@ export interface BlogEditParams {
 }
 
 const Tab = createMaterialTopTabNavigator();
-// const Tab = createBottomTabNavigator();
-// const Tab = createMaterialBottomTabNavigator();
 
 function EditPropsForm() {
   return (
@@ -62,14 +57,8 @@ function EditImageForm({ imageUri }: { imageUri: string | undefined }) {
   return (
     <Screen backgroundImage={require("../assets/handwriting-3.png")}>
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Button
-          title="Take picture"
-          onPress={() => takeOrPickImage(true)}
-        />
-        <Button
-          title="Pick image"
-          onPress={() => takeOrPickImage(false)}
-        />
+        <Button title="Take picture" onPress={() => takeOrPickImage(true)} />
+        <Button title="Pick image" onPress={() => takeOrPickImage(false)} />
         {newImageUri && (
           <Image
             source={{ uri: newImageUri }}

@@ -1,14 +1,16 @@
+import { Draft, produce } from "immer";
 import { User } from "../model/Auth";
-import { produce } from "immer";
-import { AuthActionTypes, AuthAction } from "./AuthActions";
 import { authLogger } from "../src/Logging";
+import { AuthAction, AuthActionTypes } from "./AuthActions";
 
 const initialState = {
-  error: undefined as (undefined | any),
-  user: undefined as (undefined | User),
+  error: undefined as undefined | any,
+  user: undefined as undefined | User,
 };
 
-function authProducer(draft: typeof initialState, action: AuthAction) {
+export type AuthState = Readonly<typeof initialState>;
+
+function authProducer(draft: Draft<AuthState>, action: AuthAction) {
   switch (action.type) {
     case AuthActionTypes.LOGIN:
     case AuthActionTypes.SIGNUP:
