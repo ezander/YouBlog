@@ -23,7 +23,11 @@ type IconMap = {
 const mapMaterial: IconMap = {
   back: "arrow-back",
   menu: "menu",
-  create: "add",
+  // create: "add",
+  // create: "playlist-add", 
+  // create: {name: "addfile", type: "antdesign"},
+  // create: {name: "md-add", type: "ionicon"},
+  create: {name: "new", type: "entypo"},
   edit: "edit",
   add_photo: "add-a-photo",
   camera: "camera",

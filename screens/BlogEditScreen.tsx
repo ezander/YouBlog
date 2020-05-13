@@ -11,6 +11,9 @@ import { editTheme } from "../config/Theming";
 import BlogEditImageForm from "./BlogEditImageForm";
 import BlogEditInfoForm from "./BlogEditInfoForm";
 import BlogEditTextForm from "./BlogEditTextForm";
+import { useSelector } from "react-redux";
+import { RootState } from "../store";
+import { BlogEntryWithId } from "../model/Blog";
 
 export interface BlogEditParams {
   id: string;
@@ -24,8 +27,10 @@ interface BlogReadScreenProps {
 }
 
 export function BlogEditScreen({ navigation, route }: BlogReadScreenProps) {
-  const params = route.params;
-  const image_url = params?.extra?.image_url;
+  const id = route.params.id
+
+  const entry = useSelector<RootState, BlogEntryWithId>(state => state.blog.edit)
+  console.log(entry)
 
   function saveAndGoBack() {
     console.log("Save and go back")
@@ -103,7 +108,7 @@ export function BlogEditScreen({ navigation, route }: BlogReadScreenProps) {
   }
 
   navigation.setOptions({
-    // title: title,
+    title: id ? "Edit blog post" : "New blog post",
     // @ts-ignore
     extraHeaderItems: [
       <Item
@@ -132,6 +137,7 @@ export function BlogEditScreen({ navigation, route }: BlogReadScreenProps) {
         tabBarPosition="bottom"
         tabBarOptions={{
           activeTintColor: "#e91e63",
+          showIcon: true
         }}
       >
         <Tab.Screen
@@ -139,7 +145,7 @@ export function BlogEditScreen({ navigation, route }: BlogReadScreenProps) {
           component={BlogEditInfoForm}
           options={{
             tabBarIcon: ({ focused, color }) => (
-              <Icon name="dialpad" type="material" size={25} color={color} />
+              <Icon name="information" type="material-community" size={25} color={color} />
             ),
           }}
         />
@@ -148,7 +154,7 @@ export function BlogEditScreen({ navigation, route }: BlogReadScreenProps) {
           component={BlogEditTextForm}
           options={{
             tabBarIcon: ({ focused, color }) => (
-              <Icon name="dialpad" type="material" size={25} color={color} />
+              <Icon name="text" type="material-community" size={25} color={color} />
             ),
           }}
         />
@@ -157,7 +163,7 @@ export function BlogEditScreen({ navigation, route }: BlogReadScreenProps) {
           component={BlogEditImageForm}
           options={{
             tabBarIcon: ({ focused, color }) => (
-              <Icon name="dialpad" type="material" size={25} color={color} />
+              <Icon name="image" type="material-community" size={25} color={color} />
             ),
           }}
         />

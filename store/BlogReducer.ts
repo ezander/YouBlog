@@ -39,7 +39,7 @@ function blogProducer(draft: Draft<BlogState>, action: BlogAction) {
 
     case BlogActionTypes.CREATE_POST:
       appLogger.info(`Creating new post.`);
-      draft.edit = {};
+      draft.edit = action.post;
       break;
 
     case BlogActionTypes.UPDATE_POST:

@@ -1,4 +1,5 @@
 import { BlogEntryWithId, BlogList, fetchBlogEntries, fetchBlogEntry } from "../model/Blog";
+import { User } from "../model/Auth";
 
 export enum BlogActionTypes {
   SET_LIST = "SET_LIST",
@@ -12,7 +13,7 @@ export type BlogAction =
   | { type: BlogActionTypes.SET_LIST; list: BlogList }
   | { type: BlogActionTypes.SET_POST; post: BlogEntryWithId, merge:boolean }
   | { type: BlogActionTypes.EDIT_POST; post: BlogEntryWithId }
-  | { type: BlogActionTypes.CREATE_POST }
+  | { type: BlogActionTypes.CREATE_POST; post: BlogEntryWithId }
   | { type: BlogActionTypes.UPDATE_POST; post: BlogEntryWithId };
 
 export function doSetList(list: BlogList) {
@@ -27,8 +28,20 @@ export function doEditPost(post: BlogEntryWithId) {
   return { type: BlogActionTypes.EDIT_POST, post };
 }
 
-export function doCreatePost() {
-  return { type: BlogActionTypes.CREATE_POST };
+export function doCreatePost(user: User) {
+  const post = {
+    id: null,
+    document: {
+      author: user.displayName,
+      author_id: user.localId,
+      date: new Date(),
+      image_url: null,
+      text: "",
+      title: "",
+    }
+  }
+
+  return { type: BlogActionTypes.CREATE_POST, post };
 }
 
 export function doUpdatePost(post: Partial<BlogEntryWithId>) {

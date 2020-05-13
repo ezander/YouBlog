@@ -4,19 +4,14 @@ import { FlatList, View } from "react-native";
 import { ListItem, Text } from "react-native-elements";
 import { Item } from "react-navigation-header-buttons";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  ErrorScreen,
-  Screen,
-  useAuthItem,
-  withErrorBoundary,
-} from "../components";
+import { ErrorScreen, Screen, useAuthItem, withErrorBoundary } from "../components";
 import { defaultBackgroundImage, GeneralTheme } from "../config/Theming";
 import { BlogEntryWithId, BlogList, fetchBlogEntries } from "../model/Blog";
 import { shareDeeplink } from "../model/Sharing";
 import { delay, useAsyncAction } from "../src/AsyncTools";
 import { appLogger } from "../src/Logging";
-import { RootState } from "../store";
-import { doSetList, doSetPost } from "../store/BlogActions";
+import { RootState, useAuthState } from "../store";
+import { doCreatePost, doSetList, doSetPost } from "../store/BlogActions";
 
 interface BlogListEntryProps {
   entry: BlogEntryWithId;
@@ -52,6 +47,7 @@ async function handleFetchList(dispatch: Dispatch<any>) {
 }
 
 function BlogListScreen({ navigation }: { navigation: any }) {
+  const authState = useAuthState();
   const authItem = useAuthItem();
   const dispatch = useDispatch();
 
@@ -79,6 +75,13 @@ function BlogListScreen({ navigation }: { navigation: any }) {
     );
   }
 
+  function handleCreate() {
+    if (authState.user) {
+      dispatch(doCreatePost(authState.user));
+      navigation.navigate("BlogEdit", { id: undefined });
+    }
+  }
+
   navigation.setOptions({
     title: "YouBlog",
     // @ts-ignore
@@ -90,6 +93,15 @@ function BlogListScreen({ navigation }: { navigation: any }) {
         onPress={handleShareList}
         style={{ paddingRight: 5 }}
       />,
+      authState.user && (
+        <Item
+          key="add"
+          title="Add"
+          iconName="create"
+          onPress={handleCreate}
+          style={{ paddingRight: 5 }}
+        />
+      ),
       authItem,
     ],
   });

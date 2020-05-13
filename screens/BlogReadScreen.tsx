@@ -32,7 +32,7 @@ import { shareDeeplink } from "../model/Sharing";
 import { useAsyncAction } from "../src/AsyncTools";
 import { appLogger } from "../src/Logging";
 import { RootState, useAuthState } from "../store";
-import { doSetPost } from "../store/BlogActions";
+import { doSetPost, doEditPost } from "../store/BlogActions";
 import { doSetFontScale, Settings } from "../store/SettingsActions";
 
 interface BlogReadScreenProps {
@@ -89,11 +89,6 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
     dispatch
   );
 
-  // const fetchThisBlogEntry = useCallback(fetchBlogEntry.bind(null, id), [id]);
-  // const { hasRun, isWorking, error, result, doRefresh } = useAsyncAction<
-  //   BlogEntryWithId
-  // >(fetchThisBlogEntry);
-
   if (error) {
     const text = "An error occurred loading blog entry";
     return <ErrorScreen text={text} error={error} onRetry={doRefresh} />;
@@ -108,7 +103,10 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
   const date = post?.date;
 
   function handleEdit() {
-    navigation.navigate("BlogEdit", { id });
+    if (post?.title) { // check that post is fully loaded
+      dispatch(doEditPost(entry as BlogEntryWithId));
+      navigation.navigate("BlogEdit", { id });
+    }
   }
 
   const editAllowed = !!authState.user && authState.user.localId === author_id; // check whether logged in and owner of entry
@@ -122,6 +120,13 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
     title: title,
     // @ts-ignore
     extraHeaderItems: [
+      <Item
+        key="share"
+        title="Share"
+        iconName="share"
+        onPress={handleShare}
+        style={{ paddingRight: 5 }}
+      />,
       editAllowed && (
         <Item
           key="edit"
@@ -131,13 +136,6 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
           style={{ paddingRight: 5 }}
         />
       ),
-      <Item
-        key="share"
-        title="Share"
-        iconName="share"
-        onPress={handleShare}
-        style={{ paddingRight: 5 }}
-      />,
       authItem,
     ],
   });
