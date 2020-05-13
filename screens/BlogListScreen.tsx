@@ -1,6 +1,6 @@
 import moment from "moment";
-import React, { Dispatch, useCallback } from "react";
-import { FlatList, Share, View } from "react-native";
+import React, { Dispatch } from "react";
+import { FlatList, View } from "react-native";
 import { ListItem, Text } from "react-native-elements";
 import { Item } from "react-navigation-header-buttons";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,14 +8,15 @@ import { withErrorBoundary } from "../components/AppErrorBoundary";
 import { useAuthItem } from "../components/AuthItem";
 import ErrorScreen from "../components/ErrorScreen";
 import Screen from "../components/Screen";
-import { GeneralTheme, defaultBackgroundImage } from "../config/Theming";
+import { defaultBackgroundImage, GeneralTheme } from "../config/Theming";
 import {
   BlogEntry,
   BlogEntryWithId,
   BlogList,
   fetchBlogEntries,
 } from "../model/Blog";
-import { useAsyncAction, delay } from "../src/AsyncTools";
+import { shareDeeplink } from "../model/Sharing";
+import { delay, useAsyncAction } from "../src/AsyncTools";
 import { appLogger } from "../src/Logging";
 import { RootState } from "../store";
 import { doSetList } from "../store/BlogActions";
@@ -84,14 +85,11 @@ function BlogListScreen({ navigation }: { navigation: any }) {
   }
 
   function handleShareList() {
-    const path = `list`;
-    const url = "https://expo.io/@ezander/YouBlog/" + path;
-    const message = `Check out this cool blogging app! \n "${url}"`;
-    Share.share({
-      title: "Share this blogging app",
-      message,
-      url,
-    });
+    shareDeeplink(
+      "Share this blogging app",
+      `list`,
+      "Check out this cool blogging app!"
+    );
   }
 
   navigation.setOptions({

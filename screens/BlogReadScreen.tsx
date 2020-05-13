@@ -6,7 +6,6 @@ import {
   ActivityIndicator,
   RefreshControl,
   ScrollView,
-  Share,
   StyleSheet,
   View,
 } from "react-native";
@@ -24,10 +23,11 @@ import {
   BlogFontScales,
   BlogFontSizes,
   BlogTheme,
-  GeneralTheme,
   defaultBackgroundImage,
+  GeneralTheme,
 } from "../config/Theming";
 import { BlogEntryWithId, fetchBlogEntry } from "../model/Blog";
+import { shareDeeplink } from "../model/Sharing";
 import { useAsyncAction } from "../src/AsyncTools";
 import { RootState, useAuthState } from "../store";
 import { doSetFontScale, Settings } from "../store/SettingsActions";
@@ -109,16 +109,9 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
   const editAllowed = !!authState.user && authState.user.localId === author_id; // check whether logged in and owner of entry
   // const editAllowed = true || author_id || isLoggedIn; // todo: remove
 
-  const handleShare = () => {
-    const path = `post/${id}`;
-    const url = "https://expo.io/@ezander/YouBlog/" + path;
-    const message = `Read this! \n "${url}"`;
-    Share.share({
-      title: "Share this blog post",
-      message,
-      url,
-    });
-  };
+  function handleShare() {
+    shareDeeplink("Share this blog post", `post/${id}`, "Read this!");
+  }
 
   navigation.setOptions({
     title: title,

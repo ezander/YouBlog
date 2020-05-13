@@ -1,16 +1,14 @@
-import "react-native-gesture-handler"; // must be the first import
+import { createStackNavigator, StackHeaderProps } from "@react-navigation/stack";
+import { AppLoading } from "expo";
 import React, { useState } from "react";
-
-import {
-  createStackNavigator,
-  StackHeaderProps,
-} from "@react-navigation/stack";
-import { AppLoading, Linking } from "expo";
 import { Text, ThemeProvider } from "react-native-elements";
 import ErrorBoundary from "react-native-error-boundary";
+import "react-native-gesture-handler"; // must be the first import
 import { Provider } from "react-redux";
 import { LinkingNavigationContainer } from "./components/LinkingNavigationContainer";
 import NavHeader from "./components/NavHeader";
+import { defaultTheme, loadFonts } from "./config/Theming";
+import { urlPrefixes } from "./model/Sharing";
 import BlogEditScreen, { BlogEditParams } from "./screens/BlogEditScreen";
 import BlogListScreen from "./screens/BlogListScreen";
 import BlogReadScreen, { BlogReadParams } from "./screens/BlogReadScreen";
@@ -18,8 +16,8 @@ import LoginScreen from "./screens/LoginScreen";
 import { delay } from "./src/AsyncTools";
 import Warnings from "./src/Warnings";
 import { doRestoreLogin } from "./store/AuthActions";
-import { loadFonts, defaultTheme } from "./config/Theming";
-import {store} from "./store/index"
+import { store } from "./store/index";
+
 
 Warnings.ignore("Setting a timer");
 
@@ -42,11 +40,7 @@ const navigatorOptions = {
 };
 
 const linking = {
-  prefixes: [
-    Linking.makeUrl("/"),
-    "https://expo.io/@ezander/YouBlog",
-    "https://zandere.de/youblog",
-  ],
+  prefixes: urlPrefixes,
   config: {
     Dummy: {
       initialRouteName: "BlogList",
