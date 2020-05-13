@@ -1,4 +1,4 @@
-import { BlogEntryWithId, BlogList } from "../model/Blog";
+import { BlogEntryWithId, BlogList, fetchBlogEntries, fetchBlogEntry } from "../model/Blog";
 
 export enum BlogActionTypes {
   SET_LIST = "SET_LIST",
@@ -33,4 +33,20 @@ export function doCreatePost() {
 
 export function doUpdatePost(post: Partial<BlogEntryWithId>) {
   return { type: BlogActionTypes.UPDATE_POST, post };
+}
+
+export function doFetchBlogEntries() {
+  async function fetchBlogEntriesAsync(dispatch: any) {
+    const list = await fetchBlogEntries();
+    dispatch(doSetList(list));
+  }
+  return fetchBlogEntriesAsync;
+}
+
+export function doFetchBlogEntry(id: string) {
+  async function fetchBlogEntriesAsync(id: string, dispatch: any) {
+    const post = await fetchBlogEntry(id)
+    dispatch(doSetPost(post));
+  }
+  return fetchBlogEntriesAsync.bind(null, id);
 }

@@ -1,38 +1,39 @@
 import moment from "moment";
-import React from "react";
+import React, { Dispatch, useCallback } from "react";
 import { FlatList, Share, View } from "react-native";
 import { ListItem, Text } from "react-native-elements";
 import { Item } from "react-navigation-header-buttons";
+import { useDispatch, useSelector } from "react-redux";
 import { withErrorBoundary } from "../components/AppErrorBoundary";
 import { useAuthItem } from "../components/AuthItem";
 import ErrorScreen from "../components/ErrorScreen";
 import Screen from "../components/Screen";
+import { GeneralTheme } from "../config/Theming";
 import {
   BlogEntry,
   BlogEntryWithId,
   BlogList,
   fetchBlogEntries,
 } from "../model/Blog";
-import { useAsyncAction } from "../src/AsyncTools";
-import { GeneralTheme } from "../config/Theming";
-import { useSelector } from "react-redux";
-import { RootState } from "../App";
+import { useAsyncAction, delay } from "../src/AsyncTools";
+import { appLogger } from "../src/Logging";
+import { RootState } from "../store";
+import { doSetList } from "../store/BlogActions";
 
-function BlogListEntry({
-  entry,
-  onSelect,
-}: {
+interface BlogListEntryProps {
   entry: BlogEntryWithId;
   onSelect: () => void;
-}) {
-  const blog = entry.document;
+}
+
+function BlogListEntry({ entry, onSelect }: BlogListEntryProps) {
+  const post = entry.document;
   return (
     <ListItem
-      title={blog.title}
-      subtitle={blog.author + " | " + moment(blog.date).fromNow()}
+      title={post.title}
+      subtitle={post.author + " | " + moment(post.date).fromNow()}
       onPress={onSelect}
       bottomDivider
-      chevron={{size: 40, color: "darkgray"}}
+      chevron={{ size: 40, color: "darkgray" }}
       containerStyle={GeneralTheme.screen}
       titleStyle={GeneralTheme.listItems.title}
       subtitleStyle={GeneralTheme.listItems.subtitle}
@@ -40,16 +41,34 @@ function BlogListEntry({
   );
 }
 
+async function handleFetchList(dispatch: Dispatch<any>) {
+  try {
+    const list = await fetchBlogEntries();
+    await delay(1);
+    appLogger.info(`Fetched ${list.length} blog posts.`);
+    return dispatch(doSetList(list));
+  } catch (error) {
+    appLogger.error(`Error fetching blog posts: ${error.message}.`);
+    throw error;
+  }
+}
+
 function BlogListScreen({ navigation }: { navigation: any }) {
   const authItem = useAuthItem();
+  const dispatch = useDispatch();
 
-  const list = useSelector<RootState, Readonly<BlogList>>( state => state.blog.list )
+  const blogList = useSelector<RootState, Readonly<BlogList>>(
+    (state) => state.blog.list
+  );
 
-  const { hasRun, isWorking, error, result, doRefresh } = useAsyncAction<
-    BlogList
-  >(fetchBlogEntries);
-
-  const entrySelected = (entry: BlogEntryWithId) => {
+  const { isWorking, error, doRefresh } = useAsyncAction(
+    handleFetchList,
+    undefined,
+    dispatch
+  );
+  // console.log(isWorking);
+  
+  function handleSelectedBlogPost(entry: BlogEntryWithId) {
     const blog = entry.document;
     navigation.navigate("BlogRead", {
       id: entry.id,
@@ -62,9 +81,9 @@ function BlogListScreen({ navigation }: { navigation: any }) {
         image_url: blog.image_url,
       } as Partial<BlogEntry>,
     });
-  };
+  }
 
-  const handleShare = () => {
+  function handleShareList() {
     const path = `list`;
     const url = "https://expo.io/@ezander/YouBlog/" + path;
     const message = `Check out this cool blogging app! \n "${url}"`;
@@ -73,13 +92,19 @@ function BlogListScreen({ navigation }: { navigation: any }) {
       message,
       url,
     });
-  };
+  }
 
   navigation.setOptions({
     title: "YouBlog",
     // @ts-ignore
     extraHeaderItems: [
-      <Item key="share" title="Share" iconName="share" onPress={handleShare}  style={{paddingRight: 5}}/>,
+      <Item
+        key="share"
+        title="Share"
+        iconName="share"
+        onPress={handleShareList}
+        style={{ paddingRight: 5 }}
+      />,
       authItem,
     ],
   });
@@ -101,11 +126,14 @@ function BlogListScreen({ navigation }: { navigation: any }) {
       </View>
       <View style={{ width: "100%", padding: 10, flex: 1 }}>
         <FlatList<BlogEntryWithId>
-          data={result}
+          data={blogList}
           renderItem={({ item }) => (
-            <BlogListEntry entry={item} onSelect={() => entrySelected(item)} />
+            <BlogListEntry
+              entry={item}
+              onSelect={() => handleSelectedBlogPost(item)}
+            />
           )}
-          refreshing={!hasRun || isWorking}
+          refreshing={isWorking}
           onRefresh={doRefresh}
           style={GeneralTheme.screen}
         />

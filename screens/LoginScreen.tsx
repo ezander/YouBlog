@@ -43,7 +43,7 @@ export default function LoginScreen({
   async function handleAuthAction(action: any, mode: string) {
     setIsWorking(true);
     try {
-      await delay(200);
+      await delay(1);
       await dispatch(action);
       setAuthError(false);
       navigation.goBack();
