@@ -1,7 +1,7 @@
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import moment from "moment";
-import React, { useCallback } from "react";
+import React, { useCallback, useState } from "react";
 import {
   ActivityIndicator,
   RefreshControl,
@@ -23,9 +23,15 @@ import ErrorScreen from "../components/ErrorScreen";
 import LoadingScreen from "../components/LoadingScreen";
 import Markdown from "../components/Markdown";
 import Screen from "../components/Screen";
-import { BlogFontSizes, BlogTheme, GeneralTheme } from "../config/Theming";
+import {
+  BlogFontSizes,
+  BlogTheme,
+  GeneralTheme,
+  BlogFontScales,
+} from "../config/Theming";
 import { BlogEntryWithId, fetchBlogEntry } from "../model/Blog";
 import { useAsyncAction } from "../src/AsyncTools";
+import ZoomTool from "../components/ZoomTool";
 
 // @ts -ignore
 interface BlogReadScreenProps {
@@ -52,6 +58,18 @@ function MyActivityIndicator() {
   );
 }
 function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
+  const [fontScale, setFontScale] = useState(BlogTheme.fontScale);
+  const zoomIn = useCallback(
+    () => setFontScale((fontScale) => BlogFontScales.zoomIn(fontScale)),
+    [setFontScale]
+  );
+  const zoomOut = useCallback(
+    () => setFontScale((fontScale) => BlogFontScales.zoomOut(fontScale)),
+    [setFontScale]
+  );
+  const canZoomIn = BlogFontScales.canZoomIn(fontScale)
+  const canZoomOut = BlogFontScales.canZoomOut(fontScale)
+
   const params = route.params;
   const id = params.id;
   const from_params = params.extra?.id === id;
@@ -106,17 +124,28 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
     // @ts-ignore
     extraHeaderItems: [
       editAllowed && (
-        <Item key="edit" title="Edit" iconName="edit" onPress={handleEdit} style={{paddingRight: 5}}/>
+        <Item
+          key="edit"
+          title="Edit"
+          iconName="edit"
+          onPress={handleEdit}
+          style={{ paddingRight: 5 }}
+        />
       ),
-      <Item key="share" title="Share" iconName="share" onPress={handleShare} style={{paddingRight: 5}} />,
+      <Item
+        key="share"
+        title="Share"
+        iconName="share"
+        onPress={handleShare}
+        style={{ paddingRight: 5 }}
+      />,
       authItem,
     ],
   });
 
-  const { fontScale, ...blogMarkdownStyle } = BlogTheme;
-  // @ts-ignore
-  blogMarkdownStyle.fontSize = BlogFontSizes[BlogTheme.fontScale];
-  const fontSize = BlogFontSizes[BlogTheme.fontScale];
+  const { ...blogMarkdownStyle } = BlogTheme;
+  blogMarkdownStyle.fontSize = BlogFontSizes[fontScale];
+  ["small", "normal", "large", "xlarge"];
 
   const fdate = moment(date).format("LLL");
   const header = `\n # ${title} \n _${author}_ | _${fdate}_ \n`;
@@ -156,6 +185,10 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
           )}
         </ScrollView>
       </View>
+      <ZoomTool
+          onZoomIn={canZoomIn ? zoomIn : undefined}
+          onZoomOut={canZoomOut ? zoomOut : undefined}
+        />
     </Screen>
   );
 }

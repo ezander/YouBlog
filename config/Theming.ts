@@ -102,6 +102,23 @@ export const BlogFontSizes = {
 };
 export type BlogFontScale = keyof typeof BlogFontSizes;
 
+export class BlogFontScales {
+  static scales: BlogFontScale[] = ["small", "normal", "large", "xlarge"];
+
+  static canZoomIn(scale: BlogFontScale) {
+    return this.scales.indexOf(scale) + 1 < this.scales.length;
+  }
+  static zoomIn(scale: BlogFontScale) {
+    return this.scales[this.scales.indexOf(scale) + 1];
+  }
+  static canZoomOut(scale: BlogFontScale) {
+    return this.scales.indexOf(scale) - 1 >= 0;
+  }
+  static zoomOut(scale: BlogFontScale) {
+    return this.scales[this.scales.indexOf(scale) - 1];
+  }
+}
+
 export const BlogTheme: BlogTheme = {
   fontScale: "large",
   textFontFamily: FontFaces.serif,
@@ -113,6 +130,7 @@ export interface BlogTheme {
   textFontFamily: string;
   codeFontFamily: string;
   backgroundColor: string;
+  fontSize?: number;
 }
 
 export type ExtendedTheme = FullTheme & {
@@ -181,6 +199,73 @@ export const loginTheme = {
   Button: {
     containerStyle: {
       width: SCREEN_WIDTH - 120,
+      borderRadius: 10,
+      borderWidth: 1,
+      height: 50,
+      marginVertical: 10,
+    },
+    buttonStyle: {
+      backgroundColor: "transparent",
+    },
+    titleStyle: {
+      // backgroundColor: "red",
+      marginLeft: 10,
+      color: "black",
+      fontFamily: "MyUnderwood",
+      fontSize: 24,
+    },
+    raised: true,
+    type: "solid",
+  },
+  Icon: {
+    color: Colors.paperLight, //"rgba(110, 120, 170, 1)",
+    size: 25,
+  },
+  Text: {
+    style: {
+      fontFamily: "MyUnderwood",
+      fontSize: 16,
+    },
+    containerStyle: {
+      alignItems: "flex-start",
+      textAlign: "left",
+    },
+  },
+  Working: {
+    style: {
+      color: "black",
+      fontFamily: "MyUnderwood",
+      fontSize: 24,
+    },
+  },
+};
+
+export const editTheme = {
+  Input: {
+    containerStyle: {
+      width: SCREEN_WIDTH - 60,
+    },
+    inputContainerStyle: {
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: Colors.paperLight,
+      height: 50,
+      marginVertical: 10,
+    },
+    placeholderTextColor: chroma
+      .interpolate(Colors.paperLight, Colors.primaryColor, 0.8)
+      .hex(),
+    inputStyle: {
+      marginLeft: 10,
+      color: Colors.paperLight,
+      fontFamily: "MyUnderwood",
+    },
+    keyboardAppearance: "light",
+    blurOnSubmit: false,
+  },
+  Button: {
+    containerStyle: {
+      // width: SCREEN_WIDTH - 120,
       borderRadius: 10,
       borderWidth: 1,
       height: 50,

@@ -10,6 +10,8 @@ import { RootStackParamList } from "../App";
 import TextScreen from "../components/TextScreen";
 import * as ImageTool from "../model/ImageTool";
 import Screen from "../components/Screen";
+import { ThemeMerger } from "../components/ThemeMerger";
+import { editTheme } from "../config/Theming";
 
 export interface BlogEditParams {
   id: string;
@@ -61,11 +63,11 @@ function EditImageForm({ imageUri }: { imageUri: string | undefined }) {
     <Screen backgroundImage={require("../assets/handwriting-3.png")}>
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Button
-          title="Take a picture with mobile camera"
+          title="Take picture"
           onPress={() => takeOrPickImage(true)}
         />
         <Button
-          title="Pick an image from camera roll"
+          title="Pick image"
           onPress={() => takeOrPickImage(false)}
         />
         {newImageUri && (
@@ -73,7 +75,7 @@ function EditImageForm({ imageUri }: { imageUri: string | undefined }) {
             source={{ uri: newImageUri }}
             containerStyle={{ borderWidth: 2 }}
             PlaceholderContent={<ActivityIndicator />}
-            style={{ width: Dimensions.get("window").width, height: 300 }}
+            style={{ width: Dimensions.get("window").width - 40, height: 200 }}
           />
         )}
       </View>
@@ -105,42 +107,44 @@ export function BlogEditScreen({
 
   // { focused: boolean, color: string, size: number }
   return (
-    <Tab.Navigator
-      initialRouteName="Image"
-      tabBarPosition="bottom"
-      tabBarOptions={{
-        activeTintColor: "#e91e63",
-      }}
-    >
-      <Tab.Screen
-        name="Props"
-        component={EditPropsForm}
-        options={{
-          tabBarIcon: ({ focused, color }) => (
-            <Icon name="dialpad" type="material" size={25} color={color} />
-          ),
+    <ThemeMerger theme={editTheme}>
+      <Tab.Navigator
+        initialRouteName="Image"
+        tabBarPosition="bottom"
+        tabBarOptions={{
+          activeTintColor: "#e91e63",
         }}
-      />
-      <Tab.Screen
-        name="Text"
-        component={EditTextForm}
-        options={{
-          tabBarIcon: ({ focused, color }) => (
-            <Icon name="dialpad" type="material" size={25} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name="Image"
-        component={LocalImageView}
-        initialParams={{ imageUri: image_url }}
-        options={{
-          tabBarIcon: ({ focused, color }) => (
-            <Icon name="dialpad" type="material" size={25} color={color} />
-          ),
-        }}
-      />
-    </Tab.Navigator>
+      >
+        <Tab.Screen
+          name="Props"
+          component={EditPropsForm}
+          options={{
+            tabBarIcon: ({ focused, color }) => (
+              <Icon name="dialpad" type="material" size={25} color={color} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Text"
+          component={EditTextForm}
+          options={{
+            tabBarIcon: ({ focused, color }) => (
+              <Icon name="dialpad" type="material" size={25} color={color} />
+            ),
+          }}
+        />
+        <Tab.Screen
+          name="Image"
+          component={LocalImageView}
+          initialParams={{ imageUri: image_url }}
+          options={{
+            tabBarIcon: ({ focused, color }) => (
+              <Icon name="dialpad" type="material" size={25} color={color} />
+            ),
+          }}
+        />
+      </Tab.Navigator>
+    </ThemeMerger>
   );
 }
 
