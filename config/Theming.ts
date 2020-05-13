@@ -72,6 +72,8 @@ export interface HeaderTheme {
   [others: string]: any;
 }
 
+export const defaultBackgroundImage = require("../assets/images/handwriting-1362879_1280.jpg")
+
 export const GeneralTheme = {
   headingStyle: {
     // fontFamily: "Pacifico",

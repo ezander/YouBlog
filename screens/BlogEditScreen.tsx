@@ -27,7 +27,7 @@ const Tab = createMaterialTopTabNavigator();
 
 function EditPropsForm() {
   return (
-    <Screen backgroundImage={require("../assets/handwriting-1.png")}>
+    <Screen backgroundImage={require("../assets/images/handwriting-1.png")}>
       {/* <TextScreen text={"This is the blog edit screen for Props"} /> */}
     </Screen>
   );
@@ -35,7 +35,7 @@ function EditPropsForm() {
 
 function EditTextForm() {
   return (
-    <Screen backgroundImage={require("../assets/handwriting-2.png")}>
+    <Screen backgroundImage={require("../assets/images/handwriting-2.png")}>
       {/* <TextScreen text={"This is the blog edit screen for Text"} /> */}
     </Screen>
   );
@@ -55,7 +55,7 @@ function EditImageForm({ imageUri }: { imageUri: string | undefined }) {
   }
 
   return (
-    <Screen backgroundImage={require("../assets/handwriting-3.png")}>
+    <Screen backgroundImage={require("../assets/images/handwriting-3.png")}>
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         <Button title="Take picture" onPress={() => takeOrPickImage(true)} />
         <Button title="Pick image" onPress={() => takeOrPickImage(false)} />

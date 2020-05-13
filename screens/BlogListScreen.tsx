@@ -8,7 +8,7 @@ import { withErrorBoundary } from "../components/AppErrorBoundary";
 import { useAuthItem } from "../components/AuthItem";
 import ErrorScreen from "../components/ErrorScreen";
 import Screen from "../components/Screen";
-import { GeneralTheme } from "../config/Theming";
+import { GeneralTheme, defaultBackgroundImage } from "../config/Theming";
 import {
   BlogEntry,
   BlogEntryWithId,
@@ -67,7 +67,7 @@ function BlogListScreen({ navigation }: { navigation: any }) {
     dispatch
   );
   // console.log(isWorking);
-  
+
   function handleSelectedBlogPost(entry: BlogEntryWithId) {
     const blog = entry.document;
     navigation.navigate("BlogRead", {
@@ -120,7 +120,7 @@ function BlogListScreen({ navigation }: { navigation: any }) {
   }
 
   return (
-    <Screen backgroundImage={require("../assets/handwriting-1362879_1280.jpg")}>
+    <Screen backgroundImage={defaultBackgroundImage}>
       <View style={{ paddingTop: 10 }}>
         <Text style={GeneralTheme.headingStyle}>Latest Blog Entries</Text>
       </View>

@@ -6,12 +6,12 @@ import { useDispatch } from "react-redux";
 import { RootStackParamList } from "../App";
 import Screen from "../components/Screen";
 import TabView from "../components/TabView";
-import { Colors, loginTheme } from "../config/Theming";
+import { Colors, defaultBackgroundImage, loginTheme } from "../config/Theming";
 import { delay } from "../src/AsyncTools";
+import { authLogger } from "../src/Logging";
 import { useAuthState } from "../store";
 import * as AuthActions from "../store/AuthActions";
 import LoginForm from "./LoginForm";
-import { authLogger } from "../src/Logging";
 
 interface LoginScreenProps {
   navigation: StackNavigationProp<RootStackParamList, "Login">;
@@ -48,13 +48,14 @@ export default function LoginScreen({
       setAuthError(false);
       navigation.goBack();
     } catch (error) {
-      authLogger.info(`Authentication error: "${error?.message}"`)
-      authLogger.debug(`Detaild auth error: "${JSON.stringify(error)}"`)
+      authLogger.info(`Authentication error: "${error?.message}"`);
+      authLogger.debug(`Detaild auth error: "${JSON.stringify(error)}"`);
       setAuthError(error);
     } finally {
       setIsWorking(false);
     }
   }
+
   async function handleLogin(email: string, password: string) {
     setWorkingOn("Logging you in...");
     handleAuthAction(AuthActions.doLogin(email, password), "Login");
@@ -78,7 +79,7 @@ export default function LoginScreen({
   }
 
   return (
-    <Screen backgroundImage={require("../assets/handwriting-1362879_1280.jpg")}>
+    <Screen backgroundImage={defaultBackgroundImage}>
       <Overlay
         isVisible={isWorking}
         overlayStyle={{

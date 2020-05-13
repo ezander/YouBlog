@@ -25,6 +25,7 @@ import {
   BlogFontSizes,
   BlogTheme,
   GeneralTheme,
+  defaultBackgroundImage,
 } from "../config/Theming";
 import { BlogEntryWithId, fetchBlogEntry } from "../model/Blog";
 import { useAsyncAction } from "../src/AsyncTools";
@@ -151,7 +152,7 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
   const header = `\n # ${title} \n _${author}_ | _${fdate}_ \n`;
 
   return (
-    <Screen backgroundImage={require("../assets/handwriting-1362879_1280.jpg")}>
+    <Screen backgroundImage={defaultBackgroundImage}>
       <View style={styles.blogContainer}>
         <ScrollView
           refreshControl={

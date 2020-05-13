@@ -9,9 +9,9 @@
     ],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/LogoMakr_9AokN1.png" ,
+    "icon": "./assets/icons/LogoMakr_9AokN1.png" ,
     "splash": {
-      "image": "./assets/splash_new.png",
+      "image": "./assets/images/splash_new.png",
       "resizeMode": "contain",
       "backgroundColor": "#e4e1cc"
     },
