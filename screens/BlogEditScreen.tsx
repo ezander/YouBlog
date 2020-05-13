@@ -1,98 +1,128 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import React, { useCallback, useState } from "react";
-import { ActivityIndicator, Dimensions, View } from "react-native";
-import { Button, Icon, Image } from "react-native-elements";
+import React from "react";
+import { Alert } from "react-native";
+import { Icon } from "react-native-elements";
+import { Item } from "react-navigation-header-buttons";
 import { RootStackParamList } from "../App";
-import Screen from "../components/Screen";
 import { ThemeMerger } from "../components/ThemeMerger";
 import { editTheme } from "../config/Theming";
-import * as ImageTool from "../model/ImageTool";
+import BlogEditImageForm from "./BlogEditImageForm";
+import BlogEditInfoForm from "./BlogEditInfoForm";
+import BlogEditTextForm from "./BlogEditTextForm";
 
 export interface BlogEditParams {
   id: string;
-  extra: {
-    id: string;
-    author: string;
-    author_id: string;
-    title: string;
-    date_str: string;
-    image_url: string;
-    text: string;
-  };
 }
 
 const Tab = createMaterialTopTabNavigator();
 
-function EditPropsForm() {
-  return (
-    <Screen backgroundImage={require("../assets/images/handwriting-1.png")}>
-      {/* <TextScreen text={"This is the blog edit screen for Props"} /> */}
-    </Screen>
-  );
-}
-
-function EditTextForm() {
-  return (
-    <Screen backgroundImage={require("../assets/images/handwriting-2.png")}>
-      {/* <TextScreen text={"This is the blog edit screen for Text"} /> */}
-    </Screen>
-  );
-}
-
-function EditImageForm({ imageUri }: { imageUri: string | undefined }) {
-  const [newImageUri, setImageUri] = useState<string | undefined>(imageUri);
-  // useEffect(() => {ImagePicker.getCameraPermissionsAsync()}, [])
-  // useEffect(() => {ImagePicker.getCameraRollPermissionsAsync()}, [])
-
-  function handleImageSelect(image_uri: string) {
-    console.log("Image selected: ", image_uri);
-    setImageUri(image_uri);
-  }
-  async function takeOrPickImage(take: boolean) {
-    ImageTool.takeOrPickImage(take, handleImageSelect);
-  }
-
-  return (
-    <Screen backgroundImage={require("../assets/images/handwriting-3.png")}>
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Button title="Take picture" onPress={() => takeOrPickImage(true)} />
-        <Button title="Pick image" onPress={() => takeOrPickImage(false)} />
-        {newImageUri && (
-          <Image
-            source={{ uri: newImageUri }}
-            containerStyle={{ borderWidth: 2 }}
-            PlaceholderContent={<ActivityIndicator />}
-            style={{ width: Dimensions.get("window").width - 40, height: 200 }}
-          />
-        )}
-      </View>
-    </Screen>
-  );
-  // return <TextScreen text={"This is the blog edit screen for Image"} />;
-}
-
-// @ts -ignore
 interface BlogReadScreenProps {
   navigation: StackNavigationProp<RootStackParamList, "BlogEdit">;
   route: RouteProp<RootStackParamList, "BlogEdit">;
 }
 
-export function BlogEditScreen({
-  navigation,
-  route,
-  ...props
-}: BlogReadScreenProps) {
-  // <TextScreen text={"This is the blog edit screen for:\n" + route.params.id}/>
-
+export function BlogEditScreen({ navigation, route }: BlogReadScreenProps) {
   const params = route.params;
-  const image_url = params.extra.image_url;
+  const image_url = params?.extra?.image_url;
 
-  const LocalImageView = useCallback(
-    () => <EditImageForm imageUri={image_url} />,
-    [image_url]
-  );
+  function saveAndGoBack() {
+    console.log("Save and go back")
+    // save this stuff
+    navigation.goBack()
+  }
+  function discardAndGoBack() {
+    console.log("Discard changed and go back")
+    navigation.goBack()
+  }
+  function keepEditing() {
+    console.log("Keep editing")
+  }
+  
+  function handleGoBack() {
+    Alert.alert(
+      "Leave page",
+      "What do you want to do?",
+      [
+        {
+          text: "Save changes",
+          onPress: saveAndGoBack,
+        },
+        {
+          text: "Discard my changes",
+          onPress: discardAndGoBack,
+          style: "destructive",
+        },
+        {
+          text: "Let me keep editing",
+          onPress: keepEditing,
+          style: "cancel",
+        },
+      ],
+      { cancelable: true, onDismiss: () => {} }
+    );
+  }
+
+  function handleDone() {
+    Alert.alert(
+      "Save?",
+      "Save this blog post?",
+      [
+        {
+          text: "Sure, ready to publish...",
+          onPress: saveAndGoBack,
+        },
+        {
+          text: "No, I'm not quite finished...",
+          onPress: keepEditing,
+          style: "cancel",
+        },
+      ],
+      { cancelable: true, onDismiss: () => {} }
+    );
+  }
+
+  function handleCancel() {
+    Alert.alert(
+      "Really cancel?",
+      "Throw away all edits?",
+      [
+        {
+          text: "Yep! Throw away this junk...",
+          onPress: discardAndGoBack,
+        },
+        {
+          text: "No, I'll polish it up...",
+          onPress: keepEditing,
+          style: "cancel",
+        },
+      ],
+      { cancelable: true, onDismiss: () => {} }
+    );
+  }
+
+  navigation.setOptions({
+    // title: title,
+    // @ts-ignore
+    extraHeaderItems: [
+      <Item
+        key="done"
+        title="Done"
+        iconName="done"
+        onPress={handleDone}
+        style={{ paddingRight: 5 }}
+      />,
+      <Item
+        key="cancel"
+        title="Cancel"
+        iconName="cancel"
+        onPress={handleCancel}
+        style={{ paddingRight: 5 }}
+      />,
+    ],
+    onGoBack: handleGoBack
+  });
 
   // { focused: boolean, color: string, size: number }
   return (
@@ -105,8 +135,8 @@ export function BlogEditScreen({
         }}
       >
         <Tab.Screen
-          name="Props"
-          component={EditPropsForm}
+          name="Info"
+          component={BlogEditInfoForm}
           options={{
             tabBarIcon: ({ focused, color }) => (
               <Icon name="dialpad" type="material" size={25} color={color} />
@@ -115,7 +145,7 @@ export function BlogEditScreen({
         />
         <Tab.Screen
           name="Text"
-          component={EditTextForm}
+          component={BlogEditTextForm}
           options={{
             tabBarIcon: ({ focused, color }) => (
               <Icon name="dialpad" type="material" size={25} color={color} />
@@ -124,8 +154,7 @@ export function BlogEditScreen({
         />
         <Tab.Screen
           name="Image"
-          component={LocalImageView}
-          initialParams={{ imageUri: image_url }}
+          component={BlogEditImageForm}
           options={{
             tabBarIcon: ({ focused, color }) => (
               <Icon name="dialpad" type="material" size={25} color={color} />

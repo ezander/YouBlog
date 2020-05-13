@@ -16,6 +16,7 @@ import ThemedIcon, { SpecialisedThemedIconProps } from "./ThemedIcon";
 export type ExtendedNavigationOptions = StackNavigationOptions & {
   onOpenMenu?: any;
   extraHeaderItems?: Array<JSX.Element>;
+  onGoBack?: () => any
 };
 
 export function IconComponent(props: SpecialisedThemedIconProps) {
@@ -55,12 +56,13 @@ function NavHeader({ headerProps }: { headerProps: StackHeaderProps }) {
   }
 
   if (previous) {
+    const handleGoBack = options.onGoBack || navigation.goBack
     leftHeaderItems.push(
       <Item
         key="back"
         title="Back"
         iconName="back"
-        onPress={navigation.goBack}
+        onPress={handleGoBack}
       />
     );
   }

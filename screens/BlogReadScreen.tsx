@@ -12,6 +12,7 @@ import {
 import { Image, Text } from "react-native-elements";
 import { Item } from "react-navigation-header-buttons";
 import { useDispatch, useSelector } from "react-redux";
+import { Dispatch } from "redux";
 import { RootStackParamList } from "../App";
 import { withErrorBoundary } from "../components/AppErrorBoundary";
 import { useAuthItem } from "../components/AuthItem";
@@ -28,14 +29,11 @@ import {
 } from "../config/Theming";
 import { BlogEntryWithId, fetchBlogEntry } from "../model/Blog";
 import { shareDeeplink } from "../model/Sharing";
-import { useAsyncAction, delay } from "../src/AsyncTools";
-import { RootState, useAuthState } from "../store";
-import { doSetFontScale, Settings } from "../store/SettingsActions";
-import { stringToTokens } from "react-native-markdown-display";
-import { BlogMap } from "../store/BlogReducer";
-import { doSetPost } from "../store/BlogActions";
+import { useAsyncAction } from "../src/AsyncTools";
 import { appLogger } from "../src/Logging";
-import { Dispatch } from "redux";
+import { RootState, useAuthState } from "../store";
+import { doSetPost } from "../store/BlogActions";
+import { doSetFontScale, Settings } from "../store/SettingsActions";
 
 interface BlogReadScreenProps {
   navigation: StackNavigationProp<RootStackParamList, "BlogRead">;
@@ -44,15 +42,6 @@ interface BlogReadScreenProps {
 export interface BlogReadParams {
   id: string;
 }
-
-function MyActivityIndicator() {
-  return (
-    <View style={styles.blogContainer}>
-      <ActivityIndicator />
-    </View>
-  );
-}
-
 
 async function handleFetchPost(id: string, dispatch: Dispatch<any>) {
   try {
@@ -65,7 +54,6 @@ async function handleFetchPost(id: string, dispatch: Dispatch<any>) {
     throw error;
   }
 }
-
 
 function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
   const dispatch = useDispatch();
@@ -90,13 +78,15 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
 
   // Fetching and merging the blog post
   const id = route.params.id;
+  type BlogMap = ReadonlyMap<string, Partial<BlogEntryWithId>>;
   const posts = useSelector<RootState, BlogMap>((state) => state.blog.posts);
-  const entry = posts.get(id)
+  const entry = posts.get(id);
 
   const { isWorking, error, doRefresh } = useAsyncAction(
     handleFetchPost,
     undefined,
-    id, dispatch
+    id,
+    dispatch
   );
 
   // const fetchThisBlogEntry = useCallback(fetchBlogEntry.bind(null, id), [id]);
@@ -117,12 +107,9 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
   const image_url = post?.image_url;
   const date = post?.date;
 
-  const handleEdit = () => {
-    navigation.navigate("BlogEdit", {
-      id,
-      extra: { id, title, author, image_url },
-    });
-  };
+  function handleEdit() {
+    navigation.navigate("BlogEdit", { id });
+  }
 
   const editAllowed = !!authState.user && authState.user.localId === author_id; // check whether logged in and owner of entry
   // const editAllowed = true || author_id || isLoggedIn; // todo: remove
@@ -167,10 +154,7 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
       <View style={styles.blogContainer}>
         <ScrollView
           refreshControl={
-            <RefreshControl
-              refreshing={isWorking}
-              onRefresh={doRefresh}
-            />
+            <RefreshControl refreshing={isWorking} onRefresh={doRefresh} />
           }
         >
           {title && <Markdown {...blogMarkdownStyle}>{header}</Markdown>}
