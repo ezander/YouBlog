@@ -4,22 +4,19 @@ import { FlatList, View } from "react-native";
 import { ListItem, Text } from "react-native-elements";
 import { Item } from "react-navigation-header-buttons";
 import { useDispatch, useSelector } from "react-redux";
-import { withErrorBoundary } from "../components/AppErrorBoundary";
-import { useAuthItem } from "../components/AuthItem";
-import ErrorScreen from "../components/ErrorScreen";
-import Screen from "../components/Screen";
-import { defaultBackgroundImage, GeneralTheme } from "../config/Theming";
 import {
-  BlogEntry,
-  BlogEntryWithId,
-  BlogList,
-  fetchBlogEntries,
-} from "../model/Blog";
+  ErrorScreen,
+  Screen,
+  useAuthItem,
+  withErrorBoundary,
+} from "../components";
+import { defaultBackgroundImage, GeneralTheme } from "../config/Theming";
+import { BlogEntryWithId, BlogList, fetchBlogEntries } from "../model/Blog";
 import { shareDeeplink } from "../model/Sharing";
 import { delay, useAsyncAction } from "../src/AsyncTools";
 import { appLogger } from "../src/Logging";
 import { RootState } from "../store";
-import { doSetList } from "../store/BlogActions";
+import { doSetList, doSetPost } from "../store/BlogActions";
 
 interface BlogListEntryProps {
   entry: BlogEntryWithId;
@@ -70,18 +67,8 @@ function BlogListScreen({ navigation }: { navigation: any }) {
   // console.log(isWorking);
 
   function handleSelectedBlogPost(entry: BlogEntryWithId) {
-    const blog = entry.document;
-    navigation.navigate("BlogRead", {
-      id: entry.id,
-      extra: {
-        id: entry.id,
-        title: blog.title,
-        date_str: blog.date.toISOString(),
-        author: blog.author,
-        author_id: blog.author_id,
-        image_url: blog.image_url,
-      } as Partial<BlogEntry>,
-    });
+    dispatch(doSetPost(entry, true));
+    navigation.navigate("BlogRead", { id: entry.id });
   }
 
   function handleShareList() {
@@ -110,7 +97,7 @@ function BlogListScreen({ navigation }: { navigation: any }) {
   if (error) {
     return (
       <ErrorScreen
-        text="An error occurred loading blog entries"
+        text="An error occurred loading blog entries."
         error={error}
         onRetry={doRefresh}
       />

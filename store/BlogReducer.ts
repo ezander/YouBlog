@@ -19,7 +19,12 @@ function blogProducer(draft: Draft<BlogState>, action: BlogAction) {
       break;
 
     case BlogActionTypes.SET_POST:
-      const post = action.post as BlogEntryWithId
+      const merge = action.merge
+      let post = action.post 
+      if( merge ) {
+        let oldPost = draft.posts.get(post.id)
+        if( oldPost ) post = deepmerge(oldPost, post)
+      }
       draft.posts.set(post.id, post)
       break;
 
@@ -37,6 +42,7 @@ function blogProducer(draft: Draft<BlogState>, action: BlogAction) {
 
     case BlogActionTypes.UPDATE_POST:
       draft.edit = deepmerge(draft.edit, action.post)
+      console.log(draft.edit)
       throw Error("Not yet implemented");
       break;
   }

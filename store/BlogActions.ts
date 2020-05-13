@@ -10,7 +10,7 @@ export enum BlogActionTypes {
 
 export type BlogAction =
   | { type: BlogActionTypes.SET_LIST; list: BlogList }
-  | { type: BlogActionTypes.SET_POST; post: BlogEntryWithId }
+  | { type: BlogActionTypes.SET_POST; post: BlogEntryWithId, merge:boolean }
   | { type: BlogActionTypes.EDIT_POST; post: BlogEntryWithId }
   | { type: BlogActionTypes.CREATE_POST }
   | { type: BlogActionTypes.UPDATE_POST; post: BlogEntryWithId };
@@ -19,8 +19,8 @@ export function doSetList(list: BlogList) {
   return { type: BlogActionTypes.SET_LIST, list };
 }
 
-export function doSetPost(post: BlogEntryWithId) {
-  return { type: BlogActionTypes.SET_POST, post };
+export function doSetPost(post: BlogEntryWithId, merge:boolean=true) {
+  return { type: BlogActionTypes.SET_POST, post, merge };
 }
 
 export function doEditPost(post: BlogEntryWithId) {

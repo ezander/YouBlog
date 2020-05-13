@@ -15,7 +15,7 @@ export type LinkingNavigationContainerProps = NavigationContainerProps & {
   fallback: JSX.Element;
 };
 
-export function LinkingNavigationContainer<Props>({
+export function LinkingNavigationContainer({
   linking,
   fallback,
   ...props
@@ -57,3 +57,5 @@ export function LinkingNavigationContainer<Props>({
     <NavigationContainer initialState={initialState} ref={ref} {...props} />
   );
 }
+
+export default LinkingNavigationContainer

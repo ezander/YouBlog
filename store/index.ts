@@ -1,3 +1,4 @@
+import { enableMapSet } from "immer";
 import { useSelector } from "react-redux";
 import { applyMiddleware, combineReducers, createStore } from "redux";
 import ReduxThunk from "redux-thunk";
@@ -5,6 +6,8 @@ import { ReduxLogger } from "../src/Logging";
 import authReducer, { AuthState } from "./AuthReducer";
 import blogReducer from "./BlogReducer";
 import settingsReducer from "./SettingsReducer";
+
+enableMapSet();
 
 export const rootReducer = combineReducers({
   auth: authReducer,

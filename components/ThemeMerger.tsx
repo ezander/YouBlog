@@ -24,3 +24,5 @@ export function ThemeMerger({ theme, children }: ThemeMergerProps) {
     <ThemeProvider theme={deepmerge(defTheme, theme)}>{children}</ThemeProvider>
   );
 }
+
+export default ThemeMerger
