@@ -32,6 +32,8 @@ import {
 import { BlogEntryWithId, fetchBlogEntry } from "../model/Blog";
 import { useAsyncAction } from "../src/AsyncTools";
 import ZoomTool from "../components/ZoomTool";
+import { useSelector, useDispatch } from "react-redux";
+import { Settings, doSetFontScale } from "../store/SettingsActions";
 
 // @ts -ignore
 interface BlogReadScreenProps {
@@ -58,17 +60,21 @@ function MyActivityIndicator() {
   );
 }
 function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
-  const [fontScale, setFontScale] = useState(BlogTheme.fontScale);
+
+  const settings = useSelector((state) => state.settings) as Settings;
+  const dispatch = useDispatch();
+  const fontScale = settings.blogFontScale;
   const zoomIn = useCallback(
-    () => setFontScale((fontScale) => BlogFontScales.zoomIn(fontScale)),
-    [setFontScale]
+    () => dispatch(doSetFontScale(BlogFontScales.zoomIn(fontScale))),
+    [fontScale]
   );
   const zoomOut = useCallback(
-    () => setFontScale((fontScale) => BlogFontScales.zoomOut(fontScale)),
-    [setFontScale]
+    () => dispatch(doSetFontScale(BlogFontScales.zoomOut(fontScale))),
+    [fontScale]
   );
-  const canZoomIn = BlogFontScales.canZoomIn(fontScale)
-  const canZoomOut = BlogFontScales.canZoomOut(fontScale)
+
+  const canZoomIn = BlogFontScales.canZoomIn(fontScale);
+  const canZoomOut = BlogFontScales.canZoomOut(fontScale);
 
   const params = route.params;
   const id = params.id;
@@ -186,9 +192,9 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
         </ScrollView>
       </View>
       <ZoomTool
-          onZoomIn={canZoomIn ? zoomIn : undefined}
-          onZoomOut={canZoomOut ? zoomOut : undefined}
-        />
+        onZoomIn={canZoomIn ? zoomIn : undefined}
+        onZoomOut={canZoomOut ? zoomOut : undefined}
+      />
     </Screen>
   );
 }

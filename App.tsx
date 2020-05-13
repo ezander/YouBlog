@@ -24,12 +24,14 @@ import authReducer from "./store/AuthReducer";
 import blogReducer from "./store/BlogReducer";
 import { loadFonts, defaultTheme } from "./config/Theming";
 import { ReduxLogger } from "./src/Logging";
+import settingsReducer from "./store/SettingsReducer";
 
 Warnings.ignore("Setting a timer");
 
 const rootReducer = combineReducers({
   auth: authReducer,
   blog: blogReducer,
+  settings: settingsReducer
 });
 const middleware = [ReduxThunk, ReduxLogger];
 const store = createStore(rootReducer, applyMiddleware(...middleware));
