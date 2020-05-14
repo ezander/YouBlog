@@ -14,47 +14,50 @@ test("authUrl", () => {
 
 describe("signUpUser", () => {
   test("invalid email", () => {
-    expect.assertions(2);
+    expect.assertions(3);
     return signUpUser(
       { email: "foo", password: "xxx123" },
       firebaseConfig
     ).catch((reason) => {
       Promise.all([
         expect(reason).toBeInstanceOf(FirebaseError),
-        expect(reason.message).toMatch("INVALID_EMAIL"),
+        expect(reason.message).toMatch("formatted"),
+        expect(reason.info.rootError.message).toMatch("INVALID_EMAIL"),
       ]);
     });
   });
 
   test("missing password", () => {
-    expect.assertions(2);
+    expect.assertions(3);
     return signUpUser(
       { email: "foo@bar.com", password: "" },
       firebaseConfig
     ).catch((reason) => {
       Promise.all([
         expect(reason).toBeInstanceOf(FirebaseError),
-        expect(reason.message).toMatch("MISSING_PASSWORD"),
+        expect(reason.message).toMatch("was missing"),
+        expect(reason.info.rootError.message).toMatch("MISSING_PASSWORD"),
       ]);
     });
   });
 
   test("weak password", () => {
-    expect.assertions(2);
+    expect.assertions(3);
     return signUpUser(
       { email: "foo@bar.com", password: "xxx" },
       firebaseConfig
     ).catch((reason) => {
       Promise.all([
         expect(reason).toBeInstanceOf(FirebaseError),
-        expect(reason.message).toMatch("WEAK_PASSWORD"),
+        expect(reason.message).toMatch("at least"),
+        expect(reason.info.rootError.message).toMatch("WEAK_PASSWORD"),
       ]);
     });
   });
 
   test("email exists", async () => {
     // with test we more or less also now that signing up works...
-    expect.assertions(2);
+    expect.assertions(3);
     try {
       await signUpUser(
         { email: "foo2@bar.com", password: "xxx123" },
@@ -66,7 +69,8 @@ describe("signUpUser", () => {
       );
     } catch (error) {
       expect(error).toBeInstanceOf(FirebaseError);
-      expect(error.message).toMatch(/^EMAIL_EXISTS/);
+      expect(error.message).toMatch("already");
+      expect(error.info.rootError.message).toMatch(/^EMAIL_EXISTS/);
     }
   });
 });

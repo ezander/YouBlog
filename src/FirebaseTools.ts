@@ -107,6 +107,8 @@ const errorMapping = {
     "The supplied auth credential is malformed or has expired.",
   INVALID_OOB_CODE:
     "The action code is invalid. This can happen if the code is malformed, expired, or has already been used.",
+  MISSING_PASSWORD:
+    "The password was missing from the request.",
   INVALID_PASSWORD:
     "The password is invalid or the user does not have a password.",
   INVALID_REFRESH_TOKEN: "An invalid refresh token is provided.",
@@ -139,7 +141,7 @@ export function parseError(error: any) {
     // @ts-ignore
     const message = (origMessage in errorMapping) ? errorMapping[origMessage] : origMessage
 
-    return new FirebaseError(message);
+    return new FirebaseError(message, undefined, {rootError: response.data.error});
   } else {
     return new HTTPError(`${status} - ${statusText}`);
   }
