@@ -152,6 +152,7 @@ export const defaultTheme = {
       // width: SCREEN_WIDTH - 10,
       alignItems: "center",
       paddingVertical: 30,
+      borderRadius: 7,
     },
     Text: {
       color: Colors.paperLight,

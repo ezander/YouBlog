@@ -1,11 +1,11 @@
-import React, { useState, useRef } from "react";
+import React, { useRef, useState } from "react";
+import { View, ViewProps } from "react-native";
+import { Input, Text } from "react-native-elements";
+import { useDispatch, useSelector } from "react-redux";
 import Screen from "../components/Screen";
-import { RootState } from "../store";
-import { useSelector, useDispatch } from "react-redux";
-import { View } from "react-native";
-import { Text, Input } from "react-native-elements";
+import { Colors, SCREEN_WIDTH } from "../config/Theming";
 import { User } from "../model/Auth";
-import { Canvas } from "./BlogEditTextForm";
+import { RootState } from "../store";
 import { doUpdatePost } from "../store/BlogActions";
 
 export function Label({ title }: { title: string }) {
@@ -15,6 +15,27 @@ export function Label({ title }: { title: string }) {
     </Text>
   );
 }
+
+export interface CanvasProps extends ViewProps {
+  children?: Array<JSX.Element> | JSX.Element;
+}
+export function Canvas({ ...props }: CanvasProps) {
+  return (
+    <View
+      style={{
+        height: "100%",
+        width: SCREEN_WIDTH - 30,
+        marginVertical: 10,
+        marginHorizontal: 50,
+        borderWidth: 3,
+        backgroundColor: Colors.paperColor,
+        flex: 1,
+      }}
+      {...props}
+    />
+  );
+}
+
 export function BlogEditInfoForm() {
   const user = useSelector<RootState, Readonly<User>>(
     (state) => state.auth.user!
@@ -44,7 +65,7 @@ export function BlogEditInfoForm() {
           placeholder="Catchy title goes here..."
           multiline={true}
           numberOfLines={2}
-          inputContainerStyle={{height: 80}}
+          inputContainerStyle={{ height: 80 }}
           onChangeText={setTitle}
           ref={titleRef}
           onBlur={storeChanges}
