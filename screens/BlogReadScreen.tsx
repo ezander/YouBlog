@@ -33,7 +33,7 @@ import { shareDeeplink } from "../model/Sharing";
 import { useAsyncAction } from "../src/AsyncTools";
 import { appLogger } from "../src/Logging";
 import { RootState, useAuthState } from "../store";
-import { doSetPost, doEditPost } from "../store/BlogActions";
+import { doSetPost, doEditPost, doDeletePost } from "../store/BlogActions";
 import { doSetFontScale, Settings } from "../store/SettingsActions";
 
 interface BlogReadScreenProps {
@@ -103,16 +103,17 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
   const image_url = post?.image_url;
   const date = post?.date;
 
-  function handleEdit() {
+  async function handleEdit() {
     if (post?.title) { // check that post is fully loaded
-      dispatch(doEditPost(entry as BlogEntryWithId));
+      await dispatch(doEditPost(entry as BlogEntryWithId));
       navigation.navigate("BlogEdit", { id });
     }
   }
 
-  function reallyDeleteBlogPost() {
-    // dispatch(doDeletePost(entry as BlogEntryWithId));
-    // navigation.goBack();
+  async function reallyDeleteBlogPost() {
+    await dispatch(doDeletePost(entry?.id!, authState.user?.idToken!));
+    appLogger.info(`Deleted blog post with id "${entry?.id}"`)
+    navigation.goBack();
   }
 
   function handleDelete() {

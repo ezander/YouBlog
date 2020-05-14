@@ -2,10 +2,9 @@ import { produce, Draft } from "immer";
 import { appLogger } from "../src/Logging";
 import { BlogActionTypes, BlogAction } from "./BlogActions";
 import { BlogList, BlogEntryWithId } from "../model/Blog";
-import deepmerge from 'deepmerge'
+import deepmerge from "deepmerge";
 
-
-export type EditPostType = (Partial<BlogEntryWithId> & {changed: boolean})
+export type EditPostType = Partial<BlogEntryWithId> & { changed: boolean };
 
 const initialState = {
   list: [] as BlogList,
@@ -13,46 +12,62 @@ const initialState = {
   edit: {} as EditPostType,
 };
 
-export type BlogState = Readonly<typeof initialState>
-export type BlogMap = typeof initialState.posts
+export type BlogState = Readonly<typeof initialState>;
+export type BlogMap = typeof initialState.posts;
 
 function blogProducer(draft: Draft<BlogState>, action: BlogAction) {
   switch (action.type) {
     case BlogActionTypes.SET_LIST:
       draft.list = action.list;
-      break;
+      return;
 
     case BlogActionTypes.SET_POST:
-      const merge = action.merge
-      let post = action.post 
-      if( merge ) {
-        let oldPost = draft.posts.get(post.id)
-        if( oldPost ) post = deepmerge(oldPost, post)
+      const merge = action.merge;
+      let post = action.post;
+      if (merge) {
+        let oldPost = draft.posts.get(post.id);
+        if (oldPost) post = deepmerge(oldPost, post);
       }
-      draft.posts.set(post.id, post)
-      break;
+      draft.posts.set(post.id, post);
+      return;
 
     case BlogActionTypes.EDIT_POST:
       appLogger.info(
         `Start editing ${action.post?.document.title} by (${action.post?.document.author}).`
       );
-      draft.edit = {...action.post, changed: false};
-      break;
+      draft.edit = { ...action.post, changed: false };
+      return;
 
     case BlogActionTypes.CREATE_POST:
       appLogger.info(`Creating new post.`);
-      draft.edit = {...action.post, changed: false};
-      break;
+      draft.edit = { ...action.post, changed: false };
+      return;
 
     case BlogActionTypes.UPDATE_POST:
-      const oldJson = JSON.stringify(draft)
-      draft.edit = deepmerge(draft.edit, action.post) as (typeof draft.edit)
-      const newJson = JSON.stringify(draft)
-      draft.edit.changed = draft.edit.changed  || (oldJson!==newJson)
+      const oldJson = JSON.stringify(draft);
+      draft.edit = deepmerge(draft.edit, action.post) as typeof draft.edit;
+      const newJson = JSON.stringify(draft);
+      draft.edit.changed = draft.edit.changed || oldJson !== newJson;
+      return;
 
-      // console.log(draft.edit)
-      // throw Error("Not yet implemented");
-      break;
+    case BlogActionTypes.DELETE_POST:
+      draft.list = draft.list.filter(entry => entry.id !== action.id)
+      if( draft.posts.has(action.id)) {
+        draft.posts.delete(action.id)
+      }
+      return;
+
+    case BlogActionTypes.STORE_POST:
+      const index = draft.list.findIndex(entry => entry.id === action.post.id)
+      if( index ) {
+        draft.list[index] = action.post
+      }
+      else {
+        draft.list.unshift(action.post)
+      }
+
+      draft.posts.set(action.post.id, action.post)
+      return;
   }
 }
 
