@@ -2,12 +2,12 @@ import { createMaterialTopTabNavigator } from "@react-navigation/material-top-ta
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import React from "react";
-import { Alert } from "react-native";
+import { Alert, View, ViewProps } from "react-native";
 import { Icon } from "react-native-elements";
 import { Item } from "react-navigation-header-buttons";
 import { RootStackParamList } from "../App";
 import { ThemeMerger } from "../components/ThemeMerger";
-import { editTheme } from "../config/Theming";
+import { editTheme, Colors, SCREEN_WIDTH } from "../config/Theming";
 import BlogEditImageForm from "./BlogEditImageForm";
 import BlogEditInfoForm from "./BlogEditInfoForm";
 import BlogEditTextForm from "./BlogEditTextForm";
@@ -21,31 +21,39 @@ export interface BlogEditParams {
 
 const Tab = createMaterialTopTabNavigator();
 
+
 interface BlogReadScreenProps {
   navigation: StackNavigationProp<RootStackParamList, "BlogEdit">;
   route: RouteProp<RootStackParamList, "BlogEdit">;
 }
 
 export function BlogEditScreen({ navigation, route }: BlogReadScreenProps) {
-  const id = route.params.id
+  const id = route.params.id;
 
-  const entry = useSelector<RootState, BlogEntryWithId>(state => state.blog.edit)
-  console.log(entry)
+
+  type BlogEntry = RootState["blog"]["edit"];
+  const entry = useSelector<RootState, BlogEntry>((state) => state.blog.edit!);
+  // console.log(entry)
+  const hasChanged = false // compute from json image...
 
   function saveAndGoBack() {
-    console.log("Save and go back")
+    console.log("Save and go back");
     // save this stuff
-    navigation.goBack()
+    navigation.goBack();
   }
   function discardAndGoBack() {
-    console.log("Discard changed and go back")
-    navigation.goBack()
+    console.log("Discard changed and go back");
+    navigation.goBack();
   }
   function keepEditing() {
-    console.log("Keep editing")
+    console.log("Keep editing");
   }
-  
+
   function handleGoBack() {
+    if( !hasChanged ) {
+      discardAndGoBack()
+      return
+    }
     Alert.alert(
       "Leave page",
       "What do you want to do?",
@@ -126,7 +134,7 @@ export function BlogEditScreen({ navigation, route }: BlogReadScreenProps) {
         style={{ paddingRight: 5 }}
       />,
     ],
-    onGoBack: handleGoBack
+    onGoBack: handleGoBack,
   });
 
   // { focused: boolean, color: string, size: number }
@@ -137,7 +145,7 @@ export function BlogEditScreen({ navigation, route }: BlogReadScreenProps) {
         tabBarPosition="bottom"
         tabBarOptions={{
           activeTintColor: "#e91e63",
-          showIcon: true
+          showIcon: true,
         }}
       >
         <Tab.Screen
@@ -145,7 +153,12 @@ export function BlogEditScreen({ navigation, route }: BlogReadScreenProps) {
           component={BlogEditInfoForm}
           options={{
             tabBarIcon: ({ focused, color }) => (
-              <Icon name="information" type="material-community" size={25} color={color} />
+              <Icon
+                name="information"
+                type="material-community"
+                size={25}
+                color={color}
+              />
             ),
           }}
         />
@@ -154,7 +167,12 @@ export function BlogEditScreen({ navigation, route }: BlogReadScreenProps) {
           component={BlogEditTextForm}
           options={{
             tabBarIcon: ({ focused, color }) => (
-              <Icon name="text" type="material-community" size={25} color={color} />
+              <Icon
+                name="text"
+                type="material-community"
+                size={25}
+                color={color}
+              />
             ),
           }}
         />
@@ -163,7 +181,12 @@ export function BlogEditScreen({ navigation, route }: BlogReadScreenProps) {
           component={BlogEditImageForm}
           options={{
             tabBarIcon: ({ focused, color }) => (
-              <Icon name="image" type="material-community" size={25} color={color} />
+              <Icon
+                name="image"
+                type="material-community"
+                size={25}
+                color={color}
+              />
             ),
           }}
         />

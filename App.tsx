@@ -13,6 +13,7 @@ import BlogEditScreen, { BlogEditParams } from "./screens/BlogEditScreen";
 import BlogListScreen from "./screens/BlogListScreen";
 import BlogReadScreen, { BlogReadParams } from "./screens/BlogReadScreen";
 import LoginScreen from "./screens/LoginScreen";
+import TestScreen from "./screens/TestScreen";
 import { delay } from "./src/AsyncTools";
 import Warnings from "./src/Warnings";
 import { doRestoreLogin } from "./store/AuthActions";
@@ -57,14 +58,17 @@ const linking = {
 };
 
 function RootStackNavigator() {
-  // const TestLoginScreen = (props: any) => <LoginScreen showDebugButtons={true} {...props}/>
+  // const DebugScreen = (props: any) => <LoginScreen showDebugButtons={true} {...props}/>
+  const DebugScreen = (props: any) => <TestScreen {...props}/>
+  const testing = true
+   
   return (
     <Stack.Navigator {...navigatorOptions}>
-      {/* <Stack.Screen
-        name="LoginTest"
-        component={TestLoginScreen}
-        options={{ title: "Log in or Sign up" }}
-      /> */}
+      {testing && <Stack.Screen
+        name="DebugScreen"
+        component={DebugScreen}
+        options={{ title: "Testing" }}
+      />}
       <Stack.Screen
         name="BlogList"
         component={BlogListScreen}

@@ -1,14 +1,4 @@
-
-import { getExtension, createHashFilename } from "./ImageTool";
-
-
-test("getExtension", () => {
-
-  expect(getExtension("foobar")).toBe("");
-  expect(getExtension("foobar.jpg")).toBe(".jpg");
-  expect(getExtension("foobar.jpg.bak")).toBe(".bak");
-
-});
+import { createHashFilename } from "./ImageTool";
 
 
 test("createHashFilename", async () => {

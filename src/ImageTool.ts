@@ -1,8 +1,12 @@
 import * as ImagePicker from "expo-image-picker";
 import { ImageInfo as _ImageInfo } from "expo-image-picker/build/ImagePicker.types";
 import { CONSTANTS, JSHash } from "react-native-hash";
+import firebaseConfig from "../firebaseConfig.json";
+import { delay } from "./AsyncTools";
+import { createResource, ProgressCallbackType } from "./FirebaseStorage";
 import { appLogger } from "./Logging";
-
+import Axios, { AxiosRequestConfig } from "axios";
+import { getExtension, PathDef } from "./Networking";
 
 type ImageInfo = Required<
   Pick<_ImageInfo, "uri" | "width" | "height" | "base64">
@@ -19,9 +23,6 @@ export async function takeOrPickImage(take: "take" | "pick") {
     exif: false,
     base64: true,
   };
-
-  // ImagePicker.getCameraPermissionsAsync()
-  // ImagePicker.getCameraRollPermissionsAsync()
 
   let result =
     take === "take"
@@ -45,11 +46,6 @@ export async function takeOrPickImage(take: "take" | "pick") {
   return info;
 }
 
-export function getExtension(name: string) {
-  if (name.indexOf(".") < 0) return "";
-  return name.substr(name.lastIndexOf("."));
-}
-
 export async function createHashFilename(basename: string, data: string) {
   const alg = CONSTANTS.HashAlgorithms.sha256;
   // @ts-ignore Type definitions in react-native-hash are somewhat messsed up...
@@ -58,11 +54,56 @@ export async function createHashFilename(basename: string, data: string) {
   return hash + ext;
 }
 
-export async function transferUrl(
-  srcUrl: string,
-  destUrl: string,
-  progressCallback: (bytesTransferred: number, bytesTotal: number) => any
-) {}
+async function compareMD5Hash(data: string, md5Hash: string) {
+  return true;
 
-// useEffect(() => {ImagePicker.getCameraPermissionsAsync()}, [])
-// useEffect(() => {ImagePicker.getCameraRollPermissionsAsync()}, [])
+  // need to check that later... they use base64 for md5hash instead of hex???...
+
+  // const alg = CONSTANTS.HashAlgorithms.md5;
+  // // @ts-ignore Type definitions in react-native-hash are somewhat messsed up...
+  // const hash = await JSHash(atob(data), alg);
+  // console.log(`Hashes: orig: "${hash}"  returned: "${md5Hash}"`)
+  // const foo = atob(md5Hash)
+  // let bar = ""
+  // for( let i=0; i<foo.length; i++ ){
+  //   const x = foo.charCodeAt(i)
+  //   const chars = "0123456789abcdef"
+  //   bar += chars[(x & 0xF0)>>4]
+  //   bar += chars[x & 0x0F]
+  // }
+  // console.log(`Hashes: orig: "${btoa(hash)}"  returned: "${bar}"`)
+
+  // return hash === foo;
+}
+
+export async function transferImage(
+  image: ImageInfo,
+  prefix: PathDef,
+  progressCallback?: ProgressCallbackType,
+  token?: string // not needed currently, doesn't work anyway
+) {
+  const path = prefix
+  const resourceId= (await createHashFilename(image.uri, image.base64));
+
+  try {
+    const response = await createResource(
+      path,
+      resourceId,
+      image.base64,
+      firebaseConfig,
+      token,
+      progressCallback
+    );
+    const {id, mediaLink, selfLink, md5Hash, timeCreated, updated} = response.data
+    appLogger.info("Created resource with link: " + mediaLink)
+    appLogger.debug("Details: ", {id, mediaLink, selfLink, md5Hash, timeCreated, updated})
+
+    // const hashesMatch = await compareMD5Hash(image.base64, md5Hash)
+
+    return mediaLink
+  } catch (error) {
+    appLogger.error("Error uploading image: ", error.message)
+    throw(error)
+  }
+}
+

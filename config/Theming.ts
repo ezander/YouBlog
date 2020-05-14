@@ -31,6 +31,8 @@ export const FontFaces = {
   serif: "Baskerville",
   // serif: "Pacifico",
   sansSerif: Platform.select({ default: "sans-serif", ios: "Arial" }),
+  typewriter: "MyUnderwood",
+  decorative: "Pacifico"
 };
 
 export async function loadFonts() {
@@ -52,7 +54,7 @@ export const HeaderTheme: HeaderTheme = {
   iconTheme: "material",
   iconSize: 25,
   fontSize: 20,
-  // fontFamily: "Baskerville",
+  fontFamily: FontFaces.decorative,
   backgroundColor: Platform.select({
     ios: "white",
     default: Colors.primaryColor,
@@ -72,7 +74,7 @@ export interface HeaderTheme {
   [others: string]: any;
 }
 
-export const defaultBackgroundImage = require("../assets/images/handwriting-1362879_1280.jpg")
+export const defaultBackgroundImage = require("../assets/images/handwriting-1362879_1280.jpg");
 
 export const GeneralTheme = {
   headingStyle: {
@@ -250,7 +252,7 @@ export const editTheme = {
     inputContainerStyle: {
       borderRadius: 10,
       borderWidth: 1,
-      borderColor: Colors.paperLight,
+      borderColor: "black",
       height: 50,
       marginVertical: 10,
     },
@@ -259,8 +261,12 @@ export const editTheme = {
       .hex(),
     inputStyle: {
       marginLeft: 10,
-      color: Colors.paperLight,
+      color: "black",
       fontFamily: "MyUnderwood",
+    },
+    labelStyle: {
+      fontFamily: "MyUnderwood",
+      color: "red"
     },
     keyboardAppearance: "light",
     blurOnSubmit: false,

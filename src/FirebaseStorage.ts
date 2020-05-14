@@ -1,71 +1,26 @@
-import axios, { AxiosRequestConfig, AxiosResponse, Method } from "axios";
-import { createError } from "./FirebaseErrors";
-import { FirebaseConfig, HTTPError } from "./FirebaseTools";
+import axios, { AxiosRequestConfig, Method } from "axios";
+import { FirebaseConfig } from "./FirebaseTools";
 import { networkLogger } from "./Logging";
-
-// export function mapObject<T>(
-//     obj: T,
-//     func: ((value: any, key: string) => any)
-// ): T {
-//     const res: T = {} as T
-//     for (const key in obj) {
-//         res[key] = func(obj[key], key)
-//     }
-//     return res
-// }
-
-function handleResponse(response: AxiosResponse) {
-  networkLogger.info(
-    "Axios: ",
-    response.status,
-    response.statusText,
-    response.request.method,
-    response.config.url,
-    response.config.method,
-    // response.config.params
-  );
-  const between = (low: number, number: number, high: number) =>
-    low <= number && number < high;
-  //console.log("Axios success: ", response)
-  const { status, statusText } = response;
-  if (between(100, status, 200)) {
-    // don't know how to handle informational messages
-    throw new HTTPError(response.statusText + response.data.message);
-  }
-  if (between(200, status, 300)) {
-    // OK
-    // console.log("Data: ", response.data)
-    return response.data;
-  }
-  if (between(300, status, 400)) {
-    // don't know how to handle redirects and the like
-    throw new HTTPError(response.statusText + response.data.message);
-  }
-  if (between(400, status, 500)) {
-    // handle here: doc not found, 401, whatever...
-    const error = createError(response);
-    throw error;
-  }
-
-  throw new HTTPError(response.statusText + response.data.message);
-}
+import {
+  extendPath,
+  getMimetype,
+  httpSimplePost,
+  PathDef,
+  pathDefToString,
+} from "./Networking";
 
 function makeParent(path: PathDef, firebaseConfig: FirebaseConfig) {
   const { storageBucket } = firebaseConfig;
   const fullPath = pathDefToString(path);
   return `b/${storageBucket}/o/${fullPath}`;
 }
-// https://firebasestorage.googleapis.com/v0/b/youblog-814ae.appspot.com/o/books-1245690_1280.jpg
 
-export type PathDef = string | string[];
-export function pathDefToString(path: PathDef) {
-  return Array.isArray(path) ? path.join("/") : path;
-}
-
-export function extendPath(path1: PathDef, path2: PathDef): PathDef {
-  const toArray = (s: PathDef) => (Array.isArray(s) ? s : [s]);
-  return [...toArray(path1), ...toArray(path2)];
-}
+export type ProgressCallbackType = (
+  bytes: number,
+  total: number,
+  name: string,
+  finished: boolean
+) => any;
 
 export async function makeStorageRequest(
   method: Method,
@@ -74,107 +29,146 @@ export async function makeStorageRequest(
   data: undefined | any,
   firebaseConfig: FirebaseConfig,
   token?: string,
-  extraConfig?: AxiosRequestConfig
+  extraConfig?: AxiosRequestConfig,
+  progressCallback?: ProgressCallbackType
 ) {
-  const base_url = "https://firebasestorage.googleapis.com/v0/";
+  // const base_url = "https://firebasestorage.googleapis.com/v0/";
+  const base_url = "https://storage.googleapis.com/upload/storage/v1/";
   const parent = makeParent(path, firebaseConfig);
-  const headers: any = {};
+  const headers: any = extraConfig?.headers || {};
   if (token) {
     headers["Authorization"] = "Bearer " + token; // access_token
   }
 
+  progressCallback && progressCallback(0, data.length, parent, true);
+
   const config: AxiosRequestConfig = {
     url: base_url + parent,
+    // url: "http://192.168.178.25:8081", // for testing
     method,
     validateStatus: () => true,
     headers,
     ...extraConfig,
+    onUploadProgress: function (progressEvent) {
+      // Do whatever you want with the native progress event
+      // @ts-ignore
+      progressCallback &&
+        progressCallback(
+          progressEvent.loaded,
+          progressEvent.total,
+          parent,
+          true
+        );
+    },
   };
   if (params) config.params = params;
   if (data) config.data = data;
 
-  const response = await axios(config);
-  console.log(response.headers["content-length"]);
-  return response;
-  // return await handleResponse(response);
+  try {
+    networkLogger.debug("Storage request config: ", config);
+    const response = await axios(config);
+    networkLogger.info(
+      `Received storage response of length: ${response.headers["content-length"]}`
+    );
+    networkLogger.debug("Storage request config: ", config);
+    return response;
+  } finally {
+    progressCallback &&
+      progressCallback(data.length, data.length, parent, true);
+  }
 }
 
 export async function createResource(
   path: PathDef,
-  resourceId: undefined | string,
+  resourceId: string,
   data: any,
   firebaseConfig: FirebaseConfig,
-  token?: string
+  token?: string,
+  progressCallback?: ProgressCallbackType
 ) {
-  const params = new URLSearchParams();
-  // if (resourceId) toFirestoreParams({ documentId: resourceId }, params);
-  // const doc = toFirestoreDocument(data)
+  try {
+    const params = new URLSearchParams();
 
-  if (!resourceId) throw "al;ksdjf;laskdjf;la";
+    const mimetype = getMimetype(resourceId);
 
-  const response = await makeStorageRequest(
-    "post",
-    extendPath(path, resourceId),
-    params,
-    data,
-    firebaseConfig,
-    token
-  );
-  return response; // fromFirestoreDocument(data, makeParent(path, firebaseConfig))
+    const { content, contentHeaders } = httpSimplePost(data, mimetype);
+
+    params.append("uploadType", "media");
+    params.append("name", pathDefToString(extendPath(path, resourceId)));
+
+    const response = await makeStorageRequest(
+      "post",
+      [],
+      params,
+      content,
+      firebaseConfig,
+      token,
+      {
+        headers: contentHeaders,
+      },
+      progressCallback
+    );
+
+    return response;
+  } catch (e) {
+    networkLogger.error("Error in create resource: ", e.message);
+    networkLogger.debug("Error details: ", e);
+    throw e;
+  }
 }
 
-export async function getResource(
-  path: PathDef,
-  resourceId: string,
-  firebaseConfig: FirebaseConfig,
-  token?: string
-) {
-  const params = new URLSearchParams();
-  params.append("alt", "media");
+// export async function getResourceAsStream(
+//   path: PathDef,
+//   resourceId: string,
+//   firebaseConfig: FirebaseConfig,
+//   token?: string
+// ) {
+//   const params = new URLSearchParams();
+//   params.append("alt", "media");
 
-  const data = await makeStorageRequest(
-    "get",
-    extendPath(path, resourceId),
-    params,
-    undefined,
-    firebaseConfig,
-    token,
-    { responseType: "stream" }
-  );
-  return data;
-  // return fromFirestoreDocument(data, makeParent(path, firebaseConfig))
-}
+//   const data = await makeStorageRequest(
+//     "get",
+//     extendPath(path, resourceId),
+//     params,
+//     undefined,
+//     firebaseConfig,
+//     token,
+//     { responseType: "stream" }
+//   );
+//   return data;
+//   // return fromFirestoreDocument(data, makeParent(path, firebaseConfig))
+// }
 
-export async function listResources(
-  path: PathDef,
-  firebaseConfig: FirebaseConfig,
-  token?: string
-) {
-  const params = new URLSearchParams();
+// export async function listResources(
+//   path: PathDef,
+//   firebaseConfig: FirebaseConfig,
+//   token?: string
+// ) {
+//   const params = new URLSearchParams();
 
-  const data = await makeStorageRequest(
-    "get",
-    path,
-    params,
-    undefined,
-    firebaseConfig,
-    token
-  );
-  return data; // data.documents.map((doc: any) => fromFirestoreDocument(doc, makeParent(collection, firebaseConfig)))
-}
+//   const data = await makeStorageRequest(
+//     "get",
+//     path,
+//     params,
+//     undefined,
+//     firebaseConfig,
+//     token
+//   );
+//   return data; // data.documents.map((doc: any) => fromFirestoreDocument(doc, makeParent(collection, firebaseConfig)))
+// }
 
-export async function deleteResource(
-  path: string,
-  resource: string,
-  firebaseConfig: FirebaseConfig,
-  token?: string
-) {
-  return await makeStorageRequest(
-    "delete",
-    path + "/" + resource,
-    undefined,
-    undefined,
-    firebaseConfig,
-    token
-  );
-}
+// export async function deleteResource(
+//   path: string,
+//   resource: string,
+//   firebaseConfig: FirebaseConfig,
+//   token?: string
+// ) {
+//   return await makeStorageRequest(
+//     "delete",
+//     path + "/" + resource,
+//     undefined,
+//     undefined,
+//     firebaseConfig,
+//     token
+//   );
+// }
