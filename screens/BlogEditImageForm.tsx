@@ -1,34 +1,44 @@
 import React, { useState } from "react";
 import { ActivityIndicator, Dimensions, View } from "react-native";
 import { Button, Image } from "react-native-elements";
+import { useSelector, useDispatch } from "react-redux";
 import Screen from "../components/Screen";
-import * as ImageTool from "../src/ImageTool";
-import { useSelector } from "react-redux";
+import { ImageInfo, TakeOrPick, takeOrPickImage } from "../src/ImageTool";
 import { RootState } from "../store";
-import { updateLocale } from "moment";
 import { UploadForm } from "./UploadForm";
+import { doUpdatePost } from "../store/BlogActions";
 
 export function BlogEditImageForm() {
   type BlogEntry = RootState["blog"]["edit"];
   const entry = useSelector<RootState, BlogEntry>((state) => state.blog.edit!);
   const post = entry.document;
-  
-  const testFile = "file:///data/user/0/host.exp.exponent/cache/ExperienceData/%2540ezander%252FYouBlog/ImagePicker/27e527a0-5433-434f-96df-72e5399b5a66.jpg"
 
-  const [localUri, setLocalUri] = useState<string | undefined>(testFile);
-  
-  function handleImageSelect(imageUri: string) {
+  const dispatch = useDispatch();
+  const [newImage, setNewImage] = useState<ImageInfo | undefined>();
+
+  async function handleGetImage(take: TakeOrPick) {
+    const imageUri = await takeOrPickImage(take);
     console.log("Image selected: ", imageUri);
-    setLocalUri(imageUri);
+    setNewImage(imageUri);
   }
 
-  async function takeOrPickImage(take: boolean) {
-    ImageTool.takeOrPickImage(take, handleImageSelect);
+  function handleDismiss() {
+    setNewImage(undefined);
   }
+  function handleUpload(newUrl: string) {
+    // @ts-ignore Need to make attributes recursively partial
+    dispatch(doUpdatePost({ document: { image_url: newUrl } }));
+    setNewImage(undefined);
+  }
+
   const isWorking = false;
   return (
     <Screen backgroundImage={require("../assets/images/handwriting-3.png")}>
-      <UploadForm localUri={localUri} onDismiss={() => setLocalUri(undefined)} />
+      <UploadForm
+        imageInfo={newImage}
+        onDismiss={handleDismiss}
+        onUpload={handleUpload}
+      />
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
         {post?.image_url && (
           <Image
@@ -45,14 +55,22 @@ export function BlogEditImageForm() {
             justifyContent: "space-around",
           }}
         >
-          <Button title="Take picture" onPress={() => takeOrPickImage(true)} />
-          <Button title="Pick image" onPress={() => {takeOrPickImage(false)}} />
-          {/* <Button title="Pick image" onPress={() => {setLocalUri(testFile)}}/> */}
+          <Button
+            title="Take picture"
+            onPress={() => {
+              handleGetImage("take");
+            }}
+          />
+          <Button
+            title="Pick image"
+            onPress={() => {
+              handleGetImage("pick");
+            }}
+          />
         </View>
       </View>
     </Screen>
   );
-  // return <TextScreen text={"This is the blog edit screen for Image"} />;
 }
 
 export default BlogEditImageForm;

@@ -8,11 +8,13 @@ import { appLogger } from "./Logging";
 import Axios, { AxiosRequestConfig } from "axios";
 import { getExtension, PathDef } from "./Networking";
 
-type ImageInfo = Required<
+export type ImageInfo = Required<
   Pick<_ImageInfo, "uri" | "width" | "height" | "base64">
 >;
 
-export async function takeOrPickImage(take: "take" | "pick") {
+export type TakeOrPick = "take" | "pick"
+
+export async function takeOrPickImage(take: TakeOrPick) {
   const aspect: [number, number] = [16, 9];
   const options = {
     mediaTypes: ImagePicker.MediaTypeOptions.Images,

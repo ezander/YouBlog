@@ -30,8 +30,8 @@ function TestScreen() {
 
       transferImage(
         result,
-        ["public", user?.localId],
-        (bytes, size, dest, working) => {
+        ["public", user!.localId],
+        (bytes: number, size: number, dest: string, working: boolean) => {
           networkLogger.info(working ? `Uploaded ${bytes} of ${size} bytes` : "Upload finished");
           setUploadState({ bytes, size, fraction: (size==0) ? 1 : bytes / size, dest, working });
         },

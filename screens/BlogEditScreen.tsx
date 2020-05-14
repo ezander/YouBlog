@@ -34,7 +34,7 @@ export function BlogEditScreen({ navigation, route }: BlogReadScreenProps) {
   type BlogEntry = RootState["blog"]["edit"];
   const entry = useSelector<RootState, BlogEntry>((state) => state.blog.edit!);
   // console.log(entry)
-  const hasChanged = false // compute from json image...
+  const hasChanged = entry.changed
 
   function saveAndGoBack() {
     console.log("Save and go back");

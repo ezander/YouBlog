@@ -27,6 +27,7 @@ export type RootStackParamList = {
   BlogRead: BlogReadParams;
   BlogEdit: BlogEditParams;
   Login: undefined;
+  DebugScreen: undefined;
 };
 
 const DummyStack = createStackNavigator();
@@ -60,7 +61,7 @@ const linking = {
 function RootStackNavigator() {
   // const DebugScreen = (props: any) => <LoginScreen showDebugButtons={true} {...props}/>
   const DebugScreen = (props: any) => <TestScreen {...props}/>
-  const testing = true
+  const testing = !true
    
   return (
     <Stack.Navigator {...navigatorOptions}>
