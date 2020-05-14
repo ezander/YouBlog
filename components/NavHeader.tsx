@@ -96,9 +96,13 @@ function NavHeader({ headerProps }: { headerProps: StackHeaderProps }) {
     style: styles.headerComponents,
   };
 
-  const leftContainerStyle = { flex: 1 };
-  const centerContainerStyle = { flex: 5 };
-  const rightContainerStyle = { flex: 2 };
+  const flexLeft = Math.max(leftHeaderItems.length, 1)
+  const flexRight = Math.max(rightHeaderItems.length, 1)
+  const flexCenter = 12 - flexLeft - flexRight
+
+  const leftContainerStyle = { flex: flexLeft };
+  const centerContainerStyle = { flex: flexCenter };
+  const rightContainerStyle = { flex: flexRight };
 
   return (
     <Header

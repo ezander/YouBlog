@@ -2,15 +2,17 @@
 
 ## To be done
 
-* Authentication: Login, Logoff, SignUp, Change Profile
-* Creating, Editing, and Deleting of blog posts
-* Taking and uploading photos
+* Change Profile (optional)
+* Creating, Editing (check that...)
+* Deleting of blog posts
 
 ## Done
 
 * Error boundary component around App
 * Deep links
 * Sharing feature
+* Taking and uploading photos
+* Authentication: Login, Logoff, SignUp, Change Profile
 
 ## Ideas
 

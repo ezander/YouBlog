@@ -8,6 +8,7 @@ type IconMap = {
   back: IconDef;
   menu: IconDef;
   create: IconDef;
+  delete: IconDef;
   edit: IconDef;
   add_photo: IconDef;
   camera: IconDef;
@@ -28,6 +29,8 @@ const mapMaterial: IconMap = {
   // create: {name: "addfile", type: "antdesign"},
   // create: {name: "md-add", type: "ionicon"},
   create: {name: "new", type: "entypo"},
+  // delete: {name: "remove", type: "font-awesome"},
+  delete: "delete",
   edit: "edit",
   add_photo: "add-a-photo",
   camera: "camera",
@@ -47,6 +50,7 @@ const mapIosIonicons: IconMap = {
   back: "ios-arrow-back",
   menu: "ios-menu",
   create: "ios-add", // ios-create
+  delete: {name: "delete", type: "material"},
   edit: "ios-create",
   add_photo: "ios-folder-open",
   camera: "ios-camera",
@@ -63,6 +67,7 @@ const mapDefIonicons: IconMap = {
   back: "md-arrow-back",
   menu: "md-menu",
   create: "md-add", // ios-create
+  delete: {name: "delete", type: "material"},
   edit: "md-create",
   add_photo: "md-folder-open",
   camera: "md-camera",

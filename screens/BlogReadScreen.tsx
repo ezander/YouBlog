@@ -8,6 +8,7 @@ import {
   ScrollView,
   StyleSheet,
   View,
+  Alert,
 } from "react-native";
 import { Image, Text } from "react-native-elements";
 import { Item } from "react-navigation-header-buttons";
@@ -109,6 +110,30 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
     }
   }
 
+  function reallyDeleteBlogPost() {
+    // dispatch(doDeletePost(entry as BlogEntryWithId));
+    // navigation.goBack();
+  }
+
+  function handleDelete() {
+    Alert.alert(
+      "Delete this blog post?",
+      "Really delete this blog post? You know, this action can't be undone...",
+      [
+        {
+          text: "Yep! Throw away this junk...",
+          onPress: reallyDeleteBlogPost,
+        },
+        {
+          text: "No, I've changed my mind...",
+          style: "cancel",
+        },
+      ],
+      { cancelable: true }
+    );
+  }
+
+
   const editAllowed = !!authState.user && authState.user.localId === author_id; // check whether logged in and owner of entry
   // const editAllowed = true || author_id || isLoggedIn; // todo: remove
 
@@ -133,6 +158,15 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
           title="Edit"
           iconName="edit"
           onPress={handleEdit}
+          style={{ paddingRight: 5 }}
+        />
+      ),
+      editAllowed && (
+        <Item
+          key="delete"
+          title="Delete"
+          iconName="delete"
+          onPress={handleDelete}
           style={{ paddingRight: 5 }}
         />
       ),
