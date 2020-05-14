@@ -50,7 +50,7 @@ export interface SignUpProps {
   onSignUp: (
     email: string,
     password: string,
-    username: string,
+    username: string
   ) => Promise<void>;
 }
 export interface LoginProps {
@@ -72,6 +72,9 @@ export function LoginForm({ showTitle, ...rest }: LoginFormProps) {
   const [email, setEmail] = useState("cc@testmail.com");
   const [password, setPassword] = useState("test1234");
   const [confirmPwd, setConfirmPwd] = useState("");
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPwd, setShowConfirmPwd] = useState(false);
 
   const noErrors = {
     email: [],
@@ -186,10 +189,17 @@ export function LoginForm({ showTitle, ...rest }: LoginFormProps) {
         <Error error={errors?.email} />
         <Input
           leftIcon={<Icon name="lock" type="simple-line-icon" />}
-          rightIcon={<Icon name="md-eye-off" type="ionicon" />}
+          rightIcon={
+            <Icon
+              name={showPassword ? "md-eye-off" : "md-eye"}
+              type="ionicon"
+              onPress={() => setShowPassword((show) => !show)}
+              underlayColor="#F0000000"
+            />
+          }
           placeholder="Password"
           autoCapitalize="none"
-          secureTextEntry={true}
+          secureTextEntry={!showPassword}
           autoCorrect={false}
           keyboardType="default"
           returnKeyType={isSignUp ? "next" : "done"}
@@ -199,17 +209,25 @@ export function LoginForm({ showTitle, ...rest }: LoginFormProps) {
           onSubmitEditing={() => {
             isSignUp ? confirmPwdRef.current?.focus() : handleSubmit();
           }}
+          rightIconContainerStyle={{ marginRight: 10 }}
         />
         <Error error={errors?.password} />
         {isSignUp && (
           <>
             <Input
               leftIcon={<Icon name="lock" type="simple-line-icon" />}
-              rightIcon={<Icon name="md-eye" type="ionicon" />}
-              containerStyle={{paddingRight: 10}}
+              rightIcon={
+                <Icon
+                  name={showConfirmPwd ? "md-eye-off" : "md-eye"}
+                  type="ionicon"
+                  onPress={() => setShowConfirmPwd((show) => !show)}
+                  underlayColor="#F0000000"
+                />
+              }
+              containerStyle={{ paddingRight: 10 }}
               placeholder="Confirm Password"
               autoCapitalize="none"
-              secureTextEntry={true}
+              secureTextEntry={!showConfirmPwd}
               autoCorrect={false}
               keyboardType="default"
               returnKeyType="done"
@@ -219,6 +237,7 @@ export function LoginForm({ showTitle, ...rest }: LoginFormProps) {
               onSubmitEditing={() => {
                 handleSubmit();
               }}
+              rightIconContainerStyle={{ marginRight: 10 }}
               blurOnSubmit
             />
             <Error error={errors?.confirmPwd} />
