@@ -1,4 +1,4 @@
-import { BlogEntryWithId, BlogList, fetchBlogEntries, fetchBlogEntry } from "../model/Blog";
+import { BlogEntryWithId, BlogList, fetchBlogEntries, fetchBlogEntry, BlogEntry, WithId } from "../model/Blog";
 import { User } from "../model/Auth";
 
 export enum BlogActionTypes {
@@ -44,7 +44,7 @@ export function doCreatePost(user: User) {
   return { type: BlogActionTypes.CREATE_POST, post };
 }
 
-export function doUpdatePost(post: Partial<BlogEntryWithId>) {
+export function doUpdatePost(post: Partial<WithId<Partial<BlogEntry>>>) {
   return { type: BlogActionTypes.UPDATE_POST, post };
 }
 

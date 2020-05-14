@@ -1,13 +1,14 @@
 import chroma from "chroma-js";
 import React, { useState } from "react";
-import { ActivityIndicator, Text, View } from "react-native";
-import { Button, Image, Overlay } from "react-native-elements";
+import { ActivityIndicator, View } from "react-native";
+import { Button, Image, Overlay, Text } from "react-native-elements";
 import { Colors, SCREEN_WIDTH, FontFaces } from "../config/Theming";
 import { User } from "../model/Auth";
 import { ImageInfo, transferImage } from "../src/ImageTool";
 import { networkLogger } from "../src/Logging";
 import { useAuthState } from "../store";
 import { ProgressBar } from "react-native-paper";
+import { delay } from "../src/AsyncTools";
 
 export interface UploadFormProps {
   imageInfo?: ImageInfo;
@@ -46,11 +47,17 @@ export function UploadForm({
           dest,
           working,
         });
+        delay(300)
       }
     );
     onUpload(uploadUrl);
     setUploadState({bytes: 0,size: 0,fraction:0,dest: "",working: false});
 }
+
+  function MyButton({disabled, onPress, ...props}) {
+    const style = disabled ? {color: "#777"} : {}
+    return <Button {...props} onPress={disabled?undefined:onPress} titleStyle={style}/>
+  }
 
   return (
     <Overlay
@@ -65,25 +72,6 @@ export function UploadForm({
       onDismiss={onDismiss}
     >
       <View>
-        <View style={{}}>
-          {uploadState.working ? (
-            <>
-              <Text
-                style={{ textAlign: "right", fontFamily: FontFaces.monospace }}
-              >
-                {uploadState.bytes.toFixed(0)}/{uploadState.size.toFixed(0)}
-                (={(uploadState.fraction * 100).toFixed(0)}%)
-              </Text>
-              <ProgressBar
-                progress={uploadState.fraction}
-                color={Colors.primaryColor}
-                style={{ height: 10 }}
-              />
-            </>
-          ) : undefined}
-          {/* <Button title="Upload" onPress={handleUpload} /> */}
-        </View>
-
         <Image
           source={{ uri: imageInfo?.uri }}
           containerStyle={{ borderWidth: 2 }}
@@ -95,8 +83,25 @@ export function UploadForm({
           }}
         />
         <Text></Text>
-        <Button title="Upload this image" onPress={handleUpload} />
-        <Button title="Forget about it" onPress={onDismiss} />
+        <View style={{}}>
+          {uploadState.working ? (
+            <>
+              <Text style={{ textAlign: "right" }}>
+                {uploadState.bytes.toFixed(0)}/{uploadState.size.toFixed(0)}
+                (={(uploadState.fraction * 100).toFixed(0)}%)
+              </Text>
+              <ProgressBar
+                progress={uploadState.fraction}
+                color={Colors.primaryColor}
+                style={{ height: 15 }}
+              />
+              <Text></Text>
+            </>
+          ) : undefined}
+          {/* <Button title="Upload" onPress={handleUpload} /> */}
+        </View>
+        <MyButton title="Upload this image" onPress={handleUpload} disabled={uploadState.working}/>
+        <MyButton title="Forget about it" onPress={onDismiss} disabled={uploadState.working}/>
       </View>
     </Overlay>
   );

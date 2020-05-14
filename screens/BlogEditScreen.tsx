@@ -7,13 +7,12 @@ import { Icon } from "react-native-elements";
 import { Item } from "react-navigation-header-buttons";
 import { RootStackParamList } from "../App";
 import { ThemeMerger } from "../components/ThemeMerger";
-import { editTheme, Colors, SCREEN_WIDTH } from "../config/Theming";
+import { editTheme, Colors, SCREEN_WIDTH, FontFaces } from "../config/Theming";
 import BlogEditImageForm from "./BlogEditImageForm";
 import BlogEditInfoForm from "./BlogEditInfoForm";
 import BlogEditTextForm from "./BlogEditTextForm";
 import { useSelector } from "react-redux";
 import { RootState } from "../store";
-import { BlogEntryWithId } from "../model/Blog";
 
 export interface BlogEditParams {
   id: string;
@@ -138,14 +137,26 @@ export function BlogEditScreen({ navigation, route }: BlogReadScreenProps) {
   });
 
   // { focused: boolean, color: string, size: number }
+  const showIcon = true
   return (
     <ThemeMerger theme={editTheme}>
       <Tab.Navigator
-        initialRouteName="Image"
+        initialRouteName="Info" //"Image"
         tabBarPosition="bottom"
         tabBarOptions={{
-          activeTintColor: "#e91e63",
-          showIcon: true,
+          contentContainerStyle: {
+            backgroundColor: Colors.primaryColor,
+          },
+          activeTintColor: Colors.paperLight,
+          labelStyle: {
+            fontFamily: FontFaces.typewriter,// decorative,
+            fontSize: 18,
+            textTransform: "none",
+            margin: 0,
+          },
+
+          showIcon: showIcon,
+          showLabel: !showIcon
         }}
       >
         <Tab.Screen

@@ -7,6 +7,8 @@ import { ImageInfo, TakeOrPick, takeOrPickImage } from "../src/ImageTool";
 import { RootState } from "../store";
 import { UploadForm } from "./UploadForm";
 import { doUpdatePost } from "../store/BlogActions";
+import { SCREEN_WIDTH } from "../config/Theming";
+import { appLogger } from "../src/Logging";
 
 export function BlogEditImageForm() {
   type BlogEntry = RootState["blog"]["edit"];
@@ -17,16 +19,15 @@ export function BlogEditImageForm() {
   const [newImage, setNewImage] = useState<ImageInfo | undefined>();
 
   async function handleGetImage(take: TakeOrPick) {
-    const imageUri = await takeOrPickImage(take);
-    console.log("Image selected: ", imageUri);
-    setNewImage(imageUri);
+    const imageInfo = await takeOrPickImage(take);
+    appLogger.debug("Image selected: ", imageInfo?.uri);
+    setNewImage(imageInfo);
   }
 
   function handleDismiss() {
     setNewImage(undefined);
   }
   function handleUpload(newUrl: string) {
-    // @ts-ignore Need to make attributes recursively partial
     dispatch(doUpdatePost({ document: { image_url: newUrl } }));
     setNewImage(undefined);
   }
@@ -39,13 +40,13 @@ export function BlogEditImageForm() {
         onDismiss={handleDismiss}
         onUpload={handleUpload}
       />
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <View style={{ flex: 1, width: SCREEN_WIDTH - 40, alignItems: "center", justifyContent: "center" }}>
         {post?.image_url && (
           <Image
             source={{ uri: post?.image_url }}
             containerStyle={{ borderWidth: 2 }}
             PlaceholderContent={<ActivityIndicator />}
-            style={{ width: Dimensions.get("window").width - 40, height: 200 }}
+            style={{ width: SCREEN_WIDTH - 40, height: 200 }}
           />
         )}
         <View
