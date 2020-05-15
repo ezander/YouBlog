@@ -1,5 +1,5 @@
-import Axios, { AxiosRequestConfig, Method } from "axios";
-import { networkLogger } from "../config/Logging";
+// @ts-ignore Need to write decl file for js-base64
+import { Base64 } from "js-base64";
 
 export type PathDef = string | string[];
 
@@ -13,9 +13,9 @@ export function extendPath(path1: PathDef, path2?: PathDef): PathDef {
   return [...toArray(path1), ...toArray(path2)];
 }
 
-export function getExtension(name: string, includePoint: boolean=true) {
+export function getExtension(name: string, includePoint: boolean = true) {
   if (name.indexOf(".") < 0) return "";
-  return name.substr(name.lastIndexOf(".") + (includePoint?0:1));
+  return name.substr(name.lastIndexOf(".") + (includePoint ? 0 : 1));
 }
 
 function toUint8Array(bstr: string) {
@@ -37,7 +37,7 @@ export function httpFormData(base64: string, mimetype: string) {
     `Content-Disposition: form-data; name="file"`,
     `Content-Type: ${mimetype}`,
     ``,
-    atob(base64),
+    Base64.atob(base64),
     `--${boundary}--`,
   ];
 
@@ -50,7 +50,7 @@ export function httpFormData(base64: string, mimetype: string) {
 }
 
 export function httpSimplePost(base64: string, mimetype: string) {
-  const content = toUint8Array(atob(base64));
+  const content = toUint8Array(Base64.atob(base64));
   const contentHeaders = {
     "Content-Type": mimetype,
     "Content-Length": content.length.toString(),
@@ -76,62 +76,4 @@ export function getMimetype(
     default:
       return defaultMimetype;
   }
-}
-
-export async function makeRequest(
-  method: Method,
-  path: PathDef,
-  params: undefined | URLSearchParams,
-  data: undefined | any,
-  token?: string,
-  extraConfig?: AxiosRequestConfig
-) {
-  const headers: any = {};
-  if (token) {
-    headers["Authorization"] = "Bearer " + token;
-  }
-
-  const config: AxiosRequestConfig = {
-    url: pathDefToString(path),
-    method,
-    // validateStatus: () => true,
-    headers,
-    ...extraConfig,
-  };
-  if (params) config.params = params;
-  if (data) config.data = data;
-
-  networkLogger.info("Request: ", JSON.stringify(config));
-  try {
-    const response = await Axios(config);
-    console.log(response.headers["content-length"]);
-    return response;
-  } catch (error) {
-    networkLogger.error("Network error: ", error.message);
-    console.log(error);
-
-    // throw error;
-    return;
-  }
-  // return await handleResponse(response);
-}
-
-export async function getResourceAsStream(
-  path: PathDef,
-  params?: URLSearchParams,
-  token?: string
-) {
-  const response = await makeRequest(
-    "get",
-    path,
-    params,
-    undefined,
-    token
-    // { responseType: "stream" }
-    // { responseType: "arraybuffer" }
-  );
-  console.log(response);
-
-  return response;
-  // return fromFirestoreDocument(data, makeParent(path, firebaseConfig))
 }

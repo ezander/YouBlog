@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
     paddingTop: 0,
     height: Platform.select({
       android: 50,
-      ios: 44,
+      ios: 44+20,
       default: 44,
     }),
     backgroundColor: HeaderTheme.backgroundColor,

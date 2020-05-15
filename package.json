@@ -26,6 +26,7 @@
     "expo-permissions": "~8.1.0",
     "firebase": "7.9.0",
     "immer": "^6.0.5",
+    "js-base64": "^2.5.2",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.24.0",
     "react": "16.9.0",

@@ -63,9 +63,9 @@ async function compareMD5Hash(data: string, md5Hash: string) {
 
   // const alg = CONSTANTS.HashAlgorithms.md5;
   // // @ts-ignore Type definitions in react-native-hash are somewhat messsed up...
-  // const hash = await JSHash(atob(data), alg);
+  // const hash = await JSHash(Base64.atob(data), alg);
   // console.log(`Hashes: orig: "${hash}"  returned: "${md5Hash}"`)
-  // const foo = atob(md5Hash)
+  // const foo = Base64.atob(md5Hash)
   // let bar = ""
   // for( let i=0; i<foo.length; i++ ){
   //   const x = foo.charCodeAt(i)

@@ -13,7 +13,6 @@ import BlogEditScreen, { BlogEditParams } from "./screens/BlogEditScreen";
 import BlogListScreen from "./screens/BlogListScreen";
 import BlogReadScreen, { BlogReadParams } from "./screens/BlogReadScreen";
 import LoginScreen from "./screens/LoginScreen";
-import TestScreen from "./screens/TestScreen";
 import { delay } from "./src/AsyncTools";
 import Warnings from "./src/Warnings";
 import { doRestoreLogin } from "./store/AuthActions";
