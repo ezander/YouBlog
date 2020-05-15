@@ -53,7 +53,6 @@ function blogProducer(draft: Draft<BlogState>, action: BlogAction) {
       return;
 
     case BlogActionTypes.DELETE_POST:
-      console.log("Action: ", action.type, action?.id)
       draft.list = draft.list.filter(entry => entry.id !== action.id)
       if( draft.posts.has(action.id)) {
         draft.posts.delete(action.id)
@@ -62,12 +61,13 @@ function blogProducer(draft: Draft<BlogState>, action: BlogAction) {
 
     case BlogActionTypes.STORE_POST:
       // console.log(action);
-      console.log("Action: ", action.type, action.post?.id, action.post?.title)
+      // console.log("Action: ", action.type, action.post?.id, action.post?.title)
       const index = draft.list.findIndex(entry => (entry.id === action.post.id))
-      if( index ) {
+      if( index>=0 ) {
         draft.list[index] = action.post
       }
       else {
+        // console.log("FOOOO", action);
         draft.list.unshift(action.post)
       }
 

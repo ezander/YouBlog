@@ -42,7 +42,15 @@ export function BlogEditScreen({ navigation, route }: BlogReadScreenProps) {
 
   async function saveAndGoBack() {
     // save this stuff
-    await dispatch(doStorePost(entry as BlogEntryWithId, user?.idToken!));
+    try {
+      await dispatch(doStorePost(entry as BlogEntryWithId, user?.idToken!));
+    } catch (error) {
+      Alert.alert(
+        "Database Error",
+        "There was an error storing the blog post:\n" + error.message
+      );
+      return;
+    }
     appLogger.info(`Saved changes to blog post: ${entry.id}`);
     navigation.goBack();
   }

@@ -104,15 +104,24 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
   const date = post?.date;
 
   async function handleEdit() {
-    if (post?.title) { // check that post is fully loaded
+    if (post?.title) {
+      // check that post is fully loaded
       await dispatch(doEditPost(entry as BlogEntryWithId));
       navigation.navigate("BlogEdit", { id });
     }
   }
 
   async function reallyDeleteBlogPost() {
-    await dispatch(doDeletePost(entry?.id!, authState.user?.idToken!));
-    appLogger.info(`Deleted blog post with id "${entry?.id}"`)
+    try {
+      await dispatch(doDeletePost(entry?.id!, authState.user?.idToken!));
+    } catch (error) {
+      Alert.alert(
+        "Database Error",
+        "There was an error deleting the blog post:\n" + error.message
+      );
+      return;
+    }
+    appLogger.info(`Deleted blog post with id "${entry?.id}"`);
     navigation.goBack();
   }
 
@@ -133,7 +142,6 @@ function BlogReadScreen({ navigation, route }: BlogReadScreenProps) {
       { cancelable: true }
     );
   }
-
 
   const editAllowed = !!authState.user && authState.user.localId === author_id; // check whether logged in and owner of entry
   // const editAllowed = true || author_id || isLoggedIn; // todo: remove
