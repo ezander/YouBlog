@@ -34,23 +34,16 @@ export function BlogEditTextForm() {
           numberOfLines={20}
           placeholder={"Enter your blog post in markdown syntax here..."}
           inputStyle={{
-            // width: 200,
-            // height: 100,
             borderColor: "black",
             color: "black",
-            borderWidth: 1,
-            borderTopColor: "red",
-            borderBottomColor: "red",
           }}
           containerStyle={{
             marginVertical: 0,
-            // width: "90%",
-            // height: "100%",
-            borderColor: "blue",
-            borderWidth: 2,
+            width: "100%",
+            flex: 1
           }}
           inputContainerStyle={{
-            height: 300,
+            flex: 1
           }}
           onBlur={storeChanges}
           onEndEditing={storeChanges}

@@ -3,8 +3,10 @@
 ## To be done
 
 * Change Profile (optional)
-* Creating, Editing (check that...)
-* Deleting of blog posts
+* Blog post preview
+* Faster text field updates
+* make logging consistent
+* Insert the Date picker
 
 ## Done
 
@@ -13,6 +15,8 @@
 * Sharing feature
 * Taking and uploading photos
 * Authentication: Login, Logoff, SignUp, Change Profile
+* Creating, Editing (check that...)
+* Deleting of blog posts
 
 ## Ideas
 
