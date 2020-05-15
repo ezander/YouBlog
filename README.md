@@ -54,3 +54,5 @@ YouBlog is a blogging app for Android and iOS written in TypeScript/JavaScript w
 ## Links
 
 * [Firebase Console](https://console.firebase.google.com/u/0/project/youblog-814ae/authentication/users)
+* [Expo Console](https://expo.io/dashboard/ezander)
+
