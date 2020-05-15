@@ -7,6 +7,7 @@
 * Faster text field updates
 * make logging consistent
 * Insert the Date picker
+* read up on and implement e2e tests
 
 ## Done
 
