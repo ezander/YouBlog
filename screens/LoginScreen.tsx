@@ -15,12 +15,10 @@ import LoginForm from "./LoginForm";
 
 interface LoginScreenProps {
   navigation: StackNavigationProp<RootStackParamList, "Login">;
-  showDebugButtons?: boolean;
 }
 
 export default function LoginScreen({
   navigation,
-  showDebugButtons,
 }: LoginScreenProps) {
   const authState = useAuthState();
   const dispatch = useDispatch();
@@ -28,13 +26,6 @@ export default function LoginScreen({
   const [isWorking, setIsWorking] = useState(false);
   const [workingOn, setWorkingOn] = useState("");
   const [authError, setAuthError] = useState<any>();
-
-  const handleLoginAA = () =>
-    dispatch(AuthActions.doLogin("aa@testmail.com", "test1234"));
-  const handleLoginCC = () =>
-    dispatch(AuthActions.doLogin("cc@testmail.com", "test1234"));
-  const handleLoginErr = () =>
-    dispatch(AuthActions.doLogin("cc@testmail.com", "test1235"));
 
   function handleCatChange(category: number, title: string) {
     navigation.setOptions({ title });
@@ -105,19 +96,6 @@ export default function LoginScreen({
           <LoginForm isSignUp={true} onSignUp={handleSignUp} />
         </TabView>
 
-        {showDebugButtons && (
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-around",
-              alignSelf: "stretch",
-            }}
-          >
-            <Button title="AA" onPress={handleLoginAA} />
-            <Button title="CC" onPress={handleLoginCC} />
-            <Button title="Error" onPress={handleLoginErr} />
-          </View>
-        )}
       </View>
     </Screen>
   );

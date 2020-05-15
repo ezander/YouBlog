@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { View, Alert } from "react-native";
+import { View, Alert, KeyboardAvoidingView, ScrollView } from "react-native";
 import {
   Button,
   Icon,
@@ -69,8 +69,8 @@ export function LoginForm({ showTitle, ...rest }: LoginFormProps) {
   const confirmPwdRef = useRef<Input>(null);
 
   const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("cc@testmail.com");
-  const [password, setPassword] = useState("test1234");
+  const [email, setEmail] = useState(""); // ("cc@testmail.com");
+  const [password, setPassword] = useState(""); // ("test1234");
   const [confirmPwd, setConfirmPwd] = useState("");
 
   const [showPassword, setShowPassword] = useState(false);
@@ -149,106 +149,110 @@ export function LoginForm({ showTitle, ...rest }: LoginFormProps) {
 
   return (
     <ThemeMerger theme={loginTheme}>
-      <View style={theme.Extra.View}>
-        {showTitle && (
-          <Text style={theme.Extra.Text}>{isSignUp ? "Sign up" : "Login"}</Text>
-        )}
-        {isSignUp && (
-          <>
-            <Input
-              leftIcon={<Icon name="user" type="simple-line-icon" />}
-              placeholder="Username"
-              autoCapitalize="words"
-              autoCorrect={false}
-              keyboardType="default"
-              returnKeyType="next"
-              value={username}
-              onChangeText={setUsername}
-              ref={usernameRef}
-              onSubmitEditing={() => {
-                emailRef.current?.focus();
-              }}
-            />
-            <Error error={errors?.username} />
-          </>
-        )}
-        <Input
-          leftIcon={<Icon name="email-outline" type="material-community" />}
-          placeholder="Email"
-          autoCapitalize="none"
-          autoCorrect={false}
-          keyboardType="email-address"
-          returnKeyType="next"
-          value={email}
-          onChangeText={setEmail}
-          ref={emailRef}
-          onSubmitEditing={() => {
-            passwordRef.current?.focus();
-          }}
-        />
-        <Error error={errors?.email} />
-        <Input
-          leftIcon={<Icon name="lock" type="simple-line-icon" />}
-          rightIcon={
-            <Icon
-              name={showPassword ? "md-eye-off" : "md-eye"}
-              type="ionicon"
-              onPress={() => setShowPassword((show) => !show)}
-              underlayColor="#F0000000"
-            />
-          }
-          placeholder="Password"
-          autoCapitalize="none"
-          secureTextEntry={!showPassword}
-          autoCorrect={false}
-          keyboardType="default"
-          returnKeyType={isSignUp ? "next" : "done"}
-          value={password}
-          onChangeText={setPassword}
-          ref={passwordRef}
-          onSubmitEditing={() => {
-            isSignUp ? confirmPwdRef.current?.focus() : handleSubmit();
-          }}
-          rightIconContainerStyle={{ marginRight: 10 }}
-        />
-        <Error error={errors?.password} />
-        {isSignUp && (
-          <>
-            <Input
-              leftIcon={<Icon name="lock" type="simple-line-icon" />}
-              rightIcon={
-                <Icon
-                  name={showConfirmPwd ? "md-eye-off" : "md-eye"}
-                  type="ionicon"
-                  onPress={() => setShowConfirmPwd((show) => !show)}
-                  underlayColor="#F0000000"
-                />
-              }
-              containerStyle={{ paddingRight: 10 }}
-              placeholder="Confirm Password"
-              autoCapitalize="none"
-              secureTextEntry={!showConfirmPwd}
-              autoCorrect={false}
-              keyboardType="default"
-              returnKeyType="done"
-              value={confirmPwd}
-              onChangeText={setConfirmPwd}
-              ref={confirmPwdRef}
-              onSubmitEditing={() => {
-                handleSubmit();
-              }}
-              rightIconContainerStyle={{ marginRight: 10 }}
-              blurOnSubmit
-            />
-            <Error error={errors?.confirmPwd} />
-          </>
-        )}
-        <Button
-          title={isSignUp ? "Sign up" : "Login"}
-          containerStyle={{ marginTop: 15 }}
-          onPress={handleSubmit}
-        />
-      </View>
+      <KeyboardAvoidingView style={theme.Extra.View}>
+        <>
+          {showTitle && (
+            <Text style={theme.Extra.Text}>
+              {isSignUp ? "Sign up" : "Login"}
+            </Text>
+          )}
+          {isSignUp && (
+            <>
+              <Input
+                leftIcon={<Icon name="user" type="simple-line-icon" />}
+                placeholder="Username"
+                autoCapitalize="words"
+                autoCorrect={false}
+                keyboardType="default"
+                returnKeyType="next"
+                value={username}
+                onChangeText={setUsername}
+                ref={usernameRef}
+                onSubmitEditing={() => {
+                  emailRef.current?.focus();
+                }}
+              />
+              <Error error={errors?.username} />
+            </>
+          )}
+          <Input
+            leftIcon={<Icon name="email-outline" type="material-community" />}
+            placeholder="Email"
+            autoCapitalize="none"
+            autoCorrect={false}
+            keyboardType="email-address"
+            returnKeyType="next"
+            value={email}
+            onChangeText={setEmail}
+            ref={emailRef}
+            onSubmitEditing={() => {
+              passwordRef.current?.focus();
+            }}
+          />
+          <Error error={errors?.email} />
+          <Input
+            leftIcon={<Icon name="lock" type="simple-line-icon" />}
+            rightIcon={
+              <Icon
+                name={showPassword ? "md-eye-off" : "md-eye"}
+                type="ionicon"
+                onPress={() => setShowPassword((show) => !show)}
+                underlayColor="#F0000000"
+              />
+            }
+            placeholder="Password"
+            autoCapitalize="none"
+            secureTextEntry={!showPassword}
+            autoCorrect={false}
+            keyboardType="default"
+            returnKeyType={isSignUp ? "next" : "done"}
+            value={password}
+            onChangeText={setPassword}
+            ref={passwordRef}
+            onSubmitEditing={() => {
+              isSignUp ? confirmPwdRef.current?.focus() : handleSubmit();
+            }}
+            rightIconContainerStyle={{ marginRight: 10 }}
+          />
+          <Error error={errors?.password} />
+          {isSignUp && (
+            <>
+              <Input
+                leftIcon={<Icon name="lock" type="simple-line-icon" />}
+                rightIcon={
+                  <Icon
+                    name={showConfirmPwd ? "md-eye-off" : "md-eye"}
+                    type="ionicon"
+                    onPress={() => setShowConfirmPwd((show) => !show)}
+                    underlayColor="#F0000000"
+                  />
+                }
+                containerStyle={{ paddingRight: 10 }}
+                placeholder="Confirm Password"
+                autoCapitalize="none"
+                secureTextEntry={!showConfirmPwd}
+                autoCorrect={false}
+                keyboardType="default"
+                returnKeyType="done"
+                value={confirmPwd}
+                onChangeText={setConfirmPwd}
+                ref={confirmPwdRef}
+                onSubmitEditing={() => {
+                  handleSubmit();
+                }}
+                rightIconContainerStyle={{ marginRight: 10 }}
+                blurOnSubmit
+              />
+              <Error error={errors?.confirmPwd} />
+            </>
+          )}
+          <Button
+            title={isSignUp ? "Sign up" : "Login"}
+            containerStyle={{ marginTop: 15 }}
+            onPress={handleSubmit}
+          />
+        </>
+      </KeyboardAvoidingView>
     </ThemeMerger>
   );
 }

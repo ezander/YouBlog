@@ -1,9 +1,7 @@
 import { logger } from "react-native-logs";
 import { consoleSync } from "react-native-logs/dist/transports/consoleSync";
-import { ConfigAPI } from "@babel/core";
+// @ts-ignore
 import { createLogger as createReduxLogger } from "redux-logger";
-import { BlogActionTypes } from "../store/BlogActions";
-import { AuthActionTypes } from "../store/AuthActions";
 
 const severityLevels = {
   error: 6,
@@ -75,8 +73,8 @@ const JSONActionTransformer = (action: any) =>
 export const ReduxLogger = createReduxLogger({
   logger: console,
   level: "log",
-  stateTransformer: (state) => ({}),
-  actionTransformer: (action) => action.type,
+  stateTransformer: (state: any) => ({}),
+  actionTransformer: (action: any) => action.type,
   //action => ({type: "FOO", payload: "Transformed action"}), //JSON.stringify(state, replacer),
 
   predicate: selectNonePredictate,

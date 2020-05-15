@@ -200,7 +200,7 @@ async function registerUser(
     // console.log("Login: ", userData)
     user = { ...user, ...userData };
   }
-  console.log(verifyIdToken(user.idToken));
+  // console.log(verifyIdToken(user.idToken));
 
   registeredUsers[displayName] = user;
   // registeredUsers[email] = user
