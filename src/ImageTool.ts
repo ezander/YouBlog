@@ -4,7 +4,7 @@ import { CONSTANTS, JSHash } from "react-native-hash";
 import firebaseConfig from "../firebaseConfig.json";
 import { delay } from "./AsyncTools";
 import { createResource, ProgressCallbackType } from "./FirebaseStorage";
-import { appLogger } from "./Logging";
+import { appLogger } from "../config/Logging";
 import Axios, { AxiosRequestConfig } from "axios";
 import { getExtension, PathDef } from "./Networking";
 

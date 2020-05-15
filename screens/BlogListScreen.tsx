@@ -9,7 +9,7 @@ import { defaultBackgroundImage, GeneralTheme } from "../config/Theming";
 import { BlogEntryWithId, BlogList, fetchBlogEntries } from "../model/Blog";
 import { shareDeeplink } from "../model/Sharing";
 import { delay, useAsyncAction } from "../src/AsyncTools";
-import { appLogger } from "../src/Logging";
+import { appLogger } from "../config/Logging";
 import { RootState, useAuthState } from "../store";
 import { doCreatePost, doSetList, doSetPost } from "../store/BlogActions";
 

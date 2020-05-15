@@ -31,7 +31,7 @@ import {
 import { BlogEntryWithId, fetchBlogEntry } from "../model/Blog";
 import { shareDeeplink } from "../model/Sharing";
 import { useAsyncAction } from "../src/AsyncTools";
-import { appLogger } from "../src/Logging";
+import { appLogger } from "../config/Logging";
 import { RootState, useAuthState } from "../store";
 import { doSetPost, doEditPost, doDeletePost } from "../store/BlogActions";
 import { doSetFontScale, Settings } from "../store/SettingsActions";

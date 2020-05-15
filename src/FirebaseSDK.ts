@@ -2,7 +2,7 @@ import * as firebase from "firebase";
 import "firebase/auth";
 import "firebase/firestore";
 import firebaseConfig from "../firebaseConfig.json";
-import { authLogger } from "./Logging";
+import { authLogger } from "../config/Logging";
 
 export function getApp() {
   try {

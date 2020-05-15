@@ -13,7 +13,7 @@ import { loginTheme, SCREEN_WIDTH, Colors } from "../config/Theming";
 import validate from "validate.js";
 import { useLinkProps } from "@react-navigation/native";
 import chroma from "chroma-js";
-import { appLogger } from "../src/Logging";
+import { appLogger } from "../config/Logging";
 
 type ErrorProps = TextProps & {
   error: undefined | Array<string>;

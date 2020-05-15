@@ -1,5 +1,5 @@
 import { produce, Draft } from "immer";
-import { appLogger } from "../src/Logging";
+import { appLogger } from "../config/Logging";
 import { SettingsActionTypes, SettingsAction, Settings } from "./SettingsActions";
 import { BlogTheme } from "../config/Theming";
 

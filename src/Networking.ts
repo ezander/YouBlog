@@ -1,5 +1,5 @@
 import Axios, { AxiosRequestConfig, Method } from "axios";
-import { networkLogger } from "./Logging";
+import { networkLogger } from "../config/Logging";
 
 export type PathDef = string | string[];
 

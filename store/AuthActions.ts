@@ -7,7 +7,7 @@ import {
   updateProfile,
   User,
 } from "../model/Auth";
-import { authLogger } from "../src/Logging";
+import { authLogger } from "../config/Logging";
 
 export enum AuthActionTypes {
   LOGIN = "LOGIN",

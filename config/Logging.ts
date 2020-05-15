@@ -1,7 +1,7 @@
 import { logger } from "react-native-logs";
 import { consoleSync } from "react-native-logs/dist/transports/consoleSync";
 import { ConfigAPI } from "@babel/core";
-import  {createLogger as createReduxLogger} from "redux-logger"
+import { createLogger as createReduxLogger } from "redux-logger";
 import { BlogActionTypes } from "../store/BlogActions";
 import { AuthActionTypes } from "../store/AuthActions";
 
@@ -28,7 +28,11 @@ function createConsoleLogger(name: string, severity: SeverityLevel) {
 
   const oldTransport = config.transport;
   config.transport = (msg, level, options) => {
-    return oldTransport(name.toUpperCase().padEnd(4) + " | " + msg, level, options);
+    return oldTransport(
+      name.toUpperCase().padEnd(4) + " | " + msg,
+      level,
+      options
+    );
   };
 
   return logger.createLogger(config);
@@ -46,21 +50,34 @@ const logReduxAction: string[] = [
   // "SET_POST"
   // "LOGIN",
   // "LOGOUT",
-]
+];
+const selectActionsPredicate = (
+  getState: () => any,
+  action: { type: string }
+) => logReduxAction.indexOf(action.type) >= 0;
+const selectAllPredictate = (getState: () => any, action: { type: string }) =>
+  true;
+const selectNonePredictate = (getState: () => any, action: { type: string }) =>
+  false;
 
-// function replacer(key: string, value: any) {
-//   // Filtering out properties
-//   if (typeof value === 'string' && value.length>50) {
-//     return value.slice(0, 50) + "...";
-//   }
-//   return value;
-// }
+function replacer(key: string, value: any) {
+  // Filtering out properties
+  if (typeof value === "string" && value.length > 50) {
+    return value.slice(0, 50) + "...";
+  }
+  return value;
+}
+const JSONStateTransformer = (state: any) =>
+  JSON.stringify(state, replacer, "  ");
+const JSONActionTransformer = (action: any) =>
+  JSON.stringify(action, replacer, "  ");
 
 export const ReduxLogger = createReduxLogger({
-  logger: console, 
+  logger: console,
   level: "log",
-  // stateTransformer: state => JSON.stringify(state, replacer, '  '),
-  // actionTransformer: action => ({type: "FOO", payload: "Transformed action"}), //JSON.stringify(state, replacer),
+  stateTransformer: (state) => ({}),
+  actionTransformer: (action) => action.type,
+  //action => ({type: "FOO", payload: "Transformed action"}), //JSON.stringify(state, replacer),
 
-  predicate: (getState: ()=>any, action: {type: string}) => logReduxAction.indexOf(action.type)>=0
-})
+  predicate: selectNonePredictate,
+});

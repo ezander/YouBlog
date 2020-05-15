@@ -5,7 +5,7 @@ import { ProgressBar } from "react-native-paper";
 import { Screen } from "../components";
 import { Colors, FontFaces } from "../config/Theming";
 import { takeOrPickImage, transferImage } from "../src/ImageTool";
-import { networkLogger } from "../src/Logging";
+import { networkLogger } from "../config/Logging";
 import { useAuthState } from "../store";
 
 function TestScreen() {

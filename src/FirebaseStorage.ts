@@ -1,6 +1,6 @@
 import axios, { AxiosRequestConfig, Method } from "axios";
 import { FirebaseConfig } from "./FirebaseTools";
-import { networkLogger } from "./Logging";
+import { networkLogger } from "../config/Logging";
 import {
   extendPath,
   getMimetype,

@@ -1,5 +1,5 @@
 import { produce, Draft } from "immer";
-import { appLogger } from "../src/Logging";
+import { appLogger } from "../config/Logging";
 import { BlogActionTypes, BlogAction } from "./BlogActions";
 import { BlogList, BlogEntryWithId } from "../model/Blog";
 import deepmerge from "deepmerge";
@@ -44,13 +44,16 @@ function blogProducer(draft: Draft<BlogState>, action: BlogAction) {
       return;
 
     case BlogActionTypes.UPDATE_POST:
-      const oldJson = JSON.stringify(draft);
+      const changed = draft.edit.changed
+      const oldJson = changed ? "" : JSON.stringify(draft);
       draft.edit = deepmerge(draft.edit, action.post) as typeof draft.edit;
-      const newJson = JSON.stringify(draft);
-      draft.edit.changed = draft.edit.changed || oldJson !== newJson;
+      const newJson = changed ? "" : JSON.stringify(draft);
+      draft.edit.changed = changed || oldJson !== newJson;
+      // console.log("Action: ", action.type, oldJson.length, newJson.length)
       return;
 
     case BlogActionTypes.DELETE_POST:
+      console.log("Action: ", action.type, action?.id)
       draft.list = draft.list.filter(entry => entry.id !== action.id)
       if( draft.posts.has(action.id)) {
         draft.posts.delete(action.id)
@@ -58,7 +61,9 @@ function blogProducer(draft: Draft<BlogState>, action: BlogAction) {
       return;
 
     case BlogActionTypes.STORE_POST:
-      const index = draft.list.findIndex(entry => entry.id === action.post.id)
+      // console.log(action);
+      console.log("Action: ", action.type, action.post?.id, action.post?.title)
+      const index = draft.list.findIndex(entry => (entry.id === action.post.id))
       if( index ) {
         draft.list[index] = action.post
       }

@@ -2,7 +2,7 @@ import { enableMapSet } from "immer";
 import { useSelector } from "react-redux";
 import { applyMiddleware, combineReducers, createStore } from "redux";
 import ReduxThunk from "redux-thunk";
-import { ReduxLogger } from "../src/Logging";
+import { ReduxLogger } from "../config/Logging";
 import authReducer, { AuthState } from "./AuthReducer";
 import blogReducer from "./BlogReducer";
 import settingsReducer from "./SettingsReducer";

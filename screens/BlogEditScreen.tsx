@@ -1,7 +1,7 @@
 import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
-import React from "react";
+import React, { useState } from "react";
 import { Alert, View, ViewProps } from "react-native";
 import { Icon } from "react-native-elements";
 import { Item } from "react-navigation-header-buttons";
@@ -11,15 +11,17 @@ import { editTheme, Colors, SCREEN_WIDTH, FontFaces } from "../config/Theming";
 import BlogEditImageForm from "./BlogEditImageForm";
 import BlogEditInfoForm from "./BlogEditInfoForm";
 import BlogEditTextForm from "./BlogEditTextForm";
-import { useSelector } from "react-redux";
-import { RootState } from "../store";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState, useAuthState } from "../store";
+import { doStorePost } from "../store/BlogActions";
+import { BlogEntryWithId } from "../model/Blog";
+import { appLogger } from "../config/Logging";
 
 export interface BlogEditParams {
   id: string;
 }
 
 const Tab = createMaterialTopTabNavigator();
-
 
 interface BlogReadScreenProps {
   navigation: StackNavigationProp<RootStackParamList, "BlogEdit">;
@@ -29,29 +31,35 @@ interface BlogReadScreenProps {
 export function BlogEditScreen({ navigation, route }: BlogReadScreenProps) {
   const id = route.params.id;
 
+  const user = useAuthState().user;
 
+  const dispatch = useDispatch();
   type BlogEntry = RootState["blog"]["edit"];
   const entry = useSelector<RootState, BlogEntry>((state) => state.blog.edit!);
   // console.log(entry)
-  const hasChanged = entry.changed
+  const hasChanged = entry.changed;
 
-  function saveAndGoBack() {
-    console.log("Save and go back");
+
+  async function saveAndGoBack() {
     // save this stuff
+    await dispatch(doStorePost(entry as BlogEntryWithId, user?.idToken!));
+    appLogger.info(`Saved changes to blog post: ${entry.id}`);
     navigation.goBack();
   }
+
   function discardAndGoBack() {
     console.log("Discard changed and go back");
     navigation.goBack();
   }
+
   function keepEditing() {
     console.log("Keep editing");
   }
 
   function handleGoBack() {
-    if( !hasChanged ) {
-      discardAndGoBack()
-      return
+    if (!hasChanged) {
+      discardAndGoBack();
+      return;
     }
     Alert.alert(
       "Leave page",
@@ -117,7 +125,7 @@ export function BlogEditScreen({ navigation, route }: BlogReadScreenProps) {
   navigation.setOptions({
     title: id ? "Edit blog post" : "New blog post",
     // @ts-ignore
-    extraHeaderItems: [
+    extraHeaderItems: !hasChanged ? [] : [
       <Item
         key="done"
         title="Done"
@@ -137,7 +145,7 @@ export function BlogEditScreen({ navigation, route }: BlogReadScreenProps) {
   });
 
   // { focused: boolean, color: string, size: number }
-  const showIcon = true
+  const showIcon = true;
   return (
     <ThemeMerger theme={editTheme}>
       <Tab.Navigator
@@ -149,14 +157,14 @@ export function BlogEditScreen({ navigation, route }: BlogReadScreenProps) {
           },
           activeTintColor: Colors.paperLight,
           labelStyle: {
-            fontFamily: FontFaces.typewriter,// decorative,
+            fontFamily: FontFaces.typewriter, // decorative,
             fontSize: 18,
             textTransform: "none",
             margin: 0,
           },
 
           showIcon: showIcon,
-          showLabel: !showIcon
+          showLabel: !showIcon,
         }}
       >
         <Tab.Screen

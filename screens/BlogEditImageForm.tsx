@@ -8,7 +8,7 @@ import { RootState } from "../store";
 import { UploadForm } from "./UploadForm";
 import { doUpdatePost } from "../store/BlogActions";
 import { SCREEN_WIDTH } from "../config/Theming";
-import { appLogger } from "../src/Logging";
+import { appLogger } from "../config/Logging";
 
 export function BlogEditImageForm() {
   type BlogEntry = RootState["blog"]["edit"];

@@ -5,7 +5,7 @@ import { Button, Image, Overlay, Text } from "react-native-elements";
 import { Colors, SCREEN_WIDTH, FontFaces } from "../config/Theming";
 import { User } from "../model/Auth";
 import { ImageInfo, transferImage } from "../src/ImageTool";
-import { networkLogger } from "../src/Logging";
+import { networkLogger } from "../config/Logging";
 import { useAuthState } from "../store";
 import { ProgressBar } from "react-native-paper";
 import { delay } from "../src/AsyncTools";

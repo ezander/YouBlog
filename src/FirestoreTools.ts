@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, AxiosResponse, Method } from "axios";
 import { createError } from "./FirebaseErrors";
 import { FirebaseConfig, HTTPError } from "./FirebaseTools";
-import { networkLogger } from "./Logging";
+import { networkLogger } from "../config/Logging";
 
 export function mapObject<T>(
   obj: T,

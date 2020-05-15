@@ -1,6 +1,6 @@
 import { Draft, produce } from "immer";
 import { User } from "../model/Auth";
-import { authLogger } from "../src/Logging";
+import { authLogger } from "../config/Logging";
 import { AuthAction, AuthActionTypes } from "./AuthActions";
 
 const initialState = {

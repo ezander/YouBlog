@@ -60,8 +60,10 @@ export function doDeletePost(id: string, idToken: string) {
 }
 
 async function asyncStorePost(entry: BlogEntryWithId, idToken: string, dispatch: Dispatch) {
+  console.log("Before: ", entry.id, entry.document.title)
   const storedEntry = await storeBlogEntry(entry, idToken)
-  return dispatch({type: BlogActionTypes.STORE_POST, storedEntry})
+  console.log("After: ", storedEntry.id, storedEntry.document.title)
+  return dispatch({type: BlogActionTypes.STORE_POST, post: storedEntry})
 }
 
 export function doStorePost(entry: BlogEntryWithId, idToken: string) {
